@@ -25,6 +25,8 @@ Science
 Less-Science
 ------------
 
+* [Counting subgraphs in streams](counting_subgraphs.html)
+
 Elsewhere on the Web
 ====================
 
