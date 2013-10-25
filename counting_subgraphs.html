@@ -11,7 +11,7 @@
 <body>
 <h1 id="counting-subgraphs-in-streams">Counting Subgraphs in Streams</h1>
 <div class="figure">
-<img src="http://4.bp.blogspot.com/-QMi4QrscdrU/T6pE9UN-bdI/AAAAAAAAACw/vSp-3U7Fpzs/s1600/stream.jpg" title="CC-BY-NC &#39;Streaming&#39; by Flickr user Dru!" /><p class="caption"></p>
+<img src="pictures/stream.jpg" title="CC-BY-NC &#39;Streaming&#39; by Flickr user Dru!" /><p class="caption"></p>
 </div>
 <p>Suppose you have a very large graph, for example a protein-protein interaction graph for some complicated synthesis pathway. To draw conclusions from such a wealth of data, it is typically helpful to look for certain patterns, or subgraphs.</p>
 <p>Finding, or indeed even counting, small sized subgraphs in a large graph seems to be a very hard problem: The number of candidate positions against which you need to match your subgraph explodes com­bi­na­to­ri­cal­ly. The situation is even more hopeless if the data doesn't fit into main memory anymore.</p>
@@ -20,7 +20,7 @@
 <p>Triangle counting already is a relevant problem in itself. It has applications for example in community detection in graphs. There the clustering coefficient, i.e. how many of a node's neighbours are adjacent to each other (and thus form triangles), plays a central role. Indeed there are several papers <sup><a href="#fn2" class="footnoteRef" id="fnref2">2</a></sup> on counting triangles using MapReduce as a way to tackle the large networks we face today. The streaming algorithm I'll present here is a simple alternative to this.</p>
 <!-- more -->
 
-<h4 id="the-algorithm">The Algorithm</h4>
+<h2 id="the-algorithm">The Algorithm</h2>
 <p>This algorithm is from a paper by Jowhari and Ghodsi <sup><a href="#fn3" class="footnoteRef" id="fnref3">3</a></sup>. It is extremely simple. We need a source of sufficiently independent random bits, say an explicit polynomial generator of degree 12. That is a polynomial <span class="LaTeX">$p$</span> over some sufficiently large field with random coefficients. The random numbers are then <span class="LaTeX">$p(1),p(2),\ldots$</span> and we use their binary representation for a stream of random numbers <span class="LaTeX">$b[1],\ldots, b[n]$</span>, with <span class="LaTeX">$b[i] \in \{-1,1\}$</span>. Note that we can encode this generator using only a logarithmic number of bits for the coefficients.</p>
 <p>As we see the edges <span class="LaTeX">$(u,v),(x,y),\ldots$</span> we sum up <span class="LaTeX">$b[u]b[v]$</span>, that is the algorithm computes</p>
 <p><span class="LaTeX">$$Z = \sum_{(u,v)\in E} b[u]b[v]$$</span></p>
