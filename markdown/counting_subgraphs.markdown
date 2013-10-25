@@ -1,7 +1,7 @@
 Counting Subgraphs in Streams
 =============================
 
-![](http://4.bp.blogspot.com/-QMi4QrscdrU/T6pE9UN-bdI/AAAAAAAAACw/vSp-3U7Fpzs/s1600/stream.jpg "CC-BY-NC 'Streaming' by Flickr user Dru!")
+![](pictures/stream.jpg "CC-BY-NC 'Streaming' by Flickr user Dru!")
 
 Suppose you have a very large graph, for example a protein-protein interaction graph for some complicated synthesis pathway. To draw conclusions from such a wealth of data, it is typically helpful to look for certain patterns, or subgraphs. 
 
@@ -15,7 +15,8 @@ Triangle counting already is a relevant problem in itself. It has applications f
 
 <!-- more -->
 
-#### The Algorithm
+The Algorithm
+-------------
 
 This algorithm is from a paper by Jowhari and Ghodsi [^1]. It is extremely simple. We need a source of sufficiently independent random bits, say an explicit polynomial generator of degree 12. That is a polynomial $p$ over some sufficiently large field with random coefficients. The random numbers are then $p(1),p(2),\ldots$ and we use their binary representation for a stream of random numbers $b[1],\ldots, b[n]$, with $b[i] \in \{-1,1\}$. Note that we can encode this generator using only a logarithmic number of bits for the coefficients.
 
