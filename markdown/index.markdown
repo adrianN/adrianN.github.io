@@ -28,6 +28,11 @@ Less-Science
 * [Counting subgraphs in streams](counting_subgraphs.html)
 * [Distributing balls into bins](ballsBins.html)
 
+No Science
+----------
+
+* [Simple Programming Problems](programming_problems.html)
+
 Elsewhere on the Web
 ====================
 
