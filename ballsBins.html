@@ -23,7 +23,7 @@
 <p>This seems like a difficult problem to tackle, but it turns out we can use the first moment method<sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup> on appropriately defined random variables.</p>
 <p>As it is so often the case, 'appropriately' defining things gets you half way to a solution. The first moment method allows us to show that a random variable will be zero asymptotically almost surely. In our application we want to show that there will be no bins with a large number of balls, so let's define <span class="LaTeX">$X\_k$</span> to count the number of bins who have <span class="LaTeX">$k$</span> or more rings.</p>
 <p>As we already observed the number of balls is binomially distributed, so it is not so difficult to bound the probability that a bin contains more than <span class="LaTeX">$k$</span>. To make things easier, we will use the Poisson approximation<sup><a href="#fn2" class="footnoteRef" id="fnref2">2</a></sup> and cheat a little with the constant factors involved. <span class="LaTeX">$$\mbox{Pr}(\mbox{elf has }\geq k \mbox{ rings})= \mbox{Pr}(\mbox{Bin}(n,1/n)\geq k) \leq n \mbox{Pr}(\mbox{Pois}(1) = k) =n e^{-1} \cdot \frac{1}{k!}\approx ne^{-1} \cdot 2^{-k \log k} \approx e^{\log n - k \log k}$$</span></p>
-<p>We used Stirling to approximate <span class="LaTeX">$k! \approx 2^{k\log k}$</span>. By defining an indicator for every bin we see that the expectation is just <span class="LaTeX">$\mathbb{E}(X\_k) \leq e^{2\log n - k \log k}$</span>. Clearly this expectation goes to zero for <span class="LaTeX">$$
+<p>We used Stirling to approximate <span class="LaTeX">$k! \approx 2^{k\log k}$</span>. By defining an indicator for every bin we see that the expectation is just <span class="LaTeX">$\mathbb{E}(X_k) \leq e^{2\log n - k \log k}$</span>. Clearly this expectation goes to zero for <span class="LaTeX">$$
 k \geq \frac{c\log n}{\log \log n}
 $$</span> for some suitable <span class="LaTeX">$c$</span>, depending on the exact values of the constants in the exponent.</p>
 <h2 id="remarks">Remarks</h2>
@@ -38,5 +38,10 @@ $$</span> for some suitable <span class="LaTeX">$c$</span>, depending on the exa
 <li id="fn2"><p>I told you the Poisson distribution is useful <a href="http://zufallstee.blogspot.com/2011/10/poisson-distribution.html">in this post</a><a href="#fnref2">↩</a></p></li>
 </ol>
 </div>
+<div style="font-size:80%">
+<hr/>
+<div style="float:left"><p>CC-BY-SA <a href="mailto:aneumann@mpi-inf.mpg.de">Adrian Neumann</a></p></div>
+<div style="float:right"><p><a href="./">adriann.github.io</a></p></div>
+</div> 
 </body>
 </html>

@@ -23,7 +23,7 @@ As it is so often the case, 'appropriately' defining things gets you half way to
 As we already observed the number of balls is binomially distributed, so it is not so difficult to bound the probability that a bin contains more than $k$. To make things easier, we will use the Poisson approximation[^2] and cheat a little with the constant factors involved.
 $$\mbox{Pr}(\mbox{elf has }\geq k \mbox{ rings})= \mbox{Pr}(\mbox{Bin}(n,1/n)\geq k) \leq n \mbox{Pr}(\mbox{Pois}(1) = k) =n e^{-1} \cdot \frac{1}{k!}\approx ne^{-1} \cdot 2^{-k \log k} \approx e^{\log n - k \log k}$$
 
-We used Stirling to approximate $k! \approx 2^{k\log k}$. By defining an indicator for every bin we see that the expectation is just $\mathbb{E}(X\_k) \leq e^{2\log n - k \log k}$. Clearly this expectation goes to zero for 
+We used Stirling to approximate $k! \approx 2^{k\log k}$. By defining an indicator for every bin we see that the expectation is just $\mathbb{E}(X_k) \leq e^{2\log n - k \log k}$. Clearly this expectation goes to zero for 
 $$
 k \geq \frac{c\log n}{\log \log n}
 $$

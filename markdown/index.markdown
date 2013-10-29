@@ -22,11 +22,12 @@ Science
 * Kurt Mehlhorn, Adrian Neumann, Jens M. Schmidt: *Certifying 3-Edge-Connectivity*, WG 2013, [Preprint on arXiv](http://arxiv.org/abs/1211.6553)
 * Sayan Bhattacharya, Parinya Chalermsook, Kurt Mehlhorn, Adrian Neumann: *New Approximability Results for the Robust k-Median Problem*, [Preprint on arXiv](http://arxiv.org/abs/1309.4602) 
 
-Less-Science
+Less Science
 ------------
 
 * [Counting subgraphs in streams](counting_subgraphs.html)
 * [Distributing balls into bins](ballsBins.html)
+* [Ullman's Subgraph Isomorphism Algorithm](Ullman subgraph isomorphism.html)
 
 No Science
 ----------
