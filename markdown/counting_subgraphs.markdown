@@ -1,5 +1,5 @@
-Counting Subgraphs in Streams
-=============================
+% Counting Subgraphs in Streams
+% Adrian Neumann (adrian_neumann@gmx.de)
 
 ![](pictures/stream.jpg "CC-BY-NC 'Streaming' by Flickr user Dru!")
 

@@ -1,5 +1,5 @@
-One Rule to Distribute them All
-===============================
+% One Rule to Distribute them All
+% Adrian Neumann (adrian_neumann@gmx.de)
 
 ![Share... the load](pictures/sam.jpg "Copyright probably with New Line Cinema")
 

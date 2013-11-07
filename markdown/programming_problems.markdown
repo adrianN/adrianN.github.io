@@ -1,5 +1,5 @@
-﻿Simple Programming Problems
-===========================
+﻿% Simple Programming Problems
+% Adrian Neumann (adrian_neumann@gmx.de)
 
 
 Whenever I'm TA for a introductory CS class where students learn some programming language, I have trouble coming up with good exercises. Problems from [Project Euler](http://projecteuler.net/) and the like are usually much too difficult for beginners, especially if they don't have a strong background in mathematics.
@@ -22,7 +22,7 @@ Elementary
 8. Write a guessing game where the user has to guess a secret number. After every guess the program tells the user whether his number was too large or too small. At the end the number of tries needed should be printed. I counts only as one try if the user inputs the same number consecutively.
 9. Write a program that prints the next 20 leap years.
 1. Write a program that computes 
-\\[4\\cdot \\sum\_{k=1}\^{10\^6} \\frac{(-1)\^{k+1}}{2k-1}.\\]
+$$4\cdot \sum_{k=1}^{10^6} \frac{(-1)^{k+1}}{2k-1}.$$
 
 
 Lists, Strings

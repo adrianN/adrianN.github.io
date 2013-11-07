@@ -28,6 +28,7 @@ Less Science
 * [Counting subgraphs in streams](counting_subgraphs.html)
 * [Distributing balls into bins](ballsBins.html)
 * [Ullman's Subgraph Isomorphism Algorithm](Ullman subgraph isomorphism.html)
+* [Cuckoo Hashing](cuckoo.html)
 
 No Science
 ----------

@@ -1,5 +1,5 @@
 % Ullman's Subgraph Isomorphism Algorithm
-% Adrian Neumann (aneumann@mpi-inf.mpg.de)
+% Adrian Neumann (adrian_neumann@gmx.de)
 
 ![](pictures/puzzle_by_aice83.jpg "puzzle by deviant art user ~aice83")
 

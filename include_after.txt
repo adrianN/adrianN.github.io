@@ -1,5 +1,5 @@
 <div style="font-size:80%">
 <hr/>
-<div style="float:left"><p>CC-BY-SA <a href="mailto:aneumann@mpi-inf.mpg.de">Adrian Neumann</a></p></div>
-<div style="float:right"><p><a href="./">adriann.github.io</a></p></div>
+<p style="float:left">CC-BY-SA <a href="mailto:adrian_neumann@gmx.de">Adrian Neumann</a> (PGP Key <a href="ressources/pub.asc">A210311B</a>)</p>
+<p style="float:right"><a href="./">adriann.github.io</a></p>
 </div> 
