@@ -5,11 +5,13 @@
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <meta name="author" content="Adrian Neumann (adrian_neumann@gmx.de)" />
-  <title>Ullman's Subgraph Isomorphism Algorithm</title>
+  <title>Ullman’s Subgraph Isomorphism Algorithm</title>
   <script src="mathml.js" type="text/javascript"></script>
   <style>
-  .caption{font-size:66%;text-align:right;}
   .displayequation{margin-left:auto;margin-right:auto;}
+  </style>
+  <style>
+  .caption{font-size:66%;text-align:right;}
   .figure{float:right;padding-bottom:1em;padding-left:1em;}
   .footnotes{font-size:80%;}
   a:hover{text-shadow: 0 0 5px;}
@@ -19,20 +21,23 @@
   </style>
 </head>
 <body>
+  <noscript>
+    <p style="float:right; font-size:80%; color:red">This site uses Javascript to render Math.</p>
+  </noscript>
 <div id="header">
-<h1 class="title">Ullman's Subgraph Isomorphism Algorithm</h1>
+<h1 class="title">Ullman’s Subgraph Isomorphism Algorithm</h1>
 </div>
 <div class="figure">
 <img src="pictures/puzzle_by_aice83.jpg" title="puzzle by deviant art user ~aice83" /><p class="caption"></p>
 </div>
 <p>The subgraph isomorphism problem asks whether a graph <span class="LaTeX">$G$</span> has a subgraph <span class="LaTeX">$G&#39;\subset G$</span> that is isomorphmic to a graph <span class="LaTeX">$P$</span>. So basically you have the picture on the box of a puzzle (<span class="LaTeX">$G$</span>) and want to know where a particular piece (<span class="LaTeX">$P$</span>) fits, if at all. It is NP-complete because Hamiltonian cycle is a special case.</p>
-<p>In 1976 Ullman proposed a backtracking algorithm for this problem. The writeup in the <a href="http://dx.doi.org/10.1145%2F321921.321925">original paper</a> is hard to follow because the pseudo-code doesn't use functions or even loops. Maybe those weren't invented back then.<sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup></p>
+<p>In 1976 Ullman proposed a backtracking algorithm for this problem. The writeup in the <a href="http://dx.doi.org/10.1145%2F321921.321925">original paper</a> is hard to follow because the pseudo-code doesn’t use functions or even loops. Maybe those weren’t invented back then.<sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup></p>
 <!--more-->
 
 <h2 id="the-basic-algorithm">The basic algorithm</h2>
-<p>It is possible to encode a subgraph isomorphism as a <span class="LaTeX">$|V_P|\times |V_G|$</span> matrix <span class="LaTeX">$M$</span> in which each row contains exactly one 1 and each column contains at most one 1. We set <span class="LaTeX">$m_{ij}$</span> to 1 iff <span class="LaTeX">$v_j\in G$</span> corresponds to <span class="LaTeX">$v_i\in P$</span> in the isomorphism. Then <span class="LaTeX">$P=M(MG)^T$</span>, where I use <span class="LaTeX">$P$</span> and <span class="LaTeX">$G$</span> to stand for the adjacency matrices. If we aren't looking for induced subgraphs, <span class="LaTeX">$P\leq M(MG)^T$</span> (componentwise), i.e. the subgraph of <span class="LaTeX">$G$</span> selected by <span class="LaTeX">$M$</span> might contain additional edges not present in <span class="LaTeX">$P$</span>.</p>
+<p>It is possible to encode a subgraph isomorphism as a <span class="LaTeX">$|V_P|\times |V_G|$</span> matrix <span class="LaTeX">$M$</span> in which each row contains exactly one 1 and each column contains at most one 1. We set <span class="LaTeX">$m_{ij}$</span> to 1 iff <span class="LaTeX">$v_j\in G$</span> corresponds to <span class="LaTeX">$v_i\in P$</span> in the isomorphism. Then <span class="LaTeX">$P=M(MG)^T$</span>, where I use <span class="LaTeX">$P$</span> and <span class="LaTeX">$G$</span> to stand for the adjacency matrices. If we aren’t looking for induced subgraphs, <span class="LaTeX">$P\leq M(MG)^T$</span> (componentwise), i.e. the subgraph of <span class="LaTeX">$G$</span> selected by <span class="LaTeX">$M$</span> might contain additional edges not present in <span class="LaTeX">$P$</span>.</p>
 <p>The algorithm works by systematically enumerating possible matrices <span class="LaTeX">$M$</span> and checking whether they actually encode an isomorphism.</p>
-<p>We start by setting up a <span class="LaTeX">$|V_P|\times |V_G|$</span> matrix <span class="LaTeX">$M^0$</span> that contains a 1 at <span class="LaTeX">$(i,j)$</span> if it is possible that <span class="LaTeX">$v_i \sim v_j$</span> in some subgraph isomorphism. For now, we only use the degree as a criterion, i.e. we can map <span class="LaTeX">$v_i$</span> to <span class="LaTeX">$v_j$</span> if the latter has enough neighbors: <span class="LaTeX">$m_{ij}^0 = 1 \Leftrightarrow \mbox{deg}(v_i) \leq \mbox{deg}(v_j)$</span>. If we were cleverer we could remove more 1's and reduce our runtime.</p>
+<p>We start by setting up a <span class="LaTeX">$|V_P|\times |V_G|$</span> matrix <span class="LaTeX">$M^0$</span> that contains a 1 at <span class="LaTeX">$(i,j)$</span> if it is possible that <span class="LaTeX">$v_i \sim v_j$</span> in some subgraph isomorphism. For now, we only use the degree as a criterion, i.e. we can map <span class="LaTeX">$v_i$</span> to <span class="LaTeX">$v_j$</span> if the latter has enough neighbors: <span class="LaTeX">$m_{ij}^0 = 1 \Leftrightarrow \mbox{deg}(v_i) \leq \mbox{deg}(v_j)$</span>. If we were cleverer we could remove more 1’s and reduce our runtime.</p>
 <p>Now all we need to do is try all matrices <span class="LaTeX">$M$</span> that can be obtained from <span class="LaTeX">$M^0$</span> by removing all but one 1 from each row while having at most one 1 in each column. We do that recursively.</p>
 <pre><code>recurse(used_columns, cur_row, G, P, M)
     if cur_row = num_rows(M)
@@ -49,10 +54,10 @@
         mark c as unused
 
     output no</code></pre>
-<p>Making the <span class="LaTeX">$M&#39;$</span> copy of <span class="LaTeX">$M$</span> isn't really necessary, but it will become so once we implement our pruning procedure.</p>
+<p>Making the <span class="LaTeX">$M&#39;$</span> copy of <span class="LaTeX">$M$</span> isn’t really necessary, but it will become so once we implement our pruning procedure.</p>
 <h2 id="pruning">Pruning</h2>
-<p>We want to (safely) change at least some of the 1's in our matrix to 0's to reduce the computation time. For that, we use a simple observation. If some <span class="LaTeX">$p\in V_P$</span> has neighbours <span class="LaTeX">$p_1,\ldots, p_l \in P$</span>, and we map it to some <span class="LaTeX">$g \in V_G$</span>, then we'd better also map <span class="LaTeX">$p_1,\ldots,p_l$</span> to neigbors of <span class="LaTeX">$g$</span>.</p>
-<p>Remember that a 1 at <span class="LaTeX">$(i,j)$</span> in <span class="LaTeX">$M$</span> means that we still think that <span class="LaTeX">$v_i\in P$</span> can correspond to <span class="LaTeX">$v_j\in G$</span>. But if we already found out that there is a neighbour of <span class="LaTeX">$v_i\in P$</span> can't be mapped to any neigbour of <span class="LaTeX">$v_j\in G$</span> clearly the 1 at <span class="LaTeX">$(i,j)$</span> is wrong and we can change it safely to a 0. This change might make more mappings impossible, so we iterate this check until nothing can be changed. If we remove all 1's from a row during this refinement, we can stop the whole process, since <span class="LaTeX">$M$</span> can't be completed to an isomorphism anymore.</p>
+<p>We want to (safely) change at least some of the 1’s in our matrix to 0’s to reduce the computation time. For that, we use a simple observation. If some <span class="LaTeX">$p\in V_P$</span> has neighbours <span class="LaTeX">$p_1,\ldots, p_l \in P$</span>, and we map it to some <span class="LaTeX">$g \in V_G$</span>, then we’d better also map <span class="LaTeX">$p_1,\ldots,p_l$</span> to neigbors of <span class="LaTeX">$g$</span>.</p>
+<p>Remember that a 1 at <span class="LaTeX">$(i,j)$</span> in <span class="LaTeX">$M$</span> means that we still think that <span class="LaTeX">$v_i\in P$</span> can correspond to <span class="LaTeX">$v_j\in G$</span>. But if we already found out that there is a neighbour of <span class="LaTeX">$v_i\in P$</span> can’t be mapped to any neigbour of <span class="LaTeX">$v_j\in G$</span> clearly the 1 at <span class="LaTeX">$(i,j)$</span> is wrong and we can change it safely to a 0. This change might make more mappings impossible, so we iterate this check until nothing can be changed. If we remove all 1’s from a row during this refinement, we can stop the whole process, since <span class="LaTeX">$M$</span> can’t be completed to an isomorphism anymore.</p>
 <pre><code>do
     for all (i,j) where M is 1
         for all neighbors x of vi in P
@@ -61,11 +66,11 @@
 while M was changed</code></pre>
 <p>Now the effectiveness of our pruning procedure depends on the order of the vertices. The earlier in the recursion we find a 1 that can be changed to a 0, the better. Thus it is a good a idea to order the vertices such that high degree vertices of <span class="LaTeX">$P$</span> are first.</p>
 <h2 id="clever-implementation">Clever Implementation</h2>
-<p>This algorithm seems rather costly, since we do a matrix multplication for every leaf in the recursion tree and manipulate the matrix quite a lot in between. However, note that we're dealing with boolean matrices here. It's a good idea to encode them as bit vectors. Then multiplication can be done efficiently using bit-twiddling, even if we still use the naive O(<span class="LaTeX">$n^3$</span>) algorithm. Similarly setting a column to 1 and the other columns to 0 can be done using bit-twiddling and finding viable neighbors during the pruning step is fast too. Using these implementation tricks we can speed up the naive algorithm by some largish constant factor, depending on the word size of the CPU and whether it supports SSE or similar vector operations.</p>
+<p>This algorithm seems rather costly, since we do a matrix multplication for every leaf in the recursion tree and manipulate the matrix quite a lot in between. However, note that we’re dealing with boolean matrices here. It’s a good idea to encode them as bit vectors. Then multiplication can be done efficiently using bit-twiddling, even if we still use the naive O(<span class="LaTeX">$n^3$</span>) algorithm. Similarly setting a column to 1 and the other columns to 0 can be done using bit-twiddling and finding viable neighbors during the pruning step is fast too. Using these implementation tricks we can speed up the naive algorithm by some largish constant factor, depending on the word size of the CPU and whether it supports SSE or similar vector operations.</p>
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p><a href="http://www.blogger.com/profile/03287960526248203121">Clifford Wolf</a> says: I think those were invented in the late 60's by Dijkstra (&quot;Structured Programming&quot; by E.W.Dijkstra in Nato Science Committee - Software Engineering Techniques in April 1970 and &quot;GO TO Statement Considered Harmful&quot; by E.W.Dijkstra in CACM V 11 No. 3 in March 1968). But afaik the concept of programming using block structures was unknown to most people in computer science before Kernighan and Plauger's 1974 book &quot;The Elements of Programming Style&quot; and probably Nassi and Shneiderman's 1973 paper &quot;Flowchart techniques for structured programming&quot;. So at least it was a rather new idea in 1976.<a href="#fnref1">↩</a></p></li>
+<li id="fn1"><p><a href="http://www.blogger.com/profile/03287960526248203121">Clifford Wolf</a> says: I think those were invented in the late 60’s by Dijkstra (“Structured Programming” by E.W.Dijkstra in Nato Science Committee - Software Engineering Techniques in April 1970 and “GO TO Statement Considered Harmful” by E.W.Dijkstra in CACM V 11 No. 3 in March 1968). But afaik the concept of programming using block structures was unknown to most people in computer science before Kernighan and Plauger’s 1974 book “The Elements of Programming Style” and probably Nassi and Shneiderman’s 1973 paper “Flowchart techniques for structured programming”. So at least it was a rather new idea in 1976.<a href="#fnref1">↩</a></p></li>
 </ol>
 </div>
 <div style="font-size:80%">

@@ -8,8 +8,10 @@
   <title>Counting Subgraphs in Streams</title>
   <script src="mathml.js" type="text/javascript"></script>
   <style>
-  .caption{font-size:66%;text-align:right;}
   .displayequation{margin-left:auto;margin-right:auto;}
+  </style>
+  <style>
+  .caption{font-size:66%;text-align:right;}
   .figure{float:right;padding-bottom:1em;padding-left:1em;}
   .footnotes{font-size:80%;}
   a:hover{text-shadow: 0 0 5px;}
@@ -19,6 +21,9 @@
   </style>
 </head>
 <body>
+  <noscript>
+    <p style="float:right; font-size:80%; color:red">This site uses Javascript to render Math.</p>
+  </noscript>
 <div id="header">
 <h1 class="title">Counting Subgraphs in Streams</h1>
 </div>
@@ -26,10 +31,10 @@
 <img src="pictures/stream.jpg" title="CC-BY-NC &#39;Streaming&#39; by Flickr user Dru!" /><p class="caption"></p>
 </div>
 <p>Suppose you have a very large graph, for example a protein-protein interaction graph for some complicated synthesis pathway. To draw conclusions from such a wealth of data, it is typically helpful to look for certain patterns, or subgraphs.</p>
-<p>Finding, or indeed even counting, small sized subgraphs in a large graph seems to be a very hard problem: The number of candidate positions against which you need to match your subgraph explodes com­bi­na­to­ri­cal­ly. The situation is even more hopeless if the data doesn't fit into main memory anymore.</p>
-<p>To address the problem of working with graphs that don't fit into RAM the streaming model was introduced. Here the algorithm has a very limited amount of storage, say O(<span class="LaTeX">$\log n$</span>) bits, and the in­put is pre­sent­ed as a stream of edges. The algorithm is only allowed to make a small number of passes over the data.</p>
+<p>Finding, or indeed even counting, small sized subgraphs in a large graph seems to be a very hard problem: The number of candidate positions against which you need to match your subgraph explodes com­bi­na­to­ri­cal­ly. The situation is even more hopeless if the data doesn’t fit into main memory anymore.</p>
+<p>To address the problem of working with graphs that don’t fit into RAM the streaming model was introduced. Here the algorithm has a very limited amount of storage, say O(<span class="LaTeX">$\log n$</span>) bits, and the in­put is pre­sent­ed as a stream of edges. The algorithm is only allowed to make a small number of passes over the data.</p>
 <p>Only few problems can be solved exactly in this model, but often it is possible to find good approximation algorithms. In this post we will have a look at how to count triangles in the streaming model. Very similar techniques can be used to count arbitrary constant size subgraphs.<sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup></p>
-<p>Triangle counting already is a relevant problem in itself. It has applications for example in community detection in graphs. There the clustering coefficient, i.e. how many of a node's neighbours are adjacent to each other (and thus form triangles), plays a central role. Indeed there are several papers <sup><a href="#fn2" class="footnoteRef" id="fnref2">2</a></sup> on counting triangles using MapReduce as a way to tackle the large networks we face today. The streaming algorithm I'll present here is a simple alternative to this.</p>
+<p>Triangle counting already is a relevant problem in itself. It has applications for example in community detection in graphs. There the clustering coefficient, i.e. how many of a node’s neighbours are adjacent to each other (and thus form triangles), plays a central role. Indeed there are several papers <sup><a href="#fn2" class="footnoteRef" id="fnref2">2</a></sup> on counting triangles using MapReduce as a way to tackle the large networks we face today. The streaming algorithm I’ll present here is a simple alternative to this.</p>
 <!-- more -->
 
 <h2 id="the-algorithm">The Algorithm</h2>
@@ -38,7 +43,7 @@
 <p><span class="LaTeX">$$Z = \sum_{(u,v)\in E} b[u]b[v]$$</span></p>
 <p>The output is then</p>
 <p><span class="LaTeX">$$\frac{1}{6} Z^3.$$</span></p>
-<p>That's it. Algorithm over. This might seem too simple to be correct, but it actually works. Observe that we output</p>
+<p>That’s it. Algorithm over. This might seem too simple to be correct, but it actually works. Observe that we output</p>
 <p><span class="LaTeX">$$\frac 16 \sum_{(u,v), (w,x), (y,z) \in E} b[u]b[v]b[w]b[x]b[y]b[z]$$</span></p>
 <p>Since <span class="LaTeX">$b[u]^k$</span> is zero in expectation for odd <span class="LaTeX">$k$</span>, only terms with even powers count (in expectation) in this sum.<sup><a href="#fn4" class="footnoteRef" id="fnref4">4</a></sup> Hence only if <span class="LaTeX">$u=z$</span>, <span class="LaTeX">$v=w$</span>, and <span class="LaTeX">$x=y$</span> we count this term. This is exactly true if the three edges form a triangle! Of course we over count, since there are <span class="LaTeX">$3*2*1=6$</span> permutations of the three edges and they all occur in the sum, but we simply divide by six and get the right thing.</p>
 <p>Unfortunately this is only true in expectation, the actual value can differ quite a bit. But it is not too difficult to bound the variance of <span class="LaTeX">$Z$</span> and hence get a good estimate of how often we need to run this with fresh random variables to get a good estimate. Have a look at the paper to get the actual numbers. In the streaming model we can simply run these instances in parallel.</p>
@@ -49,7 +54,7 @@
 <li id="fn1"><p>Kane, Mehlhorn, Sauerwald, Sun: <a href="http://www.mpi-inf.mpg.de/~hsun/SGC12.pdf">Counting Arbitrary Subgraphs in Data Streams</a><a href="#fnref1">↩</a></p></li>
 <li id="fn2"><p>Suri, Vassilvitskii: Counting Triangles and the Curse of the Last Reducer,<br /> Pagh, Tsourarakis: Colorful triangle counting and a mapreduce implementation<a href="#fnref2">↩</a></p></li>
 <li id="fn3"><p>Jowhari, Ghodsi: <a href="http://sina.sharif.ac.ir/~ghodsi/papers/jowhari-cocoon2005.pdf">New Streaming Algorithms for Counting Triangles in Graphs</a><a href="#fnref3">↩</a></p></li>
-<li id="fn4"><p>If you ask yourself why we can take the expectation of the individual <span class="LaTeX">$b[u]$</span>, even though they appear in a product, this is because they are sufficiently independent. For the expectation calculation six-way independent random numbers would be sufficient (there are six terms in the product), but for the variance calculation that I don't show here we need <span class="LaTeX">$E(Z)^2$</span>, hence 12-way independence.<a href="#fnref4">↩</a></p></li>
+<li id="fn4"><p>If you ask yourself why we can take the expectation of the individual <span class="LaTeX">$b[u]$</span>, even though they appear in a product, this is because they are sufficiently independent. For the expectation calculation six-way independent random numbers would be sufficient (there are six terms in the product), but for the variance calculation that I don’t show here we need <span class="LaTeX">$E(Z)^2$</span>, hence 12-way independence.<a href="#fnref4">↩</a></p></li>
 </ol>
 </div>
 <div style="font-size:80%">

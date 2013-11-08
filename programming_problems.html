@@ -8,8 +8,10 @@
   <title>Simple Programming Problems</title>
   <script src="mathml.js" type="text/javascript"></script>
   <style>
-  .caption{font-size:66%;text-align:right;}
   .displayequation{margin-left:auto;margin-right:auto;}
+  </style>
+  <style>
+  .caption{font-size:66%;text-align:right;}
   .figure{float:right;padding-bottom:1em;padding-left:1em;}
   .footnotes{font-size:80%;}
   a:hover{text-shadow: 0 0 5px;}
@@ -19,20 +21,23 @@
   </style>
 </head>
 <body>
+  <noscript>
+    <p style="float:right; font-size:80%; color:red">This site uses Javascript to render Math.</p>
+  </noscript>
 <div id="header">
 <h1 class="title">Simple Programming Problems</h1>
 </div>
-<p>Whenever I'm TA for a introductory CS class where students learn some programming language, I have trouble coming up with good exercises. Problems from <a href="http://projecteuler.net/">Project Euler</a> and the like are usually much too difficult for beginners, especially if they don't have a strong background in mathematics.</p>
+<p>Whenever I’m TA for a introductory CS class where students learn some programming language, I have trouble coming up with good exercises. Problems from <a href="http://projecteuler.net/">Project Euler</a> and the like are usually much too difficult for beginners, especially if they don’t have a strong background in mathematics.</p>
 <p>This page is a collection of progressively more difficult exercises that are suitable for people who just started learning. It will be extended as I come up with new exercises. Except for the GUI questions, exercises are generally algorithmic and should be solvable without learning any libraries.</p>
 <p>I suppose they are also useful, although much easier, whenever an experienced person wants to learn a new language.</p>
 <h2 id="elementary">Elementary</h2>
 <ol style="list-style-type: decimal">
-<li>Write a program that prints 'Hello World' to the screen.</li>
+<li>Write a program that prints ‘Hello World’ to the screen.</li>
 <li>Write a program that asks the user for his name and greets him with his name.</li>
 <li>Modify the previous program such that only the users Alice and Bob are greeted with their names.</li>
 <li>Write a program that asks the user for a number <code>n</code> and prints the sum of the numbers 1 to <code>n</code></li>
-<li>Modify the previous program such that only multiples of three and five are considered in the sum, e.g. 3, 5, 9, 15 for <code>n</code>=17</li>
-<li>Write a program that asks the user for a number <code>n</code> and gives him the possibility to choose between computing the sum and computing the product of 1,...,<code>n</code>.</li>
+<li>Modify the previous program such that only multiples of three and five are considered in the sum, e.g. 3, 5, 9, 15 for <code>n</code>=17</li>
+<li>Write a program that asks the user for a number <code>n</code> and gives him the possibility to choose between computing the sum and computing the product of 1,…,<code>n</code>.</li>
 <li>Write a program that prints a multiplication table for numbers up to 12.</li>
 <li>Write a program that prints <em>all</em> prime numbers.</li>
 <li>Write a guessing game where the user has to guess a secret number. After every guess the program tells the user whether his number was too large or too small. At the end the number of tries needed should be printed. I counts only as one try if the user inputs the same number consecutively.</li>
@@ -54,7 +59,7 @@
 <li>Write a function that merges two sorted lists into a new list.</li>
 <li>Write a function that computes the list of the first 100 Fibonacci numbers.</li>
 <li>Write a function that takes a number and returns a list of its digits.</li>
-<li>Write functions that add, subtract, and multiply two numbers in their digit-list representation (and return a new digit list). If you're ambitious you can implement Karatsuba multiplication.</li>
+<li>Write functions that add, subtract, and multiply two numbers in their digit-list representation (and return a new digit list). If you’re ambitious you can implement Karatsuba multiplication.</li>
 <li>Implement the following sorting algorithms: Selection sort, Insertion sort, Merge sort, Quick sort, Stooge Sort. Check Wikipedia for descriptions.</li>
 <li>Implement binary search.</li>
 <li><p>Write a function that takes a list of strings an prints them, one per line, in a rectangular frame. For example the list <code>[&quot;Hello&quot;, &quot;World&quot;, &quot;in&quot;, &quot;a&quot;, &quot;frame&quot;]</code> gets printed as:</p>
@@ -65,12 +70,12 @@
 * a     *
 * frame *
 *********</code></pre></li>
-<li><p>Write function that translated a text to Pig Latin and back. English is translated to Pig Latin by taking the first letter of every word, moving it to the end of the word and adding 'ay'. &quot;The quick brown fox&quot; becomes &quot;Hetay uickqay rownbay oxfay&quot;.</p></li>
+<li><p>Write function that translated a text to Pig Latin and back. English is translated to Pig Latin by taking the first letter of every word, moving it to the end of the word and adding ‘ay’. “The quick brown fox” becomes “Hetay uickqay rownbay oxfay”.</p></li>
 </ol>
 <h2 id="intermediate">Intermediate</h2>
 <ol style="list-style-type: decimal">
-<li>Write a program that outputs all possibilities to put <code>+</code> or <code>-</code> or nothing between the numbers 1,2,...,9 (in this order) such that the result is 100. For example 1 + 2 + 3 - 4 + 5 + 6 + 78 + 9 = 100.</li>
-<li>Write a program that takes the duration of a year (in fractional days) for an imaginary planet as an input and produces a leap-year rule that minimizes the difference to the planet's solar year.</li>
+<li>Write a program that outputs all possibilities to put <code>+</code> or <code>-</code> or nothing between the numbers 1,2,…,9 (in this order) such that the result is 100. For example 1 + 2 + 3 - 4 + 5 + 6 + 78 + 9 = 100.</li>
+<li>Write a program that takes the duration of a year (in fractional days) for an imaginary planet as an input and produces a leap-year rule that minimizes the difference to the planet’s solar year.</li>
 <li>Implement a datastructure for graphs that allows modification (insertion, deletion). It should be possible to store values at edges and nodes. It might be easiest to use a dictionary of (node, edgelist) to do this.</li>
 <li>Write a function that generates a DOT representation of a graph.</li>
 <li>Write a program that automatically generates essays for you.
@@ -84,9 +89,9 @@
 <h2 id="advanced">Advanced</h2>
 <ol style="list-style-type: decimal">
 <li>Given two strings, write a program that efficiently finds the longest common subsequence.</li>
-<li>Given an array with numbers, write a program that efficiently answers queries of the form: &quot;Which is the nearest larger value for the number at position <code>i</code>?&quot;, where distance is the difference in array indices.</li>
+<li>Given an array with numbers, write a program that efficiently answers queries of the form: “Which is the nearest larger value for the number at position <code>i</code>?”, where distance is the difference in array indices.</li>
 <li>Given two strings, write a program that outputs the shortest sequence of character insertions and deletions that turn one string into the other.</li>
-<li>Write a function that multiplies two matrices together. Make it as efficient as you can and compare the performance to a polished linear algebra library for your language. You might want to read about <a href="https://en.wikipedia.org/wiki/Strassen_algorithm">Strassen's algorithm</a> and the effects CPU caches have. Try out different matrix layouts and see what happens.</li>
+<li>Write a function that multiplies two matrices together. Make it as efficient as you can and compare the performance to a polished linear algebra library for your language. You might want to read about <a href="https://en.wikipedia.org/wiki/Strassen_algorithm">Strassen’s algorithm</a> and the effects CPU caches have. Try out different matrix layouts and see what happens.</li>
 <li>Given a set of d-dimensional rectangular boxes, write a program that computes the volume of their union. Start with 2D and work your way up.</li>
 </ol>
 <h2 id="gui">GUI</h2>
@@ -97,14 +102,14 @@
 </ul>
 <h2 id="open-ended">Open Ended</h2>
 <ol style="list-style-type: decimal">
-<li>Write a program that plays Hangman as good as possible. For example you can use a large dictionary like <a href="http://wordlist.sourceforge.net/">this</a> and select the letter that excludes most words that are still possible solutions. Try to make the program as efficient as possible, i.e. don't scan the whole dictionary in every turn.</li>
+<li>Write a program that plays Hangman as good as possible. For example you can use a large dictionary like <a href="http://wordlist.sourceforge.net/">this</a> and select the letter that excludes most words that are still possible solutions. Try to make the program as efficient as possible, i.e. don’t scan the whole dictionary in every turn.</li>
 <li>Write a program that plays Rock, Paper, Scissors better than random against a human. Try to exploit that humans are very bad at generating random numbers.</li>
-<li>Write a program that plays Battle Ship against human opponents. It takes coordinates as input and outputs whether that was a hit or not and its own shot's coordinates.</li>
+<li>Write a program that plays Battle Ship against human opponents. It takes coordinates as input and outputs whether that was a hit or not and its own shot’s coordinates.</li>
 </ol>
 <h2 id="other-collections">Other Collections</h2>
-<p>Of course I'm not the first person to come up with the idea of having a list like this.</p>
+<p>Of course I’m not the first person to come up with the idea of having a list like this.</p>
 <ul>
-<li><a href="http://users.csc.calpoly.edu/~jdalbey/">John Dalbey</a>'s collection
+<li><a href="http://users.csc.calpoly.edu/~jdalbey/">John Dalbey</a>’s collection
 <ul>
 <li>Several small problems <a href="http://users.csc.calpoly.edu/~jdalbey/103/Projects/ProgrammingPractice.html">Programming Practice</a></li>
 <li>CPE 101 <a href="http://users.csc.calpoly.edu/~jdalbey/101/index.html">Projects</a></li>

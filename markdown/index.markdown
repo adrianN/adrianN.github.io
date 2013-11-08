@@ -29,6 +29,8 @@ Less Science
 * [Distributing balls into bins](ballsBins.html)
 * [Ullman's Subgraph Isomorphism Algorithm](Ullman subgraph isomorphism.html)
 * [Cuckoo Hashing](cuckoo.html)
+* [Guessing Games](guessing_games.html)
+* [Mastermind](mastermind.html)
 
 No Science
 ----------

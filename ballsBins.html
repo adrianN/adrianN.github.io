@@ -8,8 +8,10 @@
   <title>One Rule to Distribute them All</title>
   <script src="mathml.js" type="text/javascript"></script>
   <style>
-  .caption{font-size:66%;text-align:right;}
   .displayequation{margin-left:auto;margin-right:auto;}
+  </style>
+  <style>
+  .caption{font-size:66%;text-align:right;}
   .figure{float:right;padding-bottom:1em;padding-left:1em;}
   .footnotes{font-size:80%;}
   a:hover{text-shadow: 0 0 5px;}
@@ -19,28 +21,31 @@
   </style>
 </head>
 <body>
+  <noscript>
+    <p style="float:right; font-size:80%; color:red">This site uses Javascript to render Math.</p>
+  </noscript>
 <div id="header">
 <h1 class="title">One Rule to Distribute them All</h1>
 </div>
 <div class="figure">
-<img src="pictures/sam.jpg" title="Copyright probably with New Line Cinema" alt="Share... the load" /><p class="caption">Share... the load</p>
+<img src="pictures/sam.jpg" title="Copyright probably with New Line Cinema" alt="Share… the load" /><p class="caption">Share… the load</p>
 </div>
-<p>Suppose you are a poor orkish messenger and have <span class="LaTeX">$n$</span> rings to distribute to the <span class="LaTeX">$n$</span> elven-kings under the sky. Of course each is supposed to get their own, but you're lazy and the nasty elves all look the same anyway.</p>
-<p>Due to your extensive experience with <del>chaos</del> randomization you quickly see that throwing rings at elves randomly is in expectation just as good. The number of rings for each elf is distributed as <span class="LaTeX">$\mbox{Bin}(n,1/n)$</span>, so the expectation is one. You might also know that binomial random variables are pretty strongly concentrated around their expectation and you don't think the dependencies between the elves will change anything about that.</p>
-<p>Your boss however would like some more arguments why your approach is good enough. Let's try to compute the maximum number of rings any elf will get.</p>
+<p>Suppose you are a poor orkish messenger and have <span class="LaTeX">$n$</span> rings to distribute to the <span class="LaTeX">$n$</span> elven-kings under the sky. Of course each is supposed to get their own, but you’re lazy and the nasty elves all look the same anyway.</p>
+<p>Due to your extensive experience with <del>chaos</del> randomization you quickly see that throwing rings at elves randomly is in expectation just as good. The number of rings for each elf is distributed as <span class="LaTeX">$\mbox{Bin}(n,1/n)$</span>, so the expectation is one. You might also know that binomial random variables are pretty strongly concentrated around their expectation and you don’t think the dependencies between the elves will change anything about that.</p>
+<p>Your boss however would like some more arguments why your approach is good enough. Let’s try to compute the maximum number of rings any elf will get.</p>
 <p>The knowledgeable reader probably recognizes this as a classical balls-into-bins settings with all the immediate applications to scheduling, hashing, and so forth. From here I will use the more standard nomenclature.</p>
 <!--more-->
 
 <h2 id="counting-bins">Counting Bins</h2>
 <p>This seems like a difficult problem to tackle, but it turns out we can use the first moment method<sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup> on appropriately defined random variables.</p>
-<p>As it is so often the case, 'appropriately' defining things gets you half way to a solution. The first moment method allows us to show that a random variable will be zero asymptotically almost surely. In our application we want to show that there will be no bins with a large number of balls, so let's define <span class="LaTeX">$X\_k$</span> to count the number of bins who have <span class="LaTeX">$k$</span> or more rings.</p>
+<p>As it is so often the case, ‘appropriately’ defining things gets you half way to a solution. The first moment method allows us to show that a random variable will be zero asymptotically almost surely. In our application we want to show that there will be no bins with a large number of balls, so let’s define <span class="LaTeX">$X\_k$</span> to count the number of bins who have <span class="LaTeX">$k$</span> or more rings.</p>
 <p>As we already observed the number of balls is binomially distributed, so it is not so difficult to bound the probability that a bin contains more than <span class="LaTeX">$k$</span>. To make things easier, we will use the Poisson approximation<sup><a href="#fn2" class="footnoteRef" id="fnref2">2</a></sup> and cheat a little with the constant factors involved. <span class="LaTeX">$$\mbox{Pr}(\mbox{elf has }\geq k \mbox{ rings})= \mbox{Pr}(\mbox{Bin}(n,1/n)\geq k) \leq n \mbox{Pr}(\mbox{Pois}(1) = k) =n e^{-1} \cdot \frac{1}{k!}\approx ne^{-1} \cdot 2^{-k \log k} \approx e^{\log n - k \log k}$$</span></p>
 <p>We used Stirling to approximate <span class="LaTeX">$k! \approx 2^{k\log k}$</span>. By defining an indicator for every bin we see that the expectation is just <span class="LaTeX">$\mathbb{E}(X_k) \leq e^{2\log n - k \log k}$</span>. Clearly this expectation goes to zero for <span class="LaTeX">$$
 k \geq \frac{c\log n}{\log \log n}
 $$</span> for some suitable <span class="LaTeX">$c$</span>, depending on the exact values of the constants in the exponent.</p>
 <h2 id="remarks">Remarks</h2>
-<p>Our sloppy calculations show that the number of bins with more than <span class="LaTeX">$O(\log n/\log \log n)$</span> balls is zero a.a.s., and hence the maximum load is sublogarithmic with high probability. The interested reader might want to show, using a variance calculation, that this bound is tight. Not bad for such a simple algorithm! If you're feeling adventurous, you can try the exercise at the end of this blog post to see how much a simple twist can improve the algorithm. Perhaps I'll write a bit about that in a different post.</p>
-<p>You might be a little disappointed at how slowly the expectation goes to zero, but rest assured that this is just a symptom of our weak tools. After all we used nothing more advanced than Markov's inequality! It is entirely possible (and indeed a common textbook example) to derive much stronger bounds by applying Chernoff-type bounds on a series of appropriately conditioned Poisson random variables, see for example chapter 5 of the excellent book <a href="http://books.google.com/books/about/Probability_and_computing.html?id=0bAYl6d7hvkC">Probability and Computing</a> by Mitzenmacher and Upfal.</p>
+<p>Our sloppy calculations show that the number of bins with more than <span class="LaTeX">$O(\log n/\log \log n)$</span> balls is zero a.a.s., and hence the maximum load is sublogarithmic with high probability. The interested reader might want to show, using a variance calculation, that this bound is tight. Not bad for such a simple algorithm! If you’re feeling adventurous, you can try the exercise at the end of this blog post to see how much a simple twist can improve the algorithm. Perhaps I’ll write a bit about that in a different post.</p>
+<p>You might be a little disappointed at how slowly the expectation goes to zero, but rest assured that this is just a symptom of our weak tools. After all we used nothing more advanced than Markov’s inequality! It is entirely possible (and indeed a common textbook example) to derive much stronger bounds by applying Chernoff-type bounds on a series of appropriately conditioned Poisson random variables, see for example chapter 5 of the excellent book <a href="http://books.google.com/books/about/Probability_and_computing.html?id=0bAYl6d7hvkC">Probability and Computing</a> by Mitzenmacher and Upfal.</p>
 <h2 id="exercise">Exercise</h2>
 <p>Intuitively you could do a little better by distributing the rings in rounds. In each round you pick two elves and give a ring to the elf who currently has fewer. Can you still compute the maximum number of rings a single elf will get?</p>
 <div class="footnotes">

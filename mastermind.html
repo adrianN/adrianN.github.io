@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Adrian Neumann (adrian_neumann@gmx.de)" />
+  <title>Mastermind</title>
+  <script src="mathml.js" type="text/javascript"></script>
+  <style>
+  .displayequation{margin-left:auto;margin-right:auto;}
+  </style>
+  <style>
+  .caption{font-size:66%;text-align:right;}
+  .figure{float:right;padding-bottom:1em;padding-left:1em;}
+  .footnotes{font-size:80%;}
+  a:hover{text-shadow: 0 0 5px;}
+  body{font-family:sans-serif;max-width:100ex;padding-left:5em;}
+  code{font-family:Consolas, Inconsolata, Monaco, monospace;font-size:95%;}
+  p{text-align:justify;}
+  </style>
+</head>
+<body>
+  <noscript>
+    <p style="float:right; font-size:80%; color:red">This site uses Javascript to render Math.</p>
+  </noscript>
+<div id="header">
+<h1 class="title">Mastermind</h1>
+</div>
+<div class="figure">
+<img src="pictures/mastermind_owlpacino_scaled.jpg" title="Picture BY-ND by Flickr user owlpacino" alt="The classic game" /><p class="caption">The classic game</p>
+</div>
+<p>We already considered a <a href="guessing_games.html">guessing game</a> on this blog, in which Alice asks queries of the form “is the number in this set” and receives yes/no answers.</p>
+<p>In this post, we will play a restricted version of the popular game Mastermind. In Mastermind Carole thinks of a secret string of four coloured pins. Alice can query strings and learns the number of matching pins (differentiated between the pins that are correct and in the correct position and the pins that are merely contained in the secret string).</p>
+<p>Mastermind has been extensively studied in combinatorics. Already in ’77 Knuth showed that Alice can always win in at most 5 moves. Here we want to find asymptotics for the game when Carole chooses a string of length <span class="LaTeX">$n$</span>.</p>
+<p>To make things easier for our calculation, we will restrict the game to binary strings. Also, Alice only learns the Hamming distance (that is the number of differences) between her string and Carole’s string. Alice is computationally unbounded, the only important metric is the number of queries she needs to guess Carole’s string.</p>
+<p>The naive algorithm is testing each bit of Carole’s string sequentially, by querying strings of the form <code>0000</code>, <code>1000</code>, <code>0100</code>, etc. This takes <span class="LaTeX">$n$</span> queries for bitstrings of length <span class="LaTeX">$n$</span> – essentially we do a binary search for Carole’s string. However the algorithm doesn’t seem to be very efficient, it appears that Mastermind is easier than the yes/no game. After all we get much more information with each query.</p>
+<p>Can we find Carole’s string with less than <span class="LaTeX">$n$</span> queries?</p>
+<!-- more -->
+
+<p>It turns out that it <em>is</em> possible to gather enough information quickly. Disappointingly the strategy is not very useful if we take the computation time into account that Alice needs to produce the secret string.</p>
+<h2 id="a-randomized-strategy">A Randomized Strategy</h2>
+<p>In Knuth’s algorithm, Alice always queries the string that eliminates the largest number of possible secret strings. This is straightforward to implement by using a brute force approach (we’re com­pu­ta­tionally un­bound­ed), however the analysis becomes tricky.</p>
+<p>Luckily Alice has a very simple randomized strategy that succeeds with high probability. Without thinking she queries random strings and stores the string and its Hamming distance to the secret string. Intuitively a random string is not much worse at eliminating possible solutions than the optimal string.</p>
+<p>We have collected enough information when there is only one possible solution left. Let the the secret string be <span class="LaTeX">$s$</span>, and let the query string be <span class="LaTeX">$q$</span>. Let us try to find the probability that a fixed impostor-string <span class="LaTeX">$i$</span> is not excluded by querying <span class="LaTeX">$q$</span>, i. e. <span class="LaTeX">$s$</span> and <span class="LaTeX">$i$</span> have the same Hamming distance from <span class="LaTeX">$q$</span>.</p>
+<div class="figure">
+<img src="pictures/mastermind.png" alt="The same distance" /><p class="caption">The same distance</p>
+</div>
+<p>Suppose <span class="LaTeX">$s$</span> and <span class="LaTeX">$i$</span> differ in <span class="LaTeX">$d$</span> positions. How many query strings are there that don’t discern between the two? For <span class="LaTeX">$q$</span> to have the same distance from both, only the positions matter where <span class="LaTeX">$s$</span> and <span class="LaTeX">$i$</span> disagree – where they agree the bits of <span class="LaTeX">$q$</span> contribute the same thing to the Hamming distance. So <span class="LaTeX">$n-d$</span> positions of <span class="LaTeX">$q$</span> are completely arbitrary. In the remaining positions we need to make sure half the bits agree with <span class="LaTeX">$s$</span> and the other half agrees with <span class="LaTeX">$i$</span>. Clearly this is only possible if <span class="LaTeX">$d$</span> is even. Already after the first query we’ve excluded all impostors that have an odd distance from <span class="LaTeX">$s$</span>. Pretty neat.</p>
+<p>For even <span class="LaTeX">$d$</span> we get <span class="LaTeX">$$\mbox{Pr}[i \mbox{ survives}] = \frac{\left({{d}\atop{d/2}}\right) \cdot 2^{n-d}}{2^{n}} = \left({{d}\atop{d/2}}\right) \cdot 2^{-d}.$$</span> Using Stirling’s approximation on the factorials it is straightforward to show that this is essentially <span class="LaTeX">$$\sqrt{\frac{2}{\pi d}}.$$</span></p>
+<p>We want to show that after a sufficiently large number of samples <span class="LaTeX">$t$</span>, the probability that there is an impostor string left tends to zero. By a simple union bound it suffices to show <span class="LaTeX">$$ \sum_d \left({{n}\atop{d}}\right) \cdot \left(\frac{2}{\pi d}\right)^{t/2} \rightarrow 0.$$</span></p>
+<p>Let’s try to bound the individual summands. We do a case distinction. First consider the case where <span class="LaTeX">$d \leq n/(\log n)^3$</span>. By Stirling’s formula we can bound <span class="LaTeX">$$\left({{n}\atop{d}}\right) \leq \left(\frac{en}{d}\right)^d,$$</span> and thus the summands are no larger than <span class="LaTeX">$$2^{t/2\cdot (2d/t \cdot \log (en/d)- \log(\pi d/2))}.$$</span> By plugging in the extreme values, 2 and <span class="LaTeX">$n/(\log n)^3$</span>, for <span class="LaTeX">$d$</span> and setting <span class="LaTeX">$t\geq 4n/\log n$</span> we get <span class="LaTeX">$$2d/t\cdot \log (en/d) - \log (\pi d/2) \leq \frac{1}{2(\log n)^2} \log (en/2) - \log \pi \leq -3/2,$$</span> for sufficiently large <span class="LaTeX">$n$</span> and thus the exponent can be bounded from above by <span class="LaTeX">$-3t/4$</span>.</p>
+<p>Hopefully we can also derive such a bound in the case where <span class="LaTeX">$n/(\log n)^3 \leq d \leq n$</span>. In this case we bound the binomial coefficient rather crudely by <span class="LaTeX">$2^n$</span>. Then the summands are not larger than <span class="LaTeX">$$2^{t/2\cdot (2n/t - \log (\pi d/2))}.$$</span> Bounding <span class="LaTeX">$\pi d/2$</span> by <span class="LaTeX">$n/(\log n)^3$</span> and setting <span class="LaTeX">$t\geq 4n/\log n$</span> we get <span class="LaTeX">$$\frac{2n}{t} - \log {\pi d}{2} &amp; \leq \frac{\log n}{2} - \log (n/(\log n)^3) \
+ = \frac{\log n}{2} - \log n + 3 \log \log n \
+ = 3 \log \log n - \frac{\log n}{2}.
+$$</span> Again this is smaller than <span class="LaTeX">$-3/2$</span> for sufficiently large <span class="LaTeX">$n$</span> and we can bound the summands by <span class="LaTeX">$2^{-3t/4}$</span> in this case too.</p>
+<p>Now we can easily bound the whole sum for <span class="LaTeX">$t\geq 4n/\log n$</span> <span class="LaTeX">$$
+\sum_{d} \left({{n}\atop{d}}\right) \cdot \left(\frac{2}{\pi d}\right)^{t/2} \leq \sum_d 2^{-3t/4} \
+ = n2^{-3t/4},\
+$$</span> and this goes to zero rather quickly.</p>
+<p>Hence a sublinear number of queries suffices to narrow down the solution space to a single candidate. An information theoretic argument shows that this is optimal. We get <span class="LaTeX">$\log n$</span> bits in every query and the secret string has <span class="LaTeX">$n$</span> bits, proof by handwave.</p>
+<h2 id="remarks">Remarks</h2>
+<p>We’ve shown that after <span class="LaTeX">$O(n/\log n)$</span> queries we’ve collected enough information to exclude all but one possible solutions. We can then find the remaining solution by brute force. Unfortunately we can’t improve much on that method: Checking whether there is a valid solution given <span class="LaTeX">$k$</span> queries and answers is <a href="http://arxiv.org/abs/cs.CC/0512049">NP-complete</a>.</p>
+<p>Optimizing functions (like the Hamming distance from a fixed string) using only the answers from an oracle is studied under the name “Blackbox Complexity”. The applications are mainly in the analysis of evolutionary and genetic algorithms. In theory algorithms base their decisions solely on the evaluation of a problem specific fitness function. Blackbox complexity tries to prove lower and upper bounds or the running time of these algorithms for different function classes. Currently only very simple functions are tractable mathematically.</p>
+<p>The analysis of Mastermind I presented here is from a <a href="http://arxiv.org/abs/1012.0952">FOGA ’11 paper by Doerr et al.</a> A slightly different take on the problem that some might find easier to follow can be found in Anil and Wiegand “Black-box Search by Elimination of Fitness Functions”.</p>
+<div style="font-size:80%">
+<hr/>
+<p style="float:left">CC-BY-SA <a href="mailto:adrian_neumann@gmx.de">Adrian Neumann</a> (PGP Key <a href="ressources/pub.asc">A210311B</a>)</p>
+<p style="float:right"><a href="./">adriann.github.io</a></p>
+</div> 
+</body>
+</html>

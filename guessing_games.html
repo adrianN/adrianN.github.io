@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Adrian Neumann (adrian_neumann@gmx.de)" />
+  <title>Guessing Games</title>
+  <script src="mathml.js" type="text/javascript"></script>
+  <style>
+  .displayequation{margin-left:auto;margin-right:auto;}
+  </style>
+  <style>
+  .caption{font-size:66%;text-align:right;}
+  .figure{float:right;padding-bottom:1em;padding-left:1em;}
+  .footnotes{font-size:80%;}
+  a:hover{text-shadow: 0 0 5px;}
+  body{font-family:sans-serif;max-width:100ex;padding-left:5em;}
+  code{font-family:Consolas, Inconsolata, Monaco, monospace;font-size:95%;}
+  p{text-align:justify;}
+  </style>
+</head>
+<body>
+  <noscript>
+    <p style="float:right; font-size:80%; color:red">This site uses Javascript to render Math.</p>
+  </noscript>
+<div id="header">
+<h1 class="title">Guessing Games</h1>
+</div>
+<div class="figure">
+<img src="pictures/alice_cards.jpg" title="copyright expired" alt="Art by Arthur Rackham" /><p class="caption">Art by Arthur Rackham</p>
+</div>
+<p>The Cheshire Cat thinks of a number between <span class="LaTeX">$1$</span> and <span class="LaTeX">$n$</span> and asks Alice to guess the number as quickly as possible using arbitrary yes/no questions. From her experience in cryptography, Alice has learnt about binary search and is thus confident that she can solve the challenge with <span class="LaTeX">$\lceil\log n\rceil$</span> questions.</p>
+<p>However, the Cheshire Cat is known to interpret ‘truthfulness’ a little unconventionally and might lie up to once during the game.</p>
+<p>Now Alice could ask every question twice to force the cat into answering correctly, however she’d rather not risk annoying the cat by consuming <span class="LaTeX">$2\log n$</span> of its time steps.</p>
+<p>But is there a better strategy?</p>
+<br style="clear:both"/> <!--more-->
+<h2 id="a-strategy-for-alice">A Strategy for Alice</h2>
+<p>As it is often the case with these riddles, it turns out there is such a strategy and in fact it is very simple.</p>
+<p>Alice begins by determining the bits of the secret number using <span class="LaTeX">$\log n$</span> questions. Next she finds out whether the cat lied already by asking some constant number of times whether this is the correct number. If the cat wants to play as long as possible, it will of course have lied and one of the bits Alice has is wrong. However, it is now very easy for Alice to figure out which bit is wrong by performing a binary search on the bits. Note that it is not very difficult to generalise this for the case where <span class="LaTeX">$k$</span> lies are allowed.</p>
+<p>This strategy needs</p>
+<p><span class="LaTeX">$$\log n + \log \log n + O(1)$$</span></p>
+<p>questions. A proof by hand-waving shows this to be a lower bound too.</p>
+<h2 id="further-remarks">Further Remarks</h2>
+<p>This game is known as Rényi-Ulam’s game and got some attention in coding theory. Apparently it is rather difficult to find the exact number of questions needed or rigorously show lower bounds. There is <a href="http://en.wikipedia.org/wiki/Ulam&#39;s_game">a wikipedia article</a> with further references.</p>
+<div style="font-size:80%">
+<hr/>
+<p style="float:left">CC-BY-SA <a href="mailto:adrian_neumann@gmx.de">Adrian Neumann</a> (PGP Key <a href="ressources/pub.asc">A210311B</a>)</p>
+<p style="float:right"><a href="./">adriann.github.io</a></p>
+</div> 
+</body>
+</html>

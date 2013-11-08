@@ -1,0 +1,9 @@
+<style>
+.caption{font-size:66%;text-align:right;}
+.figure{float:right;padding-bottom:1em;padding-left:1em;}
+.footnotes{font-size:80%;}
+a:hover{text-shadow: 0 0 5px;}
+body{font-family:sans-serif;max-width:100ex;padding-left:5em;}
+code{font-family:Consolas, Inconsolata, Monaco, monospace;font-size:95%;}
+p{text-align:justify;}
+</style>
