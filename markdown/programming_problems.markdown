@@ -15,7 +15,7 @@ Elementary
 2. Write a program that asks the user for his name and greets him with his name.
 3. Modify the previous program such that only the users Alice and Bob are greeted with their names.
 4. Write a program that asks the user for a number `n` and prints the sum of the numbers 1 to `n`
-5. Modify the previous program such that only multiples of three and five are considered in the sum, e.g. 3, 5, 9, 10, 12, 15 for `n`=17
+5. Modify the previous program such that only multiples of three or five are considered in the sum, e.g. 3, 5, 6, 9, 10, 12, 15 for `n`=17
 6. Write a program that asks the user for a number `n` and gives him the possibility to choose between computing the sum and computing the product of 1,...,`n`.
 1. Write a program that prints a multiplication table for numbers up to 12.
 7. Write a program that prints *all* prime numbers. (Note: if your programming language does not support arbitrary size numbers, printing all primes up to the largest number you can represent is fine too.)
