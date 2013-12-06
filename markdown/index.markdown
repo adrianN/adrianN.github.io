@@ -31,11 +31,13 @@ Less Science
 * [Cuckoo Hashing](cuckoo.html)
 * [Guessing Games](guessing_games.html)
 * [Mastermind](mastermind.html)
+* [A graph of NP-complete problems](npc/npc.html)
 
 No Science
 ----------
 
 * [Simple Programming Problems](programming_problems.html)
+
 
 Elsewhere on the Web
 ====================
