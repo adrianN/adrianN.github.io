@@ -4,7 +4,7 @@
 
 Whenever I'm TA for a introductory CS class where students learn some programming language, I have trouble coming up with good exercises. Problems from [Project Euler](http://projecteuler.net/) and the like are usually much too difficult for beginners, especially if they don't have a strong background in mathematics.
 
-This page is a collection of progressively more difficult exercises that are suitable for people who just started learning. It will be extended as I come up with new exercises. Except for the GUI questions, exercises are generally algorithmic and should be solvable without learning any libraries.
+This page is a collection of progressively more difficult exercises that are suitable for people who just started learning. It will be extended as I come up with new exercises. Except for the GUI questions, exercises are generally algorithmic and should be solvable without learning any libraries. The difficulty of the exercises of course somewhat depends on the programming language you use. The List exercises for example are more complicated in languages like C that don't have build-in support for lists.
 
 I suppose they are also useful, although much easier, whenever an experienced person wants to learn a new language.
 
@@ -18,11 +18,11 @@ Elementary
 5. Modify the previous program such that only multiples of three and five are considered in the sum, e.g. 3, 5, 9, 15 for `n`=17
 6. Write a program that asks the user for a number `n` and gives him the possibility to choose between computing the sum and computing the product of 1,...,`n`.
 1. Write a program that prints a multiplication table for numbers up to 12.
-7. Write a program that prints *all* prime numbers.
+7. Write a program that prints *all* prime numbers. (Note: if your programming language does not support arbitrary size numbers, printing all primes up to the largest number you can represent is fine too.)
 8. Write a guessing game where the user has to guess a secret number. After every guess the program tells the user whether his number was too large or too small. At the end the number of tries needed should be printed. I counts only as one try if the user inputs the same number consecutively.
 9. Write a program that prints the next 20 leap years.
 1. Write a program that computes 
-$$4\cdot \sum_{k=1}^{10^6} \frac{(-1)^{k+1}}{2k-1}.$$
+$$4\cdot \sum_{k=1}^{10^6} \frac{(-1)^{k+1}}{2k-1} = 4\cdot(1-1/3+1/5-1/7+1/9-1/11\ldots).$$
 
 
 Lists, Strings
