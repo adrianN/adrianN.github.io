@@ -41,7 +41,7 @@ Lists, Strings
 1. Write a function that merges two sorted lists into a new list.
 1. Write a function that computes the list of the first 100 Fibonacci numbers.
 1. Write a function that takes a number and returns a list of its digits.
-1. Write functions that add, subtract, and multiply two numbers in their digit-list representation (and return a new digit list). If you're ambitious you can implement Karatsuba multiplication.
+1. Write functions that add, subtract, and multiply two numbers in their digit-list representation (and return a new digit list). If you're ambitious you can implement Karatsuba multiplication. Try [different bases](https://en.wikipedia.org/wiki/Radix). What is the best base if you care about speed?
 1. Implement the following sorting algorithms: Selection sort, Insertion sort, Merge sort, Quick sort, Stooge Sort. Check Wikipedia for descriptions.
 1. Implement binary search.
 1. Write a function that takes a list of strings an prints them, one per line, in a rectangular frame. For example the list `["Hello", "World", "in", "a", "frame"]` gets printed as:
@@ -73,7 +73,7 @@ Advanced
 ---------
 
 1. Given two strings, write a program that efficiently finds the longest common subsequence.
-1. Given an array with numbers, write a program that efficiently answers queries of the form: "Which is the nearest larger value for the number at position `i`?", where distance is the difference in array indices.
+1. Given an array with numbers, write a program that efficiently answers queries of the form: "Which is the nearest larger value for the number at position `i`?", where distance is the difference in array indices. For example in the array `[1,4,3,2,5,7]`, the nearest larger value for 4 is 5. After linear time preprocessing you should be able to answer queries in constant time.
 1. Given two strings, write a program that outputs the shortest sequence of character insertions and deletions that turn one string into the other. 
 1. Write a function that multiplies two matrices together. Make it as efficient as you can and compare the performance to a polished linear algebra library for your language. You might want to read about [Strassen's algorithm](https://en.wikipedia.org/wiki/Strassen_algorithm) and the effects CPU caches have. Try out different matrix layouts and see what happens.
 1. Given a set of d-dimensional rectangular boxes, write a program that computes the volume of their union. Start with 2D and work your way up.
