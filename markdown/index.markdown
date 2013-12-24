@@ -37,6 +37,7 @@ No Science
 ----------
 
 * [Simple Programming Problems](programming_problems.html)
+* [Segment displays with an Arduino](arduino_segment_displays.html)
 
 
 Elsewhere on the Web
