@@ -2,7 +2,7 @@
 % Adrian Neumann (adrian_neumann@gmx.de)
 
 Things You Will Need
-====================
+-----------------
 
 * Your Arduino
 * A breadboard
@@ -11,7 +11,7 @@ Things You Will Need
 * (optional) a button
 
 Testing things (Optional)
-===================
+-----------------
 
 First I like to use buttons and my fingers instead of logic on the Arduino to make segments glow. I use the Arduino only as a power source.
 
@@ -22,7 +22,7 @@ My segment display has a common anode for all LEDs in a digit. I want to start w
 Indeed, when I push the button, the dot glows. Decently bright, even though I used a large resistor. Now I feel confident to replace the button with software control.
 
 Displaying a single digit
-=========================
+-----------------
 
 I wire up all the segments with IO pins on my Arduino, starting with pin 12. Now it is time to program the Arduino. Let's first check whether we can light up each segment one after the other. So I fire up my Arduino software. I write the following code
 
@@ -83,7 +83,7 @@ It seems that I wired things up correctly. Time to display some digit. I make an
 After I turn in on, my Arduino now counts from 0 to 9. Since I wired up the anode for the first digit of my segment display, the first digit lights up.
 
 Displaying more digits
-======================
+-----------------
 
 Okay, now I want to display more than one digit. To do so, I will wire up the anodes of each digit with a pin on my Arduino. I don't forget to add a resistor there too. Then I can display digits in quick succession and make it look like I display them simultaniously. Now the code looks like this.
 
@@ -133,7 +133,7 @@ It is important that I first turn the digit off, then set the output segments an
 I notice that the display is much darker than before. That makes sense because now every digit is on only a quarter of the time. I therefore replace the resistors. I also notice that numbers that light up more segments are darker. Again this makes sense since the current is divided among more LEDs. I could fix that by using the PWM pins on my Arduino as anodes and adjust brightness depending on how many segments are on, but I decide against that.
 
 Doing something while displaying digits
-=======================================
+-----------------
 
 To do something else besides displaying digits, I use the timer functions. I count occasionally and at all other times I display the number. The final code looks like this
 
