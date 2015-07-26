@@ -43,6 +43,7 @@ No Science
 Elsewhere on the Web
 ====================
 
+* [Adrian's e-mail](mailto:adrian_neumann@gmx.de) (PGP Key [A210311B](http://adriann.github.io/ressources/pub.asc))
 * [MPI Homepage](http://www.mpi-inf.mpg.de/~aneumann/)
 * [Computer Science Stackoverflow](http://cs.stackexchange.com/users/4736/adriann)
 * [Adrian on Twitter](https://twitter.com/AdrianNeumann)
