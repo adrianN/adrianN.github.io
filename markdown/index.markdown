@@ -32,6 +32,7 @@ Less Science
 * [Guessing Games](guessing_games.html)
 * [Mastermind](mastermind.html)
 * [A graph of NP-complete problems](npc/npc.html)
+* [Implementing timed automata in C++](timed_automata.html)
 
 No Science
 ----------
