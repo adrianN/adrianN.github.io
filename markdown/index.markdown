@@ -7,7 +7,7 @@ The most useful things are:
 * [Tool for compiling single chapters in LaTeX documents.](https://github.com/adrianN/latex-compile-chapter)
 * [Tool for mail-merge tasks with LaTeX](https://github.com/adrianN/latex-mailmerge)
 
-The least useful thing is a [fish simulation](http://www.mpi-inf.mpg.de/~aneumann/Fische/).
+The least useful thing is a [fish simulation](http://www.mpi-inf.mpg.de/~aneumann/Fische/) that by now has fallen prey to improved security standards in browsers. Back in the day you could just run Java applets...
 
 More can be found on my [Github page](https://github.com/adrianN?tab=repositories)
 
@@ -33,7 +33,12 @@ Less Science
 * [Guessing Games](guessing_games.html)
 * [Mastermind](mastermind.html)
 * [A graph of NP-complete problems](npc/npc.html)
+
+<!--
+
 * [Implementing timed automata in C++](timed_automata.html)
+
+-->
 
 No Science
 ----------
