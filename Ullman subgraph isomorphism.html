@@ -3,6 +3,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="generator" content="pandoc" />
   <meta name="author" content="Adrian Neumann (adrian_neumann@gmx.de)" />
   <title>Ullman’s Subgraph Isomorphism Algorithm</title>
@@ -15,7 +16,7 @@
   .figure{float:right;padding-bottom:1em;padding-left:1em;}
   .footnotes{font-size:80%;}
   a:hover{text-shadow: 0 0 5px;}
-  body{font-family:sans-serif;max-width:100ex;padding-left:5em;}
+  body{font-family:sans-serif;max-width:100ex;padding-left:5em;padding-right:2em;}
   code{font-family:Consolas, Inconsolata, Monaco, monospace;font-size:95%;}
   p{text-align:justify;}
   </style>
@@ -28,10 +29,10 @@
 <h1 class="title">Ullman’s Subgraph Isomorphism Algorithm</h1>
 </div>
 <div class="figure">
-<img src="pictures/puzzle_by_aice83.jpg" title="puzzle by deviant art user ~aice83" /><p class="caption"></p>
+<img src="pictures/puzzle_by_aice83.jpg" title="puzzle by deviant art user ~aice83" />
 </div>
 <p>The subgraph isomorphism problem asks whether a graph <span class="LaTeX">$G$</span> has a subgraph <span class="LaTeX">$G&#39;\subset G$</span> that is isomorphmic to a graph <span class="LaTeX">$P$</span>. So basically you have the picture on the box of a puzzle (<span class="LaTeX">$G$</span>) and want to know where a particular piece (<span class="LaTeX">$P$</span>) fits, if at all. It is NP-complete because Hamiltonian cycle is a special case.</p>
-<p>In 1976 Ullman proposed a backtracking algorithm for this problem. The writeup in the <a href="http://dx.doi.org/10.1145%2F321921.321925">original paper</a> is hard to follow because the pseudo-code doesn’t use functions or even loops. Maybe those weren’t invented back then.<sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup></p>
+<p>In 1976 Ullman proposed a backtracking algorithm for this problem. The writeup in the <a href="http://dx.doi.org/10.1145%2F321921.321925">original paper</a> is hard to follow because the pseudo-code doesn’t use functions or even loops. Maybe those weren’t invented back then.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a></p>
 <!--more-->
 
 <h2 id="the-basic-algorithm">The basic algorithm</h2>
@@ -77,6 +78,6 @@ while M was changed</code></pre>
 <hr/>
 <p style="float:left">CC-BY-SA <a href="mailto:adrian_neumann@gmx.de">Adrian Neumann</a> (PGP Key <a href="http://adriann.github.io/ressources/pub.asc">A210311B</a>)</p>
 <p style="float:right"><a href="http://adriann.github.io">adriann.github.io</a></p>
-</div> 
+</div>
 </body>
 </html>

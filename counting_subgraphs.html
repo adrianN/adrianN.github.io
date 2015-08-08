@@ -3,6 +3,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="generator" content="pandoc" />
   <meta name="author" content="Adrian Neumann (adrian_neumann@gmx.de)" />
   <title>Counting Subgraphs in Streams</title>
@@ -15,7 +16,7 @@
   .figure{float:right;padding-bottom:1em;padding-left:1em;}
   .footnotes{font-size:80%;}
   a:hover{text-shadow: 0 0 5px;}
-  body{font-family:sans-serif;max-width:100ex;padding-left:5em;}
+  body{font-family:sans-serif;max-width:100ex;padding-left:5em;padding-right:2em;}
   code{font-family:Consolas, Inconsolata, Monaco, monospace;font-size:95%;}
   p{text-align:justify;}
   </style>
@@ -28,24 +29,24 @@
 <h1 class="title">Counting Subgraphs in Streams</h1>
 </div>
 <div class="figure">
-<img src="pictures/stream.jpg" title="CC-BY-NC &#39;Streaming&#39; by Flickr user Dru!" /><p class="caption"></p>
+<img src="pictures/stream.jpg" title="CC-BY-NC &#39;Streaming&#39; by Flickr user Dru!" />
 </div>
 <p>Suppose you have a very large graph, for example a protein-protein interaction graph for some complicated synthesis pathway. To draw conclusions from such a wealth of data, it is typically helpful to look for certain patterns, or subgraphs.</p>
 <p>Finding, or indeed even counting, small sized subgraphs in a large graph seems to be a very hard problem: The number of candidate positions against which you need to match your subgraph explodes com­bi­na­to­ri­cal­ly. The situation is even more hopeless if the data doesn’t fit into main memory anymore.</p>
 <p>To address the problem of working with graphs that don’t fit into RAM the streaming model was introduced. Here the algorithm has a very limited amount of storage, say O(<span class="LaTeX">$\log n$</span>) bits, and the in­put is pre­sent­ed as a stream of edges. The algorithm is only allowed to make a small number of passes over the data.</p>
-<p>Only few problems can be solved exactly in this model, but often it is possible to find good approximation algorithms. In this post we will have a look at how to count triangles in the streaming model. Very similar techniques can be used to count arbitrary constant size subgraphs.<sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup></p>
-<p>Triangle counting already is a relevant problem in itself. It has applications for example in community detection in graphs. There the clustering coefficient, i.e. how many of a node’s neighbours are adjacent to each other (and thus form triangles), plays a central role. Indeed there are several papers <sup><a href="#fn2" class="footnoteRef" id="fnref2">2</a></sup> on counting triangles using MapReduce as a way to tackle the large networks we face today. The streaming algorithm I’ll present here is a simple alternative to this.</p>
+<p>Only few problems can be solved exactly in this model, but often it is possible to find good approximation algorithms. In this post we will have a look at how to count triangles in the streaming model. Very similar techniques can be used to count arbitrary constant size subgraphs.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a></p>
+<p>Triangle counting already is a relevant problem in itself. It has applications for example in community detection in graphs. There the clustering coefficient, i.e. how many of a node’s neighbours are adjacent to each other (and thus form triangles), plays a central role. Indeed there are several papers <a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a> on counting triangles using MapReduce as a way to tackle the large networks we face today. The streaming algorithm I’ll present here is a simple alternative to this.</p>
 <!-- more -->
 
 <h2 id="the-algorithm">The Algorithm</h2>
-<p>This algorithm is from a paper by Jowhari and Ghodsi <sup><a href="#fn3" class="footnoteRef" id="fnref3">3</a></sup>. It is extremely simple. We need a source of sufficiently independent random bits, say an explicit polynomial generator of degree 12. That is a polynomial <span class="LaTeX">$p$</span> over some sufficiently large field with random coefficients. The random numbers are then <span class="LaTeX">$p(1),p(2),\ldots$</span> and we use their binary representation for a stream of random numbers <span class="LaTeX">$b[1],\ldots, b[n]$</span>, with <span class="LaTeX">$b[i] \in \{-1,1\}$</span>. Note that we can encode this generator using only a logarithmic number of bits for the coefficients.</p>
+<p>This algorithm is from a paper by Jowhari and Ghodsi <a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a>. It is extremely simple. We need a source of sufficiently independent random bits, say an explicit polynomial generator of degree 12. That is a polynomial <span class="LaTeX">$p$</span> over some sufficiently large field with random coefficients. The random numbers are then <span class="LaTeX">$p(1),p(2),\ldots$</span> and we use their binary representation for a stream of random numbers <span class="LaTeX">$b[1],\ldots, b[n]$</span>, with <span class="LaTeX">$b[i] \in \{-1,1\}$</span>. Note that we can encode this generator using only a logarithmic number of bits for the coefficients.</p>
 <p>As we see the edges <span class="LaTeX">$(u,v),(x,y),\ldots$</span> we sum up <span class="LaTeX">$b[u]b[v]$</span>, that is the algorithm computes</p>
 <p><span class="LaTeX">$$Z = \sum_{(u,v)\in E} b[u]b[v]$$</span></p>
 <p>The output is then</p>
 <p><span class="LaTeX">$$\frac{1}{6} Z^3.$$</span></p>
 <p>That’s it. Algorithm over. This might seem too simple to be correct, but it actually works. Observe that we output</p>
 <p><span class="LaTeX">$$\frac 16 \sum_{(u,v), (w,x), (y,z) \in E} b[u]b[v]b[w]b[x]b[y]b[z]$$</span></p>
-<p>Since <span class="LaTeX">$b[u]^k$</span> is zero in expectation for odd <span class="LaTeX">$k$</span>, only terms with even powers count (in expectation) in this sum.<sup><a href="#fn4" class="footnoteRef" id="fnref4">4</a></sup> Hence only if <span class="LaTeX">$u=z$</span>, <span class="LaTeX">$v=w$</span>, and <span class="LaTeX">$x=y$</span> we count this term. This is exactly true if the three edges form a triangle! Of course we over count, since there are <span class="LaTeX">$3*2*1=6$</span> permutations of the three edges and they all occur in the sum, but we simply divide by six and get the right thing.</p>
+<p>Since <span class="LaTeX">$b[u]^k$</span> is zero in expectation for odd <span class="LaTeX">$k$</span>, only terms with even powers count (in expectation) in this sum.<a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a> Hence only if <span class="LaTeX">$u=z$</span>, <span class="LaTeX">$v=w$</span>, and <span class="LaTeX">$x=y$</span> we count this term. This is exactly true if the three edges form a triangle! Of course we over count, since there are <span class="LaTeX">$3*2*1=6$</span> permutations of the three edges and they all occur in the sum, but we simply divide by six and get the right thing.</p>
 <p>Unfortunately this is only true in expectation, the actual value can differ quite a bit. But it is not too difficult to bound the variance of <span class="LaTeX">$Z$</span> and hence get a good estimate of how often we need to run this with fresh random variables to get a good estimate. Have a look at the paper to get the actual numbers. In the streaming model we can simply run these instances in parallel.</p>
 <p>In did a few experiments and it seems like the high independence that we require in the analysis is actually not so important for random graphs. My results indicate that a normal linear congruential generator already provides sufficient randomness to get good estimates, so the algorithm is really trivial to implement.</p>
 <div class="footnotes">
@@ -61,6 +62,6 @@
 <hr/>
 <p style="float:left">CC-BY-SA <a href="mailto:adrian_neumann@gmx.de">Adrian Neumann</a> (PGP Key <a href="http://adriann.github.io/ressources/pub.asc">A210311B</a>)</p>
 <p style="float:right"><a href="http://adriann.github.io">adriann.github.io</a></p>
-</div> 
+</div>
 </body>
 </html>
