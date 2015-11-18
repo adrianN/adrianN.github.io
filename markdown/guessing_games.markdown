@@ -30,4 +30,4 @@ questions. A proof by hand-waving shows this to be a lower bound too.
 Further Remarks
 ---------------
 
-This game is known as R&eacute;nyi-Ulam's game and got some attention in coding theory. Apparently it is rather difficult to find the exact number of questions needed or rigorously show lower bounds. There is [a wikipedia article](http://en.wikipedia.org/wiki/Ulam's_game) with further references.
+This game is known as R&eacute;nyi-Ulam's game and got some attention in coding theory. Apparently it is rather difficult to find the exact number of questions needed or rigorously show lower bounds. There is [a wikipedia article](http://en.wikipedia.org/wiki/Ulam\'s_game) with further references.
