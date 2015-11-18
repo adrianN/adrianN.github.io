@@ -43,7 +43,7 @@ $if(title)$
 <div id="$idprefix$header">
 <h1 class="title">$title$</h1>
 $if(date)$
-<h3 class="date">$date$</h3>
+<p style="text-align:right">$date$</p>
 $endif$
 </div>
 $endif$

@@ -47,6 +47,7 @@ Note that I have to set the output to LOW to turn the segment on, because it has
 
 It seems that I wired things up correctly. Time to display some digit. I make an array that contains the LOW HIGH patterns for each digit. I also write a function that loops over the array and sets the pins. The code now looks like this.
 
+````C
 	const int segments[] = {12,11,10,9,8,7,6};
 	const int digit[10][7] = {
 	  {LOW, LOW, LOW, LOW, LOW, LOW, HIGH},
@@ -79,6 +80,7 @@ It seems that I wired things up correctly. Time to display some digit. I make an
 	    delay(500);
 	  } 
 	}
+````
 
 After I turn in on, my Arduino now counts from 0 to 9. Since I wired up the anode for the first digit of my segment display, the first digit lights up.
 
@@ -87,6 +89,7 @@ Displaying more digits
 
 Okay, now I want to display more than one digit. To do so, I will wire up the anodes of each digit with a pin on my Arduino. I don't forget to add a resistor there too. Then I can display digits in quick succession and make it look like I display them simultaniously. Now the code looks like this.
 
+````C
 	const int segments[] = {12,11,10,9,8,7,6};
 	const int digit[] = {2,3,4,5};
 	const int digit_pattern[10][7] = {
@@ -127,6 +130,7 @@ Okay, now I want to display more than one digit. To do so, I will wire up the an
 	    display_digit(2,2);
 	    display_digit(3,3);
 	}
+````
 
 It is important that I first turn the digit off, then set the output segments and then turn the digit on in the `display_digit` function. Otherwise things don't look right because the old digit is changed before it is switched off, or the new digit displays the wrong things before it is changed to the right values.
 
@@ -137,6 +141,7 @@ Doing something while displaying digits
 
 To do something else besides displaying digits, I use the timer functions. I count occasionally and at all other times I display the number. The final code looks like this
 
+````C
 	const int segments[] = {12,11,10,9,8,7,6};
 	const int digit[] = {2,3,4,5};
 	const int digit_pattern[10][7] = {
@@ -197,3 +202,4 @@ To do something else besides displaying digits, I use the timer functions. I cou
 	    }
 	  }
 	}
+````

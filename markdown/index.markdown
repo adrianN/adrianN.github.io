@@ -34,17 +34,16 @@ Less Science
 * [Mastermind](mastermind.html)
 * [A graph of NP-complete problems](npc/npc.html)
 
-<!--
-
-* [Implementing timed automata in C++](timed_automata.html)
-
--->
-
 No Science
 ----------
 
 * [Simple Programming Problems](programming_problems.html)
 * [Segment displays with an Arduino](arduino_segment_displays.html)
+
+Engineering
+-----------
+
+* [Software Archeology](software_archeology.html)
 
 
 Elsewhere on the Web
