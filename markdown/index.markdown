@@ -22,6 +22,7 @@ Science
 * Karl Bringmann, Benjamin Doerr, Adrian Neumann, Jakub Sliacan: *Online Checkpointing with Improved Worst-Case Guarantees*, ICALP 2013, [Preprint on arXiv](http://arxiv.org/abs/1302.4216)
 * Kurt Mehlhorn, Adrian Neumann, Jens M. Schmidt: *Certifying 3-Edge-Connectivity*, WG 2013, [Preprint on arXiv](http://arxiv.org/abs/1211.6553)
 * Sayan Bhattacharya, Parinya Chalermsook, Kurt Mehlhorn, Adrian Neumann: *New Approximability Results for the Robust k-Median Problem*, [Preprint on arXiv](http://arxiv.org/abs/1309.4602) 
+* Michael Dirnberger, Tim Kehl, Adrian Neumann: *NEFI: Network Extraction From Images*, [Scientific Reports 2015](http://www.nature.com/articles/srep15669)
 
 Less Science
 ------------
