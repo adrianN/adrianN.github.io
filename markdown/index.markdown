@@ -39,6 +39,7 @@ No Science
 ----------
 
 * [Simple Programming Problems](programming_problems.html)
+* [Learning Japanese](learning_japanese.html)
 * [Segment displays with an Arduino](arduino_segment_displays.html)
 
 Engineering
