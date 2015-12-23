@@ -1,5 +1,7 @@
-Things I programmed
-===================
+%Adrian's Homepage
+%Adrian Neumann adrian_neumann@gmx.de
+
+## Things I programmed
 
 The most useful things are:
 
@@ -11,11 +13,9 @@ The least useful thing is a [fish simulation](http://www.mpi-inf.mpg.de/~aneuman
 
 More can be found on my [Github page](https://github.com/adrianN?tab=repositories)
 
-Things I wrote
-==============
+##Things I wrote
 
-Science
--------
+### Science
 
 * Block, Marco; Neumann, Adrian: *Haskell-Intensivkurs*, [Springer 2011](http://www.springerlink.com/content/978-3-642-04717-6)
 * Karl Bringmann, Kurt Mehlhorn, Adrian Neumann: *Remarks on Category-Based Routing in Social Networks*, [Preprint on arXiv](http://arxiv.org/abs/1202.2293)
@@ -24,8 +24,7 @@ Science
 * Sayan Bhattacharya, Parinya Chalermsook, Kurt Mehlhorn, Adrian Neumann: *New Approximability Results for the Robust k-Median Problem*, [Preprint on arXiv](http://arxiv.org/abs/1309.4602) 
 * Michael Dirnberger, Tim Kehl, Adrian Neumann: *NEFI: Network Extraction From Images*, [Scientific Reports 2015](http://www.nature.com/articles/srep15669)
 
-Less Science
-------------
+### Less Science
 
 * [Counting subgraphs in streams](counting_subgraphs.html)
 * [Distributing balls into bins](ballsBins.html)
@@ -35,23 +34,18 @@ Less Science
 * [Mastermind](mastermind.html)
 * [A graph of NP-complete problems](npc/npc.html)
 
-No Science
-----------
+### No Science
 
 * [Simple Programming Problems](programming_problems.html)
 * [Learning Japanese](learning_japanese.html)
 * [Segment displays with an Arduino](arduino_segment_displays.html)
 
-Engineering
------------
+### Engineering
 
 * [Software Archeology](software_archeology.html)
 
-
-Elsewhere on the Web
-====================
+## Elsewhere on the Web
 
 * [Adrian's e-mail](mailto:adrian_neumann@gmx.de) (PGP Key [A210311B](http://adriann.github.io/ressources/pub.asc))
 * [MPI Homepage](http://www.mpi-inf.mpg.de/~aneumann/)
 * [Computer Science Stackoverflow](http://cs.stackexchange.com/users/4736/adriann)
-* [Adrian on Twitter](https://twitter.com/AdrianNeumann)
