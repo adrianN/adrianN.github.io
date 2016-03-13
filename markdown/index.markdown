@@ -26,6 +26,7 @@ More can be found on my [Github page](https://github.com/adrianN?tab=repositorie
 
 ### Less Science
 
+* [Linear Optimization](linear_optimization.html)
 * [Counting subgraphs in streams](counting_subgraphs.html)
 * [Distributing balls into bins](ballsBins.html)
 * [Ullman's Subgraph Isomorphism Algorithm](Ullman subgraph isomorphism.html)
@@ -43,6 +44,8 @@ More can be found on my [Github page](https://github.com/adrianN?tab=repositorie
 ### Engineering
 
 * [Software Archeology](software_archeology.html)
+* Undefined Behavior in C++
+    * [Type Punning](undefined_behavior.html#type-punning)
 
 ## Elsewhere on the Web
 

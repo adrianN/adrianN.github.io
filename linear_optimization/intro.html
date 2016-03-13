@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Adrian Neumann (adrian_neumann@gmx.de)" />
+  <title>Introduction</title>
+  <script src="../mathml.js" type="text/javascript"></script>
+  <style type="text/css">
+  .displayequation{margin-left:auto;margin-right:auto;}
+  </style>
+  <style>
+  .caption{font-size:66%;text-align:right;}
+  .figure{float:right;padding-bottom:1em;padding-left:1em;}
+  .footnotes{font-size:80%;}
+  li{padding:0.25em;}
+  a:hover{text-shadow: 0 0 5px;}
+  body{font-family:sans-serif;max-width:100ex;padding-left:3em;padding-right:2em;}
+  code{font-family:Consolas, Inconsolata, Monaco, monospace}
+  p{text-align:justify;}
+  </style>
+</head>
+<body>
+  <noscript>
+    <p style="float:right; font-size:80%; color:red">This site uses Javascript to render Math.</p>
+  </noscript>
+<div id="header">
+<h1 class="title">Introduction</h1>
+</div>
+<p>Although it’s called “Programming”, Linear Programming has little to do with what you’d call programming today. The term dates back to a time where programming had more to with filling out tables than writing code.</p>
+<p>Let me first hit you with the formal definition. In Linear Programming we have a number of real variables <span class="LaTeX">$x_1, \ldots, x_n$</span>, and some linear value function <span class="LaTeX">$f(x_1, \ldots, x_n)$</span> we want to maximize (or minimize). The interesting part is the set of constraints on the variables we need to satisfy (otherwise optimizing <span class="LaTeX">$f$</span> would be trivial). The constraints are a set of <span class="LaTeX">$m$</span> linear inequalities</p>
+<p><span class="LaTeX">$$a_{j1}x_1 + \ldots + a_{jn} x_n \leq b_j \qquad a_{ij},b_i \in \mbox{R}$$</span></p>
+<p>for <span class="LaTeX">$1\leq j\leq m$</span>.</p>
+<p>Now this likely seems difficult to you and you can’t see any obvious applications. Good. This way you can feel very smart once you understand it. Let’s proceed with an examples.</p>
+<p>In the Diet Problem we want to find a cheap diet, say for the military. <a href="http://www.jstor.org/stable/25061369">This is one of the original applications of Linear Programming.</a> and dates back to the first half of the twentieth century.</p>
+<p>Let’s introduce a mathematical model of a diet. We have <span class="LaTeX">$i$</span> types of food and each foodstuff has <span class="LaTeX">$m$</span> different features, e.g. calories, price, different vitamins, etc. A diet, that is, a solution to our problem, consists of <span class="LaTeX">$x_i$</span> (kilograms) of food <span class="LaTeX">$i$</span> (say per month). The <span class="LaTeX">$x_i$</span> are the variables we want to find.</p>
+<p>We want to optimize the price of our diet, so our objective function is the sum of the amount of food <span class="LaTeX">$i$</span>, <span class="LaTeX">$x_i$</span>, times the cost, cost(<span class="LaTeX">$i$</span>), for <span class="LaTeX">$i=1,\ldots, n$</span>. This is a linear function, because we don’t multiply two or more variables with each other. The cost of food <span class="LaTeX">$i$</span> is not a variable, it’s just a number.</p>
+<p>The cheapest diet is a starvation diet where you don’t eat anything, but of course we want a diet that is cheap and nutritious, so we need to constrain our solution. To do so we can introduce a number of constraints. Things like</p>
+<ul>
+<li>our diet must have at least 2000 calories a day</li>
+<li>our diet must have at least the recommended amount of each vitamin</li>
+<li>our diet must have at most the safe amount of salt</li>
+</ul>
+<p>As you can easily see these are all linear constraints, since for example the calories of each food in our diet simply add up. Since we have a linear cost function and a set of linear constraints, our model is in the form of a linear program. Using a piece of software called an LP solver we can find an optimal solution, that is a diet that is as cheap as possible while not violating any of our nutritiousness constraints. I will later explain how these programs work.</p>
+<p>One has to be somewhat careful in designing these constraints, otherwise the solutions one gets can be amusingly impractical. The article I linked at the beginning contains a funny anecdote about this.</p>
+<p>Note that we implicitly assumed that we can have any real number as the amount of food we eat. This is bad because we might get a solution where we have to eat negative amounts of some food (Too many calories in your diet? Just try this one trick and eat negative amounts of butter!). We can fix this with additional constraints <span class="LaTeX">$x_i \ge 0$</span>. Another problem is that some foods are not easily divided into small parts. It’s hard to eat 0.213kg of bananas a day without wasting some bananas. We’d like to have integer values for some of the <span class="LaTeX">$x_i$</span>. This can not be expressed with additional linear constraints<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> and you’ll see later on that imposing integrality constraints on our solution makes the problem a lot harder.</p>
+<p>But note that dropping some constraints, notably integrality constraints, can only improve the cost of the optimal solution. So a solution with fractional variables can be used as a lower bound for the optimal cost. This is an extremely useful insight if you want to prove bounds on the quality of some approximation algorithm you just came up with. Fractional solutions can also be a good start for finding true solution to your problem, for example by rounding.</p>
+<p>Solving a fractional LP and then rounding is often an easy way to get an approximate solution to a problem that is hard to solve exactly. But of course it’s not the only way. The field of approximation algorithms tries to find approximate solutions, typically for NP-complete problems. It also contains hardness results. Some problems are not only hard to solve exactly, they’re <em>also</em> hard to approximately solve. This is interesting because it gives us a more nuanced view of the difficulty of hard problems. The typical CS undergraduate will stop after a NP-completeness proof, because NP-complete problems are a) all hard and b) all about the same, after all once you can solve one, you can solve them all. Approximation theory reveals a whole world of nuance between different NP-complete problems.</p>
+<p>Let’s see an example of a simple approximation algorithm.</p>
+<p>Suppose we have <span class="LaTeX">$n$</span> jobs that take times <span class="LaTeX">$w_1 \ldots w_n$</span> to complete and two machines that can work of them. We want to assign the jobs to the machines such that the total running time is minimized. This problem is NP-complete (reduction e.g. Knapsack). Let’s try a heuristic solution and see how good it performs. The natural approach is assigning the first job to the first machine and then assigning the <span class="LaTeX">$i+1$</span>-th job to the machines that has less work among the first <span class="LaTeX">$i$</span> jobs. Note that this algorithm doesn’t need to know all the jobs before hand, it can handle jobs as they come in. This is sometimes a very desirable property of an algorithm. Algorithms of this kind are called <em>online algorithms</em>.</p>
+<p>How does a schedule such computed compare to the optimal schedule that might use arbitrarily clever algorithms and advance knowledge of all jobs? Every sensible algorithm is at least within a factor of two of the optimal schedule. Since we only have two machines we can’t do more than two units of work concurrently. The heuristic I described above is however better. It takes at most <span class="LaTeX">$3/2$</span> the time of an optimal schedule. We say it’s a <span class="LaTeX">$3/2$</span> approximation.</p>
+<p>The proof is easy: Let <span class="LaTeX">$w_{max}$</span> be the size of the maximal job and let <span class="LaTeX">$W$</span> be the total amount of work we have to do. No schedule can be faster than <span class="LaTeX">$w_{max}$</span>. Hence the time <span class="LaTeX">$\mbox{opt}$</span> an optimal schedule takes can be bounded as <span class="LaTeX">$\mbox{opt} \geq \max (w_{max}, W/2)$</span>. Consider the situation before the last job is assigned. The size of the already assigned jobs is <span class="LaTeX">$W-w_n$</span> so the less loaded machine (wlog 2) has a load at most <span class="LaTeX">$(W-w_n)/2$</span>. Assuming machine 2 determines the total length, the algorithm produces a schedule of length</p>
+<p><span class="LaTeX">$$\frac{(W-w_n)}{2} + w_n \leq W/2+w_n/2 \leq \mbox{opt} + \mbox{opt}/2$$</span></p>
+<p>Click here to proceed to the next part, the Simplex Method (coming soon)<br /><a href="../linear_optimization.html">Click here to go back to the index</a></p>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>unless P=NP, I guess…<a href="#fnref1">↩</a></p></li>
+</ol>
+</div>
+<div style="font-size:80%">
+<hr/>
+<p style="float:left">CC-BY-SA <a href="mailto:adrian_neumann@gmx.de">Adrian Neumann</a> (PGP Key <a href="http://adriann.github.io/ressources/pub.asc">A210311B</a>)</p>
+<p style="float:right"><a href="http://adriann.github.io">adriann.github.io</a></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Adrian Neumann (adrian_neumann@gmx.de)" />
+  <title>Undefined Behavior in C++</title>
+  <style>
+  .caption{font-size:66%;text-align:right;}
+  .figure{float:right;padding-bottom:1em;padding-left:1em;}
+  .footnotes{font-size:80%;}
+  li{padding:0.25em;}
+  a:hover{text-shadow: 0 0 5px;}
+  body{font-family:sans-serif;max-width:100ex;padding-left:3em;padding-right:2em;}
+  code{font-family:Consolas, Inconsolata, Monaco, monospace}
+  p{text-align:justify;}
+  </style>
+</head>
+<body>
+<div id="header">
+<h1 class="title">Undefined Behavior in C++</h1>
+</div>
+<h2 id="type-punning">Type Punning</h2>
+<p>In a systems language like C++ you often want to interpret a value of type A as a value of type B where A and B are completely unrelated types. This is called <em>type punning</em>.</p>
+<p>Take for example the ever popular <a href="https://en.wikipedia.org/wiki/Fast_inverse_square_root">Fast Inverse Square Root</a>. The Wikipedia gives us the following code.</p>
+<pre><code>float Q_rsqrt( float number )
+{
+    long i;
+    float x2, y;
+    const float threehalfs = 1.5F;
+
+    x2 = number * 0.5F;
+    y  = number;
+    i  = * ( long * ) &amp;y;                       // evil floating point bit level hacking
+    i  = 0x5f3759df - ( i &gt;&gt; 1 );               // what the fuck? 
+    y  = * ( float * ) &amp;i;
+    y  = y * ( threehalfs - ( x2 * y * y ) );   // 1st iteration
+//  y  = y * ( threehalfs - ( x2 * y * y ) );   // 2nd iteration, this can be removed
+
+    return y;
+}</code></pre>
+<p>We interpret a float value as integer in the “evil floating point bit level hacking” line. Similar type punning often happens when we want to interpret a stream of bytes as some structure. We try to simply cast the <code>char*</code> input stream to our structure and use the member elements to read values.</p>
+<p>Another common way to do this is via a union.</p>
+<pre><code>union U {
+    long i;
+    float f;
+};
+
+U u;
+u.f = number;
+long number_as_int = u.i;</code></pre>
+<p>Unfortunately neither are valid C++.</p>
+<p>Casting is invalid because of C++’s <a href="http://en.cppreference.com/w/cpp/language/reinterpret_cast">strict aliasing rules</a>. Basically, you mustn’t cast a pointer to a different type and then dereference it (unless you cast to <code>char*</code>).</p>
+<p>The union trick is also <em>not valid</em>, because only one member of a union can be “active”. When we set <code>f</code> it becomes active and <code>i</code> is thus inactive. Reading from an inactive member results in undefined behavior. At least that’s how I understand the standard. <a href="https://stackoverflow.com/questions/25664848/unions-and-type-punning">The union trick in valid in modern C99 (but not in C89).</a></p>
+<p>Instead of this you should use <code>memcpy</code> and hope that your compiler knows how to optimize it.</p>
+<pre><code>memcpy(&amp;i, &amp;y, sizeof(long));</code></pre>
+<p>See also:</p>
+<ul>
+<li><a href="http://blog.regehr.org/archives/959">John Regehr on type punning</a></li>
+</ul>
+<div style="font-size:80%">
+<hr/>
+<p style="float:left">CC-BY-SA <a href="mailto:adrian_neumann@gmx.de">Adrian Neumann</a> (PGP Key <a href="http://adriann.github.io/ressources/pub.asc">A210311B</a>)</p>
+<p style="float:right"><a href="http://adriann.github.io">adriann.github.io</a></p>
+</div>
+</body>
+</html>
