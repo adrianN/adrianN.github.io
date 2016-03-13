@@ -8,6 +8,8 @@ This page is a collection of progressively more difficult exercises that are sui
 
 I suppose they are also useful, although much easier, whenever an experienced person wants to learn a new language.
 
+This guide has been translated to Chinese by Fidel Yi. [Simple Programming Problems in Chinese](https://github.com/yisha7/SimpleProgrammingProblems)
+
 Elementary
 --------------
 
