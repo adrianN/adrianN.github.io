@@ -7,13 +7,86 @@
   <meta name="generator" content="pandoc" />
   <meta name="author" content="Adrian Neumann (adrian_neumann@gmx.de)" />
   <title>Ullman’s Subgraph Isomorphism Algorithm</title>
-  <script src="mathml.js" type="text/javascript"></script>
+  <script type="text/javascript">/*<![CDATA[*/
+  /*
+  March 19, 2004 MathHTML (c) Peter Jipsen http://www.chapman.edu/~jipsen
+  Released under the GNU General Public License version 2 or later.
+  See the GNU General Public License (at http://www.gnu.org/copyleft/gpl.html)
+  for more details.
+  */
+  
+  function convertMath(node) {// for Gecko
+    if (node.nodeType==1) {
+      var newnode =
+        document.createElementNS("http://www.w3.org/1998/Math/MathML",
+          node.nodeName.toLowerCase());
+      for(var i=0; i < node.attributes.length; i++)
+        newnode.setAttribute(node.attributes[i].nodeName,
+          node.attributes[i].value);
+      for (var i=0; i<node.childNodes.length; i++) {
+        var st = node.childNodes[i].nodeValue;
+        if (st==null || st.slice(0,1)!=" " && st.slice(0,1)!="\n")
+          newnode.appendChild(convertMath(node.childNodes[i]));
+      }
+      return newnode;
+    }
+    else return node;
+  }
+  
+  function convert() {
+    var mmlnode = document.getElementsByTagName("math");
+    var st,str,node,newnode;
+    for (var i=0; i<mmlnode.length; i++)
+      if (document.createElementNS!=null)
+        mmlnode[i].parentNode.replaceChild(convertMath(mmlnode[i]),mmlnode[i]);
+      else { // convert for IE
+        str = "";
+        node = mmlnode[i];
+        while (node.nodeName!="/MATH") {
+          st = node.nodeName.toLowerCase();
+          if (st=="#text") str += node.nodeValue;
+          else {
+            str += (st.slice(0,1)=="/" ? "</m:"+st.slice(1) : "<m:"+st);
+            if (st.slice(0,1)!="/")
+               for(var j=0; j < node.attributes.length; j++)
+                 if (node.attributes[j].value!="italic" &&
+                   node.attributes[j].value!="" &&
+                   node.attributes[j].value!="inherit" &&
+                   node.attributes[j].value!=undefined)
+                   str += " "+node.attributes[j].nodeName+"="+
+                       "\""+node.attributes[j].value+"\"";
+            str += ">";
+          }
+          node = node.nextSibling;
+          node.parentNode.removeChild(node.previousSibling);
+        }
+        str += "</m:math>";
+        newnode = document.createElement("span");
+        node.parentNode.replaceChild(newnode,node);
+        newnode.innerHTML = str;
+      }
+  }
+  
+  if (document.createElementNS==null) {
+    document.write("<object id=\"mathplayer\"\
+    classid=\"clsid:32F66A20-7614-11D4-BD11-00104BD3F987\"></object>");
+    document.write("<?import namespace=\"m\" implementation=\"#mathplayer\"?>");
+  }
+  if(typeof window.addEventListener != 'undefined'){
+    window.addEventListener('load', convert, false);
+  }
+  if(typeof window.attachEvent != 'undefined') {
+    window.attachEvent('onload', convert);
+  }
+  /*]]>*/
+  </script>
   <style type="text/css">
   .displayequation{margin-left:auto;margin-right:auto;}
   </style>
   <style>
   .caption{font-size:66%;text-align:right;}
   .figure{float:right;padding-bottom:1em;padding-left:1em;}
+  .figure>img{display:block;margin:0 auto;}
   .footnotes{font-size:80%;}
   li{padding:0.25em;}
   a:hover{text-shadow: 0 0 5px;}
@@ -23,24 +96,21 @@
   </style>
 </head>
 <body>
-  <noscript>
-    <p style="float:right; font-size:80%; color:red">This site uses Javascript to render Math.</p>
-  </noscript>
 <div id="header">
 <h1 class="title">Ullman’s Subgraph Isomorphism Algorithm</h1>
 </div>
 <div class="figure">
 <img src="pictures/puzzle_by_aice83.jpg" title="puzzle by deviant art user ~aice83" />
 </div>
-<p>The subgraph isomorphism problem asks whether a graph <span class="LaTeX">$G$</span> has a subgraph <span class="LaTeX">$G&#39;\subset G$</span> that is isomorphmic to a graph <span class="LaTeX">$P$</span>. So basically you have the picture on the box of a puzzle (<span class="LaTeX">$G$</span>) and want to know where a particular piece (<span class="LaTeX">$P$</span>) fits, if at all. It is NP-complete because Hamiltonian cycle is a special case.</p>
+<p>The subgraph isomorphism problem asks whether a graph <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>G</mi></mrow></math> has a subgraph <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>G</mi><mo>ʹ</mo><mo>⊂</mo><mi>G</mi></mrow></math> that is isomorphmic to a graph <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>P</mi></mrow></math>. So basically you have the picture on the box of a puzzle (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>G</mi></mrow></math>) and want to know where a particular piece (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>P</mi></mrow></math>) fits, if at all. It is NP-complete because Hamiltonian cycle is a special case.</p>
 <p>In 1976 Ullman proposed a backtracking algorithm for this problem. The writeup in the <a href="http://dx.doi.org/10.1145%2F321921.321925">original paper</a> is hard to follow because the pseudo-code doesn’t use functions or even loops. Maybe those weren’t invented back then.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a></p>
 <!--more-->
 
 <h2 id="the-basic-algorithm">The basic algorithm</h2>
-<p>It is possible to encode a subgraph isomorphism as a <span class="LaTeX">$|V_P|\times |V_G|$</span> matrix <span class="LaTeX">$M$</span> in which each row contains exactly one 1 and each column contains at most one 1. We set <span class="LaTeX">$m_{ij}$</span> to 1 iff <span class="LaTeX">$v_j\in G$</span> corresponds to <span class="LaTeX">$v_i\in P$</span> in the isomorphism. Then <span class="LaTeX">$P=M(MG)^T$</span>, where I use <span class="LaTeX">$P$</span> and <span class="LaTeX">$G$</span> to stand for the adjacency matrices. If we aren’t looking for induced subgraphs, <span class="LaTeX">$P\leq M(MG)^T$</span> (componentwise), i.e. the subgraph of <span class="LaTeX">$G$</span> selected by <span class="LaTeX">$M$</span> might contain additional edges not present in <span class="LaTeX">$P$</span>.</p>
-<p>The algorithm works by systematically enumerating possible matrices <span class="LaTeX">$M$</span> and checking whether they actually encode an isomorphism.</p>
-<p>We start by setting up a <span class="LaTeX">$|V_P|\times |V_G|$</span> matrix <span class="LaTeX">$M^0$</span> that contains a 1 at <span class="LaTeX">$(i,j)$</span> if it is possible that <span class="LaTeX">$v_i \sim v_j$</span> in some subgraph isomorphism. For now, we only use the degree as a criterion, i.e. we can map <span class="LaTeX">$v_i$</span> to <span class="LaTeX">$v_j$</span> if the latter has enough neighbors: <span class="LaTeX">$m_{ij}^0 = 1 \Leftrightarrow \mbox{deg}(v_i) \leq \mbox{deg}(v_j)$</span>. If we were cleverer we could remove more 1’s and reduce our runtime.</p>
-<p>Now all we need to do is try all matrices <span class="LaTeX">$M$</span> that can be obtained from <span class="LaTeX">$M^0$</span> by removing all but one 1 from each row while having at most one 1 in each column. We do that recursively.</p>
+<p>It is possible to encode a subgraph isomorphism as a <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo stretchy="false">∣</mo><msub><mi>V</mi><mi>P</mi></msub><mo stretchy="false">∣</mo><mo>×</mo><mo stretchy="false">∣</mo><msub><mi>V</mi><mi>G</mi></msub><mo stretchy="false">∣</mo></mrow></math> matrix <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>M</mi></mrow></math> in which each row contains exactly one 1 and each column contains at most one 1. We set <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>m</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math> to 1 iff <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>v</mi><mi>j</mi></msub><mo>∈</mo><mi>G</mi></mrow></math> corresponds to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>v</mi><mi>i</mi></msub><mo>∈</mo><mi>P</mi></mrow></math> in the isomorphism. Then <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>P</mi><mo>=</mo><mi>M</mi><mo stretchy="false">(</mo><mi>M</mi><mi>G</mi><msup><mo stretchy="false">)</mo><mi>T</mi></msup></mrow></math>, where I use <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>P</mi></mrow></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>G</mi></mrow></math> to stand for the adjacency matrices. If we aren’t looking for induced subgraphs, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>P</mi><mo>≤</mo><mi>M</mi><mo stretchy="false">(</mo><mi>M</mi><mi>G</mi><msup><mo stretchy="false">)</mo><mi>T</mi></msup></mrow></math> (componentwise), i.e. the subgraph of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>G</mi></mrow></math> selected by <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>M</mi></mrow></math> might contain additional edges not present in <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>P</mi></mrow></math>.</p>
+<p>The algorithm works by systematically enumerating possible matrices <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>M</mi></mrow></math> and checking whether they actually encode an isomorphism.</p>
+<p>We start by setting up a <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo stretchy="false">∣</mo><msub><mi>V</mi><mi>P</mi></msub><mo stretchy="false">∣</mo><mo>×</mo><mo stretchy="false">∣</mo><msub><mi>V</mi><mi>G</mi></msub><mo stretchy="false">∣</mo></mrow></math> matrix <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msup><mi>M</mi><mn>0</mn></msup></mrow></math> that contains a 1 at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo stretchy="false">(</mo><mi>i</mi><mo>,</mo><mi>j</mi><mo stretchy="false">)</mo></mrow></math> if it is possible that <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>v</mi><mi>i</mi></msub><mo>∼</mo><msub><mi>v</mi><mi>j</mi></msub></mrow></math> in some subgraph isomorphism. For now, we only use the degree as a criterion, i.e. we can map <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>v</mi><mi>i</mi></msub></mrow></math> to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>v</mi><mi>j</mi></msub></mrow></math> if the latter has enough neighbors: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msubsup><mi>m</mi><mrow><mi>i</mi><mi>j</mi></mrow><mn>0</mn></msubsup><mo>=</mo><mn>1</mn><mo>⇔</mo><mtext mathvariant="normal">deg</mtext><mo stretchy="false">(</mo><msub><mi>v</mi><mi>i</mi></msub><mo stretchy="false">)</mo><mo>≤</mo><mtext mathvariant="normal">deg</mtext><mo stretchy="false">(</mo><msub><mi>v</mi><mi>j</mi></msub><mo stretchy="false">)</mo></mrow></math>. If we were cleverer we could remove more 1’s and reduce our runtime.</p>
+<p>Now all we need to do is try all matrices <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>M</mi></mrow></math> that can be obtained from <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msup><mi>M</mi><mn>0</mn></msup></mrow></math> by removing all but one 1 from each row while having at most one 1 in each column. We do that recursively.</p>
 <pre><code>recurse(used_columns, cur_row, G, P, M)
     if cur_row = num_rows(M)
         if  M is an isomorphism:
@@ -56,19 +126,19 @@
         mark c as unused
 
     output no</code></pre>
-<p>Making the <span class="LaTeX">$M&#39;$</span> copy of <span class="LaTeX">$M$</span> isn’t really necessary, but it will become so once we implement our pruning procedure.</p>
+<p>Making the <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>M</mi><mo>ʹ</mo></mrow></math> copy of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>M</mi></mrow></math> isn’t really necessary, but it will become so once we implement our pruning procedure.</p>
 <h2 id="pruning">Pruning</h2>
-<p>We want to (safely) change at least some of the 1’s in our matrix to 0’s to reduce the computation time. For that, we use a simple observation. If some <span class="LaTeX">$p\in V_P$</span> has neighbours <span class="LaTeX">$p_1,\ldots, p_l \in P$</span>, and we map it to some <span class="LaTeX">$g \in V_G$</span>, then we’d better also map <span class="LaTeX">$p_1,\ldots,p_l$</span> to neigbors of <span class="LaTeX">$g$</span>.</p>
-<p>Remember that a 1 at <span class="LaTeX">$(i,j)$</span> in <span class="LaTeX">$M$</span> means that we still think that <span class="LaTeX">$v_i\in P$</span> can correspond to <span class="LaTeX">$v_j\in G$</span>. But if we already found out that there is a neighbour of <span class="LaTeX">$v_i\in P$</span> can’t be mapped to any neigbour of <span class="LaTeX">$v_j\in G$</span> clearly the 1 at <span class="LaTeX">$(i,j)$</span> is wrong and we can change it safely to a 0. This change might make more mappings impossible, so we iterate this check until nothing can be changed. If we remove all 1’s from a row during this refinement, we can stop the whole process, since <span class="LaTeX">$M$</span> can’t be completed to an isomorphism anymore.</p>
+<p>We want to (safely) change at least some of the 1’s in our matrix to 0’s to reduce the computation time. For that, we use a simple observation. If some <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>p</mi><mo>∈</mo><msub><mi>V</mi><mi>P</mi></msub></mrow></math> has neighbours <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>p</mi><mn>1</mn></msub><mo>,</mo><mo>…</mo><mo>,</mo><msub><mi>p</mi><mi>l</mi></msub><mo>∈</mo><mi>P</mi></mrow></math>, and we map it to some <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>g</mi><mo>∈</mo><msub><mi>V</mi><mi>G</mi></msub></mrow></math>, then we’d better also map <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>p</mi><mn>1</mn></msub><mo>,</mo><mo>…</mo><mo>,</mo><msub><mi>p</mi><mi>l</mi></msub></mrow></math> to neigbors of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>g</mi></mrow></math>.</p>
+<p>Remember that a 1 at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo stretchy="false">(</mo><mi>i</mi><mo>,</mo><mi>j</mi><mo stretchy="false">)</mo></mrow></math> in <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>M</mi></mrow></math> means that we still think that <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>v</mi><mi>i</mi></msub><mo>∈</mo><mi>P</mi></mrow></math> can correspond to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>v</mi><mi>j</mi></msub><mo>∈</mo><mi>G</mi></mrow></math>. But if we already found out that there is a neighbour of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>v</mi><mi>i</mi></msub><mo>∈</mo><mi>P</mi></mrow></math> can’t be mapped to any neigbour of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>v</mi><mi>j</mi></msub><mo>∈</mo><mi>G</mi></mrow></math> clearly the 1 at <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo stretchy="false">(</mo><mi>i</mi><mo>,</mo><mi>j</mi><mo stretchy="false">)</mo></mrow></math> is wrong and we can change it safely to a 0. This change might make more mappings impossible, so we iterate this check until nothing can be changed. If we remove all 1’s from a row during this refinement, we can stop the whole process, since <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>M</mi></mrow></math> can’t be completed to an isomorphism anymore.</p>
 <pre><code>do
     for all (i,j) where M is 1
         for all neighbors x of vi in P
             if there is no neighbor y of vj s.t. M(x,y)=1
                 M(i,j)=0
 while M was changed</code></pre>
-<p>Now the effectiveness of our pruning procedure depends on the order of the vertices. The earlier in the recursion we find a 1 that can be changed to a 0, the better. Thus it is a good a idea to order the vertices such that high degree vertices of <span class="LaTeX">$P$</span> are first.</p>
+<p>Now the effectiveness of our pruning procedure depends on the order of the vertices. The earlier in the recursion we find a 1 that can be changed to a 0, the better. Thus it is a good a idea to order the vertices such that high degree vertices of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>P</mi></mrow></math> are first.</p>
 <h2 id="clever-implementation">Clever Implementation</h2>
-<p>This algorithm seems rather costly, since we do a matrix multplication for every leaf in the recursion tree and manipulate the matrix quite a lot in between. However, note that we’re dealing with boolean matrices here. It’s a good idea to encode them as bit vectors. Then multiplication can be done efficiently using bit-twiddling, even if we still use the naive O(<span class="LaTeX">$n^3$</span>) algorithm. Similarly setting a column to 1 and the other columns to 0 can be done using bit-twiddling and finding viable neighbors during the pruning step is fast too. Using these implementation tricks we can speed up the naive algorithm by some largish constant factor, depending on the word size of the CPU and whether it supports SSE or similar vector operations.</p>
+<p>This algorithm seems rather costly, since we do a matrix multplication for every leaf in the recursion tree and manipulate the matrix quite a lot in between. However, note that we’re dealing with boolean matrices here. It’s a good idea to encode them as bit vectors. Then multiplication can be done efficiently using bit-twiddling, even if we still use the naive O(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msup><mi>n</mi><mn>3</mn></msup></mrow></math>) algorithm. Similarly setting a column to 1 and the other columns to 0 can be done using bit-twiddling and finding viable neighbors during the pruning step is fast too. Using these implementation tricks we can speed up the naive algorithm by some largish constant factor, depending on the word size of the CPU and whether it supports SSE or similar vector operations.</p>
 <div class="footnotes">
 <hr />
 <ol>

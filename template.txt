@@ -31,11 +31,6 @@ $for(header-includes)$
 $endfor$
 </head>
 <body>
-$if(math)$
-  <noscript>
-    <p style="float:right; font-size:80%; color:red">This site uses Javascript to render Math.</p>
-  </noscript>
-$endif$
 $for(include-before)$
 $include-before$
 $endfor$

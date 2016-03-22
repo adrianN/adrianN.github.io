@@ -5,7 +5,7 @@ Although it's called "Programming", Linear Programming has little to do with wha
 
 Let me first hit you with the formal definition. In Linear Programming we have a number of real variables $x_1, \ldots, x_n$, and some linear value function $f(x_1, \ldots, x_n)$ we want to maximize (or minimize). The interesting part is the set of constraints on the variables we need to satisfy (otherwise optimizing $f$ would be trivial). The constraints are a set of $m$ linear inequalities 
 
-$$a_{j1}x_1 + \ldots + a_{jn} x_n \leq b_j \qquad a_{ij},b_i \in \mbox{R}$$
+$$a_{j1}x_1 + \ldots + a_{jn} x_n \leq b_j \qquad a_{ji},b_j \in \mbox{R}$$
 
 for $1\leq j\leq m$.
 
@@ -43,7 +43,7 @@ The proof is easy: Let $w_{max}$ be the size of the maximal job and let $W$ be t
 
 $$\frac{(W-w_n)}{2} + w_n \leq W/2+w_n/2 \leq \mbox{opt} + \mbox{opt}/2$$
 
-Click here to proceed to the next part, the Simplex Method (coming soon)  
+[Click here to proceed to the next part, Solving LPs with Fourier Motzkin](fourier-motzkin.html)  
 [Click here to go back to the index](../linear_optimization.html)
 
 
