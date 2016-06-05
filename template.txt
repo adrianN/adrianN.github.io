@@ -21,7 +21,6 @@ $for(css)$
   <link rel="stylesheet" href="$css$" $if(html5)$$else$type="text/css" $endif$/>
 $endfor$
 $if(math)$
-  $math$
   <style type="text/css">
   .displayequation{margin-left:auto;margin-right:auto;}
   </style>

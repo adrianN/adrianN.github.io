@@ -1,7 +1,7 @@
 % Solving Linear Programs 
 % Adrian Neumann (adrian_neumann@gmx.de)
 
-Recall from the introduction that a linear program is defined by a linear objective function $f(x) = c_1x_1+c_2x_2+\ldots+c_nx_n$ and a set of constraints $a_{i1}x_1+a_{i2}x2+a_{in}x_n \le b_i$ for $1\le i\le m$. For reasons that will become clear in a few paragraphs (and even clearer in the next part of this series), I will write the variables as a column vector $\vec x=(x_1,\ldots, x_n)^\text{T}$, where I use the superscript $T$ to indicate transposition so that I can write column vectors in the rows of this text.
+Recall from the introduction that a linear program is defined by a linear objective function $f(x) = c_1x_1+c_2x_2+\ldots+c_nx_n$ and a set of constraints $a_{i1}x_1+a_{i2}x_2+a_{in}x_n \le b_i$ for $1\le i\le m$. For reasons that will become clear in a few paragraphs (and even clearer in the next part of this series), I will write the variables as a column vector $\vec x=(x_1,\ldots, x_n)^\text{T}$, where I use the superscript $T$ to indicate transposition so that I can write column vectors in the rows of this text.
 
 When we treat the variables as a vector like this, it makes sense to call the number of variables the *dimension* of the LP. I will call vectors that satisfy all constraints *feasible*. If there is no such vector, the problem is *infeasible*.
 
@@ -22,10 +22,15 @@ The constant before the $x$ in the cost function is positive, so in order to min
 
 In two dimensions we can use a very similar strategy. The cost function still tells us in which direction to move $\vec x$ and the intersection of the constraints gives us a feasible region. We use a graphical approach to see the set of feasible values for $x$. 
 
-The constraints define halfplanes in the 2D space. If you write an equals sign instead of $\le$ (or $\ge$), you get an equation for a line. The inequality is valid for all points on one side of the line. Which side depends on the weights on the left side (more precisely, on the direction defined by the vector $\vec a=(a_{i1},\ldots,a_{in})$) and whether it's a $\le$ or a $\ge$. The feasible region of the problem, i.e. all the points that satisfy all constraints, is then the intersection of all the halfplanes.
+If you write an equals sign like this $a_{i1}x_1+a_{i2}x_2+a_{in}x_n = b_i$, you get an [equation for a line](https://en.wikipedia.org/wiki/Linear_equation#General_.28or_standard.29_form). If you write the constants as a vector $\vec a=(a_{i1}, \ldots, a_{in})$, you can write the line equation using the dot product: $a\cdot x=b_i$. Note that $a$ is orthogonal to the line. Why is that so? Take some $x$ that lies on the line, i.e. it solves the above equation. Moving $x$ by some amount $z$ along the line results in a vector that lies on the line and hence still satisfies the equation. The dot product is distributive so we can write $a \cdot (x+z)= a\cdot x + a\cdot z$. We know $a\cdot x=b_i$, so the second summand must be zero. [When the dot product is zero, the two vectors are orthogonal.](https://en.wikipedia.org/wiki/Dot_product#Properties)
 
-The cost function defines a line parameterized by $\vec x$ (i.e. the line with cost $f(x)$). If $x$ lies within the feasible region we get a feasible
-solution. The cost vector $c$ is orthogonal to the line defined by $f$. The goal is to shift the line as far in negative $c$
+Now consider what happens to the equation when we take an $x$ from the line and move it by some $z$ that is not parallel to the line. It depends on $a\cdot z$. If the dot product is positive, the left hand side becomes too big for the equality, otherwise it becomes too small. The dot product is positive if $z$ points somewhat in the same direction as $a$ (more formally, $z$ can be decomposed in to vectors, $z'$ and $z''$, such that $z'$ is orthogonal to $a$ and $z''$ is $\lambda a$ for some positive real $\lambda$).
+
+So if we take the original inequality, it cuts the 2D plane in two parts, left and right from the line. Which part satisfies the inequality depends on the direction of $a$ and whether we have a $\ge$ or a $\le$. The set of points that satisfy the inequality is called a halfplane.
+
+The feasible region of the problem, i.e. all the points that satisfy all constraints, is then the intersection of all the halfplanes.
+
+The cost function also defines a line, or rather, a family of lines, one for each objective value, namely the solutions for $f(x)=z$ for each objective value $z$. If the intersection of this line with the feasible region is not empty, there is a solution (any point in the intersection) with cost $z$. The cost vector $c$ is orthogonal to the line defined by $f$. The goal is to shift the line as far in negative $c$
 direction as possible without leaving the feasible region. Take for example the following LP
 
 ![Fig:graphSolutionEx An example for a graphical solution of an LP.
@@ -83,6 +88,8 @@ $$
 \end{aligned}
 $$
 
+**Exercise** Add these constraints to your picture.
+
 We can simplify to 
 
 $$  5x/7 \ge 2  \quad 2x/7 \le 4 \quad 3x \ge 16  \quad 2x \ge 10 $$
@@ -138,5 +145,5 @@ So with Fourier Motzkin elimination we have a method of checking feasibility for
 
 **Exercise** What's the runtime of an $n$-step Fourier Motzkin Elimination? Hint: How many constraints do you introduce in each step?
 
-Next part coming soon  
+[Next part: Polyhedra](polyhedra.html)  
 [Click here to go back to the index](../linear_optimization.html)

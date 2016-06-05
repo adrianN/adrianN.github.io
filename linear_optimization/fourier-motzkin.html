@@ -7,79 +7,6 @@
   <meta name="generator" content="pandoc" />
   <meta name="author" content="Adrian Neumann (adrian_neumann@gmx.de)" />
   <title>Solving Linear Programs</title>
-  <script type="text/javascript">/*<![CDATA[*/
-  /*
-  March 19, 2004 MathHTML (c) Peter Jipsen http://www.chapman.edu/~jipsen
-  Released under the GNU General Public License version 2 or later.
-  See the GNU General Public License (at http://www.gnu.org/copyleft/gpl.html)
-  for more details.
-  */
-  
-  function convertMath(node) {// for Gecko
-    if (node.nodeType==1) {
-      var newnode =
-        document.createElementNS("http://www.w3.org/1998/Math/MathML",
-          node.nodeName.toLowerCase());
-      for(var i=0; i < node.attributes.length; i++)
-        newnode.setAttribute(node.attributes[i].nodeName,
-          node.attributes[i].value);
-      for (var i=0; i<node.childNodes.length; i++) {
-        var st = node.childNodes[i].nodeValue;
-        if (st==null || st.slice(0,1)!=" " && st.slice(0,1)!="\n")
-          newnode.appendChild(convertMath(node.childNodes[i]));
-      }
-      return newnode;
-    }
-    else return node;
-  }
-  
-  function convert() {
-    var mmlnode = document.getElementsByTagName("math");
-    var st,str,node,newnode;
-    for (var i=0; i<mmlnode.length; i++)
-      if (document.createElementNS!=null)
-        mmlnode[i].parentNode.replaceChild(convertMath(mmlnode[i]),mmlnode[i]);
-      else { // convert for IE
-        str = "";
-        node = mmlnode[i];
-        while (node.nodeName!="/MATH") {
-          st = node.nodeName.toLowerCase();
-          if (st=="#text") str += node.nodeValue;
-          else {
-            str += (st.slice(0,1)=="/" ? "</m:"+st.slice(1) : "<m:"+st);
-            if (st.slice(0,1)!="/")
-               for(var j=0; j < node.attributes.length; j++)
-                 if (node.attributes[j].value!="italic" &&
-                   node.attributes[j].value!="" &&
-                   node.attributes[j].value!="inherit" &&
-                   node.attributes[j].value!=undefined)
-                   str += " "+node.attributes[j].nodeName+"="+
-                       "\""+node.attributes[j].value+"\"";
-            str += ">";
-          }
-          node = node.nextSibling;
-          node.parentNode.removeChild(node.previousSibling);
-        }
-        str += "</m:math>";
-        newnode = document.createElement("span");
-        node.parentNode.replaceChild(newnode,node);
-        newnode.innerHTML = str;
-      }
-  }
-  
-  if (document.createElementNS==null) {
-    document.write("<object id=\"mathplayer\"\
-    classid=\"clsid:32F66A20-7614-11D4-BD11-00104BD3F987\"></object>");
-    document.write("<?import namespace=\"m\" implementation=\"#mathplayer\"?>");
-  }
-  if(typeof window.addEventListener != 'undefined'){
-    window.addEventListener('load', convert, false);
-  }
-  if(typeof window.attachEvent != 'undefined') {
-    window.attachEvent('onload', convert);
-  }
-  /*]]>*/
-  </script>
   <style type="text/css">
   .displayequation{margin-left:auto;margin-right:auto;}
   </style>
@@ -88,10 +15,11 @@
   .figure{float:right;padding-bottom:1em;padding-left:1em;}
   .figure>img{display:block;margin:0 auto;}
   .footnotes{font-size:80%;}
+  .block{border-left:1ex solid gray;padding-left:2em;}
   li{padding:0.25em;}
   a:hover{text-shadow: 0 0 5px;}
   body{font-family:sans-serif;max-width:100ex;padding-left:3em;padding-right:2em;}
-  code{font-family:Consolas, Inconsolata, Monaco, monospace}
+  code{font-family:Consolas, Inconsolata, Monaco, monospace;}
   p{text-align:justify;}
   </style>
 </head>
@@ -99,7 +27,7 @@
 <div id="header">
 <h1 class="title">Solving Linear Programs</h1>
 </div>
-<p>Recall from the introduction that a linear program is defined by a linear objective function <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mi>c</mi><mn>1</mn></msub><msub><mi>x</mi><mn>1</mn></msub><mo>+</mo><msub><mi>c</mi><mn>2</mn></msub><msub><mi>x</mi><mn>2</mn></msub><mo>+</mo><mo>…</mo><mo>+</mo><msub><mi>c</mi><mi>n</mi></msub><msub><mi>x</mi><mi>n</mi></msub></mrow></math> and a set of constraints <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>a</mi><mrow><mi>i</mi><mn>1</mn></mrow></msub><msub><mi>x</mi><mn>1</mn></msub><mo>+</mo><msub><mi>a</mi><mrow><mi>i</mi><mn>2</mn></mrow></msub><mi>x</mi><mn>2</mn><mo>+</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><msub><mi>x</mi><mi>n</mi></msub><mo>≤</mo><msub><mi>b</mi><mi>i</mi></msub></mrow></math> for <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mn>1</mn><mo>≤</mo><mi>i</mi><mo>≤</mo><mi>m</mi></mrow></math>. For reasons that will become clear in a few paragraphs (and even clearer in the next part of this series), I will write the variables as a column vector <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mover><mi>x</mi><mo accent="true">⃗</mo></mover><mo>=</mo><mo stretchy="false">(</mo><msub><mi>x</mi><mn>1</mn></msub><mo>,</mo><mo>…</mo><mo>,</mo><msub><mi>x</mi><mi>n</mi></msub><msup><mo stretchy="false">)</mo><mtext mathvariant="normal">T</mtext></msup></mrow></math>, where I use the superscript <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>T</mi></mrow></math> to indicate transposition so that I can write column vectors in the rows of this text.</p>
+<p>Recall from the introduction that a linear program is defined by a linear objective function <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mi>c</mi><mn>1</mn></msub><msub><mi>x</mi><mn>1</mn></msub><mo>+</mo><msub><mi>c</mi><mn>2</mn></msub><msub><mi>x</mi><mn>2</mn></msub><mo>+</mo><mo>…</mo><mo>+</mo><msub><mi>c</mi><mi>n</mi></msub><msub><mi>x</mi><mi>n</mi></msub></mrow></math> and a set of constraints <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>a</mi><mrow><mi>i</mi><mn>1</mn></mrow></msub><msub><mi>x</mi><mn>1</mn></msub><mo>+</mo><msub><mi>a</mi><mrow><mi>i</mi><mn>2</mn></mrow></msub><msub><mi>x</mi><mn>2</mn></msub><mo>+</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><msub><mi>x</mi><mi>n</mi></msub><mo>≤</mo><msub><mi>b</mi><mi>i</mi></msub></mrow></math> for <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mn>1</mn><mo>≤</mo><mi>i</mi><mo>≤</mo><mi>m</mi></mrow></math>. For reasons that will become clear in a few paragraphs (and even clearer in the next part of this series), I will write the variables as a column vector <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mover><mi>x</mi><mo accent="true">⃗</mo></mover><mo>=</mo><mo stretchy="false">(</mo><msub><mi>x</mi><mn>1</mn></msub><mo>,</mo><mo>…</mo><mo>,</mo><msub><mi>x</mi><mi>n</mi></msub><msup><mo stretchy="false">)</mo><mtext mathvariant="normal">T</mtext></msup></mrow></math>, where I use the superscript <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>T</mi></mrow></math> to indicate transposition so that I can write column vectors in the rows of this text.</p>
 <p>When we treat the variables as a vector like this, it makes sense to call the number of variables the <em>dimension</em> of the LP. I will call vectors that satisfy all constraints <em>feasible</em>. If there is no such vector, the problem is <em>infeasible</em>.</p>
 <h3 id="solving-1d-linear-programs-by-combining-constraints">Solving 1D Linear Programs by combining constraints</h3>
 <p>Solving 1-dimensional LPs is trivial. We have just one variable <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>x</mi></mrow></math>. The cost function either becomes bigger as <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>x</mi></mrow></math> increases or smaller, so we immediately now whether we’re looking for the biggest <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>x</mi></mrow></math> that satisfies the constraints or the smallest. The set of feasible <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>x</mi></mrow></math> is then the intersection of the rays defined be the constraints. For example</p>
@@ -107,8 +35,11 @@
 <p>The constant before the <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>x</mi></mrow></math> in the cost function is positive, so in order to minimize the objective value we need to minimize <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>x</mi></mrow></math>. The constraints can be simplified to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mn>7</mn><mo>≥</mo><mi>x</mi><mo>≥</mo><mn>5</mn><mo>≥</mo><mn>3</mn><mo>→</mo><mi>x</mi><mo>∈</mo><mo stretchy="false">[</mo><mn>5</mn><mo>,</mo><mn>7</mn><mo stretchy="false">]</mo></mrow></math> and thus the optimal value is <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>x</mi><mo>=</mo><mn>5</mn></mrow></math>.</p>
 <h3 id="solving-2d-linear-programs-by-eye-balling">Solving 2D Linear Programs by Eye-Balling</h3>
 <p>In two dimensions we can use a very similar strategy. The cost function still tells us in which direction to move <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mover><mi>x</mi><mo accent="true">⃗</mo></mover></mrow></math> and the intersection of the constraints gives us a feasible region. We use a graphical approach to see the set of feasible values for <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>x</mi></mrow></math>.</p>
-<p>The constraints define halfplanes in the 2D space. If you write an equals sign instead of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo>≤</mo></mrow></math> (or <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo>≥</mo></mrow></math>), you get an equation for a line. The inequality is valid for all points on one side of the line. Which side depends on the weights on the left side (more precisely, on the direction defined by the vector <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mover><mi>a</mi><mo accent="true">⃗</mo></mover><mo>=</mo><mo stretchy="false">(</mo><msub><mi>a</mi><mrow><mi>i</mi><mn>1</mn></mrow></msub><mo>,</mo><mo>…</mo><mo>,</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo stretchy="false">)</mo></mrow></math>) and whether it’s a <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo>≤</mo></mrow></math> or a <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo>≥</mo></mrow></math>. The feasible region of the problem, i.e. all the points that satisfy all constraints, is then the intersection of all the halfplanes.</p>
-<p>The cost function defines a line parameterized by <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mover><mi>x</mi><mo accent="true">⃗</mo></mover></mrow></math> (i.e. the line with cost <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow></math>). If <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>x</mi></mrow></math> lies within the feasible region we get a feasible solution. The cost vector <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>c</mi></mrow></math> is orthogonal to the line defined by <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>f</mi></mrow></math>. The goal is to shift the line as far in negative <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>c</mi></mrow></math> direction as possible without leaving the feasible region. Take for example the following LP</p>
+<p>If you write an equals sign like this <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>a</mi><mrow><mi>i</mi><mn>1</mn></mrow></msub><msub><mi>x</mi><mn>1</mn></msub><mo>+</mo><msub><mi>a</mi><mrow><mi>i</mi><mn>2</mn></mrow></msub><msub><mi>x</mi><mn>2</mn></msub><mo>+</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><msub><mi>x</mi><mi>n</mi></msub><mo>=</mo><msub><mi>b</mi><mi>i</mi></msub></mrow></math>, you get an <a href="https://en.wikipedia.org/wiki/Linear_equation#General_.28or_standard.29_form">equation for a line</a>. If you write the constants as a vector <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mover><mi>a</mi><mo accent="true">⃗</mo></mover><mo>=</mo><mo stretchy="false">(</mo><msub><mi>a</mi><mrow><mi>i</mi><mn>1</mn></mrow></msub><mo>,</mo><mo>…</mo><mo>,</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub><mo stretchy="false">)</mo></mrow></math>, you can write the line equation using the dot product: <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>a</mi><mo>⋅</mo><mi>x</mi><mo>=</mo><msub><mi>b</mi><mi>i</mi></msub></mrow></math>. Note that <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>a</mi></mrow></math> is orthogonal to the line. Why is that so? Take some <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>x</mi></mrow></math> that lies on the line, i.e. it solves the above equation. Moving <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>x</mi></mrow></math> by some amount <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>z</mi></mrow></math> along the line results in a vector that lies on the line and hence still satisfies the equation. The dot product is distributive so we can write <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>a</mi><mo>⋅</mo><mo stretchy="false">(</mo><mi>x</mi><mo>+</mo><mi>z</mi><mo stretchy="false">)</mo><mo>=</mo><mi>a</mi><mo>⋅</mo><mi>x</mi><mo>+</mo><mi>a</mi><mo>⋅</mo><mi>z</mi></mrow></math>. We know <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>a</mi><mo>⋅</mo><mi>x</mi><mo>=</mo><msub><mi>b</mi><mi>i</mi></msub></mrow></math>, so the second summand must be zero. <a href="https://en.wikipedia.org/wiki/Dot_product#Properties">When the dot product is zero, the two vectors are orthogonal.</a></p>
+<p>Now consider what happens to the equation when we take an <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>x</mi></mrow></math> from the line and move it by some <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>z</mi></mrow></math> that is not parallel to the line. It depends on <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>a</mi><mo>⋅</mo><mi>z</mi></mrow></math>. If the dot product is positive, the left hand side becomes too big for the equality, otherwise it becomes too small. The dot product is positive if <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>z</mi></mrow></math> points somewhat in the same direction as <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>a</mi></mrow></math> (more formally, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>z</mi></mrow></math> can be decomposed in to vectors, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>z</mi><mo>ʹ</mo></mrow></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>z</mi><mo>ʺ</mo></mrow></math>, such that <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>z</mi><mo>ʹ</mo></mrow></math> is orthogonal to <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>a</mi></mrow></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>z</mi><mo>ʺ</mo></mrow></math> is <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>λ</mi><mi>a</mi></mrow></math> for some positive real <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>λ</mi></mrow></math>).</p>
+<p>So if we take the original inequality, it cuts the 2D plane in two parts, left and right from the line. Which part satisfies the inequality depends on the direction of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>a</mi></mrow></math> and whether we have a <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo>≥</mo></mrow></math> or a <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo>≤</mo></mrow></math>. The set of points that satisfy the inequality is called a halfplane.</p>
+<p>The feasible region of the problem, i.e. all the points that satisfy all constraints, is then the intersection of all the halfplanes.</p>
+<p>The cost function also defines a line, or rather, a family of lines, one for each objective value, namely the solutions for <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>z</mi></mrow></math> for each objective value <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>z</mi></mrow></math>. If the intersection of this line with the feasible region is not empty, there is a solution (any point in the intersection) with cost <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>z</mi></mrow></math>. The cost vector <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>c</mi></mrow></math> is orthogonal to the line defined by <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>f</mi></mrow></math>. The goal is to shift the line as far in negative <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>c</mi></mrow></math> direction as possible without leaving the feasible region. Take for example the following LP</p>
 <div class="figure">
 <img src="./images/graphSolutionEx.png" title="Fig:graphSolutionEx" alt="Fig:graphSolutionEx An example for a graphical solution of an LP. The optimal solution is (3,2)" /><p class="caption">Fig:graphSolutionEx An example for a graphical solution of an LP. The optimal solution is (3,2)</p>
 </div>
@@ -126,6 +57,7 @@
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mtable><mtr><mtd columnalign="right"><mi>y</mi></mtd><mtd columnalign="left"><mo>≤</mo><mn>4</mn><mo>−</mo><mn>2</mn><mi>x</mi><mo>/</mo><mn>7</mn></mtd></mtr><mtr><mtd columnalign="right"><mi>y</mi></mtd><mtd columnalign="left"><mo>≤</mo><mo>−</mo><mn>10</mn><mo>+</mo><mn>2</mn><mi>x</mi></mtd></mtr><mtr><mtd columnalign="right"><mi>y</mi></mtd><mtd columnalign="left"><mo>≥</mo><mn>6</mn><mo>−</mo><mi>x</mi></mtd></mtr><mtr><mtd columnalign="right"><mi>y</mi></mtd><mtd columnalign="left"><mo>≥</mo><mn>0</mn></mtd></mtr></mtable></mrow></math></p>
 <p>Now we can combine the constraints where <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>y</mi><mo>≤</mo><mo>…</mo></mrow></math> with the constraints where <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>y</mi><mo>≥</mo><mo>…</mo></mrow></math>. As we have two of each, we get four constraints.</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mtable><mtr><mtd columnalign="right"><mn>4</mn><mo>−</mo><mn>2</mn><mi>x</mi><mo>/</mo><mn>7</mn></mtd><mtd columnalign="left"><mo>≥</mo><mi>y</mi><mo>≥</mo><mn>6</mn><mo>−</mo><mi>x</mi></mtd></mtr><mtr><mtd columnalign="right"><mn>4</mn><mo>−</mo><mn>2</mn><mi>x</mi><mo>/</mo><mn>7</mn></mtd><mtd columnalign="left"><mo>≥</mo><mi>y</mi><mo>≥</mo><mn>0</mn></mtd></mtr><mtr><mtd columnalign="right"><mo>−</mo><mn>10</mn><mo>+</mo><mn>2</mn><mi>x</mi></mtd><mtd columnalign="left"><mo>≥</mo><mi>y</mi><mo>≥</mo><mn>6</mn><mo>−</mo><mi>x</mi></mtd></mtr><mtr><mtd columnalign="right"><mo>−</mo><mn>10</mn><mo>+</mo><mn>2</mn><mi>x</mi></mtd><mtd columnalign="left"><mo>≥</mo><mi>y</mi><mo>≥</mo><mn>0</mn></mtd></mtr></mtable></mrow></math></p>
+<p><strong>Exercise</strong> Add these constraints to your picture.</p>
 <p>We can simplify to</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mn>5</mn><mi>x</mi><mo>/</mo><mn>7</mn><mo>≥</mo><mn>2</mn><mspace width="1em"></mspace><mn>2</mn><mi>x</mi><mo>/</mo><mn>7</mn><mo>≤</mo><mn>4</mn><mspace width="1em"></mspace><mn>3</mn><mi>x</mi><mo>≥</mo><mn>16</mn><mspace width="1em"></mspace><mn>2</mn><mi>x</mi><mo>≥</mo><mn>10</mn></mrow></math></p>
 <p>which further simplifies to</p>
@@ -160,7 +92,7 @@
 <p>And this concludes our proof.</p>
 <p>So with Fourier Motzkin elimination we have a method of checking feasibility for Linear Programs: Eliminate dimensions until no variables remain and do the math to see whether each inequality is satisfied. Together with your method for transforming optimization to repeated feasibility, we can now solve Linear Programming. Unfortunately Fourier Motzkin Elimination gets pretty expensive for large dimensions as you’ll see in the next exercise.</p>
 <p><strong>Exercise</strong> What’s the runtime of an <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>n</mi></mrow></math>-step Fourier Motzkin Elimination? Hint: How many constraints do you introduce in each step?</p>
-<p>Next part coming soon<br /><a href="../linear_optimization.html">Click here to go back to the index</a></p>
+<p><a href="polyhedra.html">Next part: Polyhedra</a><br /><a href="../linear_optimization.html">Click here to go back to the index</a></p>
 <div style="font-size:80%">
 <hr/>
 <p style="float:left">CC-BY-SA <a href="mailto:adrian_neumann@gmx.de">Adrian Neumann</a> (PGP Key <a href="http://adriann.github.io/ressources/pub.asc">A210311B</a>)</p>
