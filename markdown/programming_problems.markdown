@@ -23,7 +23,7 @@ Elementary
 7. Write a program that prints *all* prime numbers. (Note: if your programming language does not support arbitrary size numbers, printing all primes up to the largest number you can easily represent is fine too.)
 8. Write a guessing game where the user has to guess a secret number. After every guess the program tells the user whether their number was too large or too small. At the end the number of tries needed should be printed. I counts only as one try if they input the same number multiple times consecutively.
 9. Write a program that prints the next 20 leap years.
-1. Write a program that computes 
+1. Write a program that computes
 $$4\cdot \sum_{k=1}^{10^6} \frac{(-1)^{k+1}}{2k-1} = 4\cdot(1-1/3+1/5-1/7+1/9-1/11\ldots).$$
 
 
@@ -42,11 +42,12 @@ If your language of choice doesn't have a build in list and/or string type (e.g.
 1. Write a function `on_all` that applies a function to every element of a list. Use it to print the first twenty perfect squares.
 1. Write a function that concatenates two lists.
 1. Write a function that combines two lists by alternatingly taking elements, e.g. `[a,b,c]`, `[1,2,3]` &rarr; `[a,1,b,2,c,3]`.
-1. Write a function that merges two sorted lists into a new list.
+1. Write a function that merges two sorted lists into a new sorted list. You can do this quicker than concatenating them followed by a sort.
 1. Write a function that rotates a list by `k` elements. For example `[1,2,3,4,5,6]` rotated by two becomes `[3,4,5,6,1,2]`. Try solving this without creating a copy of the list. How many swap or move operations do you need?
 1. Write a function that computes the list of the first 100 Fibonacci numbers.
 1. Write a function that takes a number and returns a list of its digits.
 1. Write functions that add, subtract, and multiply two numbers in their digit-list representation (and return a new digit list). If you're ambitious you can implement Karatsuba multiplication. Try [different bases](https://en.wikipedia.org/wiki/Radix). What is the best base if you care about speed? If you couldn't completely solve the prime number exercise above due to the lack of large numbers in your language, you can now use your own library for this task.
+1. Write a function that takes a list of numbers, a starting base `b1` and a target base `b2` and interprets the list as a number in base `b1` and converts it into a number in base `b2` (in the form of a list-of-digits).
 1. Implement the following sorting algorithms: Selection sort, Insertion sort, Merge sort, Quick sort, Stooge Sort. Check Wikipedia for descriptions.
 1. Implement binary search.
 1. Write a function that takes a list of strings an prints them, one per line, in a rectangular frame. For example the list `["Hello", "World", "in", "a", "frame"]` gets printed as:
@@ -87,7 +88,7 @@ Advanced
 
 1. Given two strings, write a program that efficiently finds the longest common subsequence.
 1. Given an array with numbers, write a program that efficiently answers queries of the form: "Which is the nearest larger value for the number at position `i`?", where distance is the difference in array indices. For example in the array `[1,4,3,2,5,7]`, the nearest larger value for 4 is 5. After linear time preprocessing you should be able to answer queries in constant time.
-1. Given two strings, write a program that outputs the shortest sequence of character insertions and deletions that turn one string into the other. 
+1. Given two strings, write a program that outputs the shortest sequence of character insertions and deletions that turn one string into the other.
 1. Write a function that multiplies two matrices together. Make it as efficient as you can and compare the performance to a polished linear algebra library for your language. You might want to read about [Strassen's algorithm](https://en.wikipedia.org/wiki/Strassen_algorithm) and the effects CPU caches have. Try out different matrix layouts and see what happens.
 1. Implement a [van Emde Boas](https://en.wikipedia.org/wiki/Van_Emde_Boas_tree) tree. Compare it with your previous search tree implementations.
 1. Given a set of d-dimensional rectangular boxes, write a program that computes the volume of their union. Start with 2D and work your way up.
