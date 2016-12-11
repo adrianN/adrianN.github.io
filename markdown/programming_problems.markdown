@@ -10,6 +10,45 @@ I suppose they are also useful, although much easier, whenever an experienced pe
 
 This guide has been translated to Chinese by Fidel Yi. [Simple Programming Problems in Chinese](https://github.com/yisha7/SimpleProgrammingProblems)
 
+Before you begin
+-----------------
+
+Learning to program means learning how to solve problems using code. Conceptually it is not very difficult to write a program that solves a problem that you can solve yourself. The skill you need to acquire is thinking very precisely about how you solve the problem and breaking it down into steps that are so simple that a computer can execute them. I encourage you to first solve a few instances of a problem by hand and think about what you did to find the solution. For example if the task is sorting lists, sort some short lists yourself. A reasonable method would be to find the smallest element, write it down and cross it out of the original list and repeat this process until you have sorted the whole list. Then you have to teach the computer 1) how to find the smallest element, 2) how to write it down, 3) how to cross it out, and wrap this in a loop. Then continue this task breakdown process until you're confident you know how to write the necessary program.
+
+To make good progress in your programming task, you need to test your work as early and as thoroughly as possible. Everybody makes mistakes while programming and finding mistakes in programs consumes a very large part of a programmer's work-day. Finding a problem in a small and easy piece of code is much simpler than trying to spot it in a large program. This is why you should try to test each sub task you identified during your task-breakdown by itself. Only after you're confident that each part works as you expect you can attempt to plug them together. Make sure you test the complete program as well, errors can creep in in the way the different parts interact. You should try to automate your tests. The easier it is to test your program, the freer you are in experimenting with changes.
+
+The last important point is *how* you express your thoughts as code. In the same way that you can express the same argument in different ways in a normal English essay, you can express the same problem-solving method in different ways in code. Try for brevity. The lines that you don't write are the lines where you can be sure that the don't have bugs. Don't be afraid to Google for idiomatic ways of doing the things you'd like to do (after you tried doing them yourself!). Remember that you don't write the program for the computer, you write it for other humans (maybe a future you!). Choose names that explain things, add comments where these names don't suffice. Never comment on *what* the code is doing, only write comments that explain *why*. 
+
+This is a bad example:
+
+~~~~~~~~~~~~~~~~
+
+// This function checks whether a number is even
+def f(x):
+  // compute x modulo 2 and check whether it is zero
+  if modulo(x,2) == 0:
+    // the number is even
+    return True
+  else:
+    // the number is odd
+    return False
+
+~~~~~~~~~~~~~~~~
+
+The exact same idea is much easier to understand if you write it like this:
+
+~~~~~~~~~~~~~~~~
+
+def is_divisible(number, divisor):
+  return modulo(number, divisor) == 0
+
+def is_even(number):
+  return is_divisible(number, 2)
+
+~~~~~~~~~~~~~~~~
+
+Better naming and a better task breakdown make the comments obsolete. Revise your code just as you would revise an essay. Sketch, write, delete, reformulate, ask others what they think. Repeat until only the crispest possible expression of your idea remains. Revisit code you've written a while ago to see whether you can improve it with things you've learned since.
+
 Elementary
 --------------
 
@@ -30,7 +69,7 @@ $$4\cdot \sum_{k=1}^{10^6} \frac{(-1)^{k+1}}{2k-1} = 4\cdot(1-1/3+1/5-1/7+1/9-1/
 Lists, Strings
 --------------------
 
-If your language of choice doesn't have a build in list and/or string type (e.g. you use C), these exercises should also be solvable for arrays. However, some solutions are very different between an array-based list and a pointer based list, at least if you care about the efficiency of your code. So you might want to either find a library, or investigate how to implement your own linked list if your language doesn't have it.
+If your language of choice doesn't have a build in list and/or string type (e.g. you use C), these exercises should also be solvable for arrays. However, some solutions are very different between an array-based list (like C++'s `vector`) and a pointer based list (like C++'s `list`), at least if you care about the efficiency of your code. So you might want to either find a library, or investigate how to implement your own linked list if your language doesn't have it.
 
 1. Write a function that returns the largest element in a list.
 1. Write function that reverses a list, preferably in place.
@@ -39,10 +78,10 @@ If your language of choice doesn't have a build in list and/or string type (e.g.
 1. Write a function that computes the running total of a list.
 1. Write a function that tests whether a string is a palindrome.
 1. Write three functions that compute the sum of the numbers in a list: using a `for`-loop, a `while`-loop and recursion. (Subject to availability of these constructs in your language of choice.)
-1. Write a function `on_all` that applies a function to every element of a list. Use it to print the first twenty perfect squares.
-1. Write a function that concatenates two lists.
+1. Write a function `on_all` that applies a function to every element of a list. Use it to print the first twenty perfect squares (a natural number $n$ is a perfect square if it can be written as $n=m*m$ for some other natural number $m$. $1,4,9,16,25$ are the first 5).
+1. Write a function that concatenates two lists. `[a,b,c]`, `[1,2,3]` &rarr; `[a,b,c,1,2,3]`
 1. Write a function that combines two lists by alternatingly taking elements, e.g. `[a,b,c]`, `[1,2,3]` &rarr; `[a,1,b,2,c,3]`.
-1. Write a function that merges two sorted lists into a new sorted list. You can do this quicker than concatenating them followed by a sort.
+1. Write a function that merges two sorted lists into a new sorted list. `[1,4,6]`,`[2,3,5]` &rarr; `[1,2,3,4,5,6]`. You can do this quicker than concatenating them followed by a sort.
 1. Write a function that rotates a list by `k` elements. For example `[1,2,3,4,5,6]` rotated by two becomes `[3,4,5,6,1,2]`. Try solving this without creating a copy of the list. How many swap or move operations do you need?
 1. Write a function that computes the list of the first 100 Fibonacci numbers.
 1. Write a function that takes a number and returns a list of its digits.
