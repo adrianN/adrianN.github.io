@@ -7,7 +7,7 @@ When we treat the variables as a vector like this, it makes sense to call the nu
 
 ### Solving 1D Linear Programs by combining constraints
 
-Solving 1-dimensional LPs is trivial. We have just one variable $x$. The cost function either becomes bigger as $x$ increases or smaller, so we immediately now whether we're looking for the biggest $x$ that satisfies the constraints or the smallest. The set of feasible $x$ is then the intersection of the rays defined be the constraints. For example
+Solving 1-dimensional LPs is trivial. We have just one variable $x$. The cost function either becomes bigger as $x$ increases or smaller, so we immediately know whether we're looking for the biggest $x$ that satisfies the constraints or the smallest. The set of feasible $x$ is then the intersection of the rays defined be the constraints. For example
 
 $$\begin{aligned}
 \min & 3x \\
@@ -22,9 +22,9 @@ The constant before the $x$ in the cost function is positive, so in order to min
 
 In two dimensions we can use a very similar strategy. The cost function still tells us in which direction to move $\vec x$ and the intersection of the constraints gives us a feasible region. We use a graphical approach to see the set of feasible values for $x$. 
 
-If you write an equals sign like this $a_{i1}x_1+a_{i2}x_2+a_{in}x_n = b_i$, you get an [equation for a line](https://en.wikipedia.org/wiki/Linear_equation#General_.28or_standard.29_form). If you write the constants as a vector $\vec a=(a_{i1}, \ldots, a_{in})$, you can write the line equation using the dot product: $a\cdot x=b_i$. Note that $a$ is orthogonal to the line. Why is that so? Take some $x$ that lies on the line, i.e. it solves the above equation. Moving $x$ by some amount $z$ along the line results in a vector that lies on the line and hence still satisfies the equation. The dot product is distributive so we can write $a \cdot (x+z)= a\cdot x + a\cdot z$. We know $a\cdot x=b_i$, so the second summand must be zero. [When the dot product is zero, the two vectors are orthogonal.](https://en.wikipedia.org/wiki/Dot_product#Properties)
+If you write an equals sign like this $a_{i1}x_1+a_{i2}x_2+a_{in}x_n = b_i$, you get an [equation for a line](https://en.wikipedia.org/wiki/Linear_equation#General_.28or_standard.29_form). If you write the constants as a vector $\vec a=(a_{i1}, \ldots, a_{in})$, you can write the line equation using the dot product: $a\cdot x=b_i$. Note that $a$ is orthogonal to the line. Why is that so? Take some $x$ that lies on the line, i.e. it solves the above equation. Moving $x$ by some amount $z$ along the line results in a vector that lies on the line and hence still satisfies the equation. The dot product is distributive so we can write $a \cdot (x+z)= a\cdot x + a\cdot z$. We know $a\cdot x=b_i$ (since this is how we chose $x$), so the second summand must be zero. [When the dot product is zero, the two vectors are orthogonal.](https://en.wikipedia.org/wiki/Dot_product#Properties)
 
-Now consider what happens to the equation when we take an $x$ from the line and move it by some $z$ that is not parallel to the line. It depends on $a\cdot z$. If the dot product is positive, the left hand side becomes too big for the equality, otherwise it becomes too small. The dot product is positive if $z$ points somewhat in the same direction as $a$ (more formally, $z$ can be decomposed in to vectors, $z'$ and $z''$, such that $z'$ is orthogonal to $a$ and $z''$ is $\lambda a$ for some positive real $\lambda$).
+Now consider what happens to the equation when we take an $x$ from the line and move it by some $z$ that is not parallel to the line. It depends on $a\cdot z$. If the dot product is positive, the left hand side becomes too big for the equality, otherwise it becomes too small. The dot product is positive if $z$ points somewhat in the same direction as $a$ (more formally, $z$ can be decomposed in two vectors, $z'$ and $z''$, such that $z'$ is orthogonal to $a$ and $z''$ is $\lambda a$ for some *positive* real $\lambda$).
 
 So if we take the original inequality, it cuts the 2D plane in two parts, left and right from the line. Which part satisfies the inequality depends on the direction of $a$ and whether we have a $\ge$ or a $\le$. The set of points that satisfy the inequality is called a halfplane.
 
@@ -46,7 +46,7 @@ The cost vector is $c=(1,1)$ and the two constraints define two half-planes. For
 
 A somewhat weaker operation than picking a feasible *solution* to LP is picking an objective value $z$ and finding out whether this objective value can be achieved.
 
-To do so, we can add a new constraint, namely $f(x) \le z$. This constraint adds another half-plane that constraints the feasible region. If this makes the feasible region empty, there is no solution with at objective value at most $z$. If the feasible region still contains more than one point, then we can decrease $z$ a little more. We have reached the optimal $z$ if the feasible region contains only one point. Now, if we had a method to check whether a feasible region is empty or not, this would give us an algorithm to solve linear programs with $O(\log (z_{\text{opt}}))$ many evaluations of the feasibility algorithm.
+To do so, we can add a new constraint, namely $f(x) \le z$. This constraint adds another half-plane that constrains the feasible region. If this makes the feasible region empty, there is no solution with an objective value at most $z$. If the feasible region still contains more than one point, then we can decrease $z$ a little more. We have reached the optimal $z$ if the feasible region contains only one point. Now, if we had a method to check whether a feasible region is empty or not, this would give us an algorithm to solve linear programs with $O(\log (z_{\text{opt}}))$ many evaluations of the feasibility algorithm.
 
 ### Fourier-Motzkin Elimination
 

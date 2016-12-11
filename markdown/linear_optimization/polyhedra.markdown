@@ -31,7 +31,7 @@ $$\begin{aligned}
 \text{minimize:}& \vec c \cdot \vec x \\
 \text{subject to:} & A \cdot \vec x \le \vec b\end{aligned}$$
 
-Note that it really doesn't matter whether we use $\le$ or $\ge$. Just multiplying by $-1$ switches it around.
+Note that it really doesn't matter whether we use $\le$ or $\ge$. Just multiplying by $-1$ switches a constraint around without changing it.
 
 <div class="block">**Def** A *polyhedron* is a set in $\text{R}^n$ whose
 members obey a set of linear inequalities
@@ -55,6 +55,8 @@ intersection of a bunch of halfspaces.
 
 A corner of a $n$-dimensional polyhedron is, intuitively, a point where $n$ edges meet. I will give a bunch of different definitions and them prove them to be equal.
 
+The simplest definition uses a line. A corner of a polyhedron is a point $p$ in the polyhedron where we can find a line that touches the polyhedron only at $p$.
+
 <div class="block">**Def** Let $P$ be a polyhedron. A vector $x\in P$ is a
 *vertex* of P if $\exists \vec c\in \text{R}^n$ s.t. $cx < cy$ for all 
 $y\in P, y \neq x$; that is, $x$ is the minimal point for some cost
@@ -65,10 +67,17 @@ P). See figure [Fig:vertex]
 $c$](./images/vertex.png "Fig:vertex")
 </div>
 
+Corners are interesting for optimization because the converse is also kind of true, at least for bounded polyhedra. For any cost vector $c$, we can find a vertex $x$ of the (bounded) polyhedron such that $cx \le cy$ for all points $y$ in the polyhedron. There is no strict inequality here because the line defined by $c$ might be parallel to one of the edges of the polyhedron. If the polyhedron is not bounded, there are some $c$ such that for any point $y$ there is a point $y'$ such that $cy' < cy$, that is, the optimal value for this cost vector is unbounded. These are of course the cost vectors that define a line that doesn't leave the polyhedron. 
+
+However, we need some more definitions and theorems before we can prove the above statement.
+
+
 <div class="block">**Def**  An *extreme point* of a polyhedron P
 is a vector $x\in P$ s.t. $x$ is not a convex combination of any two
-vectors $y,z\in P$ different from $x$.
+distinct vectors $y,z\in P$ different from $x$.
 </div>
+
+Convex combinations of two points $x,y$ are all points $z$ for which the equation $\lambda x + (1-\lambda) y = z$ has a solution for $\lambda$ in $[0,1]$. Geometrically, the points $z$ lie on a line between $x$ and $y$. You can also take the convex combinations of more than two points. The principle is the same though, you add all the points, scaling each one with a non-negative scaling factor $\lambda_i$. The combination is convex if the $\lambda_i$ sum to 1. 
 
 Example: In 2D we can always select the two adjacent corners of a point
 $x$ on the edge of $P$ if and only if $x$ is not a corner. Then $x$ will be on the
@@ -81,7 +90,7 @@ have equality: $a_ix = b_i$
 </div>
 
 The constraints define the edges of polyhedron. If a point is on an
-edge that constraint is active. Intuitively it must be a corner if it
+edge that constraint is active. Intuitively the point must be a corner if it
 lies on the intersection of $n$ edges.
 
 <div class="block"> **Def** Let $P\in \text{R}^n$ be a polyhedron in
@@ -156,3 +165,5 @@ We show 1.) $\Rightarrow$ 2.) $\Rightarrow$ 3.) $\Rightarrow$ 1.).
     Let $B$ be the matrix of active constraints s.t. $Bx=b$. Let $c$ be the sum of the $n$ rows of $B$. We know the objective value for $x$ w.r.t. $c$. It’s $c x = \sum b_i$.
 
     Because $B$ has rank $n$, $x$ is the unique solution to $Bx=b$. For all $y\in P$ that are different from $x$, $By > b$, hence $x$ is the optimal point for the cost vector $c$. Therefore $x$ is a vertex.
+
+
