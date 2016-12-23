@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+<channel>
+ <title>Adrian's Homepage</title>
+ <description>This is the RSS feed for my homepage. Since I update so infrequently, it is hard for people to keep up by checking manually.</description>
+ <link>https://adriann.github.io</link>
+<lastBuildDate>
+Fri, 23 Dec 2016 22:06:20 +0100
+</lastBuildDate>
+ <ttl>20000</ttl>
+
+ <item>
+  <title>This site now has an RSS Feed</title>
+  <description>
+If you can read this you have successfully added the feed to your feed reader. Congratulations.  
+  </description>
+  <link>https://adriann.github.io</link>
+  <pubDate>
+Fri, 23 Dec 2016 22:09:13 +0100
+  </pubDate>
+ </item>
+
+</channel>
+</rss>

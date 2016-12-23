@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+  <link href="https://adriann.github.io/feed.rss" rel="alternate" type="application/rss+xml" title="What's new on adriann.github.io" />
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -28,25 +29,27 @@
 <h1 class="title">Guessing Games</h1>
 </div>
 <div class="figure">
-<img src="pictures/alice_cards.jpg" title="copyright expired" alt="Art by Arthur Rackham" /><p class="caption">Art by Arthur Rackham</p>
+<img src="pictures/alice_cards.jpg" title="copyright expired" alt="Art by Arthur Rackham" />
+<p class="caption">Art by Arthur Rackham</p>
 </div>
-<p>The Cheshire Cat thinks of a number between <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mn>1</mn></mrow></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>n</mi></mrow></math> and asks Alice to guess the number as quickly as possible using arbitrary yes/no questions. From her experience in cryptography, Alice has learnt about binary search and is thus confident that she can solve the challenge with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo stretchy="false">⌈</mo><mi>log</mi><mi>n</mi><mo stretchy="false">⌉</mo></mrow></math> questions.</p>
+<p>The Cheshire Cat thinks of a number between <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1</mn><annotation encoding="application/x-tex">1</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math> and asks Alice to guess the number as quickly as possible using arbitrary yes/no questions. From her experience in cryptography, Alice has learnt about binary search and is thus confident that she can solve the challenge with <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">⌈</mo><mo>log</mo><mi>n</mi><mo stretchy="false" form="postfix">⌉</mo></mrow><annotation encoding="application/x-tex">\lceil\log n\rceil</annotation></semantics></math> questions.</p>
 <p>However, the Cheshire Cat is known to interpret ‘truthfulness’ a little unconventionally and might lie up to once during the game.</p>
-<p>Now Alice could ask every question twice to force the cat into answering correctly, however she’d rather not risk annoying the cat by consuming <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mn>2</mn><mi>log</mi><mi>n</mi></mrow></math> of its time steps.</p>
+<p>Now Alice could ask every question twice to force the cat into answering correctly, however she’d rather not risk annoying the cat by consuming <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mo>log</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">2\log n</annotation></semantics></math> of its time steps.</p>
 <p>But is there a better strategy?</p>
 <p><br style="clear:both"/> <!--more--></p>
 <h2 id="a-strategy-for-alice">A Strategy for Alice</h2>
 <p>As it is often the case with these riddles, it turns out there is such a strategy and in fact it is very simple.</p>
-<p>Alice begins by determining the bits of the secret number using <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>log</mi><mi>n</mi></mrow></math> questions. Next she finds out whether the cat lied already by asking some constant number of times whether this is the correct number. If the cat wants to play as long as possible, it will of course have lied and one of the bits Alice has is wrong. However, it is now very easy for Alice to figure out which bit is wrong by performing a binary search on the bits. Note that it is not very difficult to generalise this for the case where <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>k</mi></mrow></math> lies are allowed.</p>
+<p>Alice begins by determining the bits of the secret number using <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>log</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">\log n</annotation></semantics></math> questions. Next she finds out whether the cat lied already by asking some constant number of times whether this is the correct number. If the cat wants to play as long as possible, it will of course have lied and one of the bits Alice has is wrong. However, it is now very easy for Alice to figure out which bit is wrong by performing a binary search on the bits. Note that it is not very difficult to generalise this for the case where <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math> lies are allowed.</p>
 <p>This strategy needs</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>log</mi><mi>n</mi><mo>+</mo><mi>log</mi><mi>log</mi><mi>n</mi><mo>+</mo><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>log</mo><mi>n</mi><mo>+</mo><mo>log</mo><mo>log</mo><mi>n</mi><mo>+</mo><mi>O</mi><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\log n + \log \log n + O(1)</annotation></semantics></math></p>
 <p>questions. A proof by hand-waving shows this to be a lower bound too.</p>
 <h2 id="further-remarks">Further Remarks</h2>
 <p>This game is known as Rényi-Ulam’s game and got some attention in coding theory. Apparently it is rather difficult to find the exact number of questions needed or rigorously show lower bounds. There is <a href="http://en.wikipedia.org/wiki/Ulam&#39;s_game">a wikipedia article</a> with further references.</p>
-<div style="font-size:80%">
 <hr/>
-<p style="float:left">CC-BY-SA <a href="mailto:adrian_neumann@gmx.de">Adrian Neumann</a> (PGP Key <a href="http://adriann.github.io/ressources/pub.asc">A210311B</a>)</p>
-<p style="float:right"><a href="http://adriann.github.io">adriann.github.io</a></p>
+<div style="display:flex;justify-content:space-between;font-size:80%">
+<p>CC-BY-SA <a href="mailto:adrian_neumann@gmx.de">Adrian Neumann</a> (PGP Key <a href="http://adriann.github.io/ressources/pub.asc">A210311B</a>)</p>
+<p><a href="http://adriann.github.io">adriann.github.io</a></p>
+<p><a href="https://adriann.github.io/feed.rss">RSS</a></p>
 </div>
 </body>
 </html>

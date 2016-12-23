@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+  <link href="https://adriann.github.io/feed.rss" rel="alternate" type="application/rss+xml" title="What's new on adriann.github.io" />
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,23 +9,41 @@
   <meta name="author" content="Adrian Neumann (adrian_neumann@gmx.de)" />
   <title>Segment displays with an Arduino</title>
   <style type="text/css">
+div.sourceCode { overflow-x: auto; }
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
   margin: 0; padding: 0; vertical-align: baseline; border: none; }
 table.sourceCode { width: 100%; line-height: 100%; }
 td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
 td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; }
-code > span.dt { color: #902000; }
-code > span.dv { color: #40a070; }
-code > span.bn { color: #40a070; }
-code > span.fl { color: #40a070; }
-code > span.ch { color: #4070a0; }
-code > span.st { color: #4070a0; }
-code > span.co { color: #60a0b0; font-style: italic; }
-code > span.ot { color: #007020; }
-code > span.al { color: #ff0000; font-weight: bold; }
-code > span.fu { color: #06287e; }
-code > span.er { color: #ff0000; font-weight: bold; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
   </style>
   <style>
   .caption{font-size:66%;text-align:right;}
@@ -76,7 +95,7 @@ void loop() {
 }</code></pre>
 <p>Note that I have to set the output to LOW to turn the segment on, because it has a common anode. If the output is HIGH, eg. +5V, no current will flow.</p>
 <p>It seems that I wired things up correctly. Time to display some digit. I make an array that contains the LOW HIGH patterns for each digit. I also write a function that loops over the array and sets the pins. The code now looks like this.</p>
-<pre class="sourceCode C"><code class="sourceCode c">    <span class="dt">const</span> <span class="dt">int</span> segments[] = {<span class="dv">12</span>,<span class="dv">11</span>,<span class="dv">10</span>,<span class="dv">9</span>,<span class="dv">8</span>,<span class="dv">7</span>,<span class="dv">6</span>};
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c">    <span class="dt">const</span> <span class="dt">int</span> segments[] = {<span class="dv">12</span>,<span class="dv">11</span>,<span class="dv">10</span>,<span class="dv">9</span>,<span class="dv">8</span>,<span class="dv">7</span>,<span class="dv">6</span>};
     <span class="dt">const</span> <span class="dt">int</span> digit[<span class="dv">10</span>][<span class="dv">7</span>] = {
       {LOW, LOW, LOW, LOW, LOW, LOW, HIGH},
       {HIGH, LOW, LOW, HIGH, HIGH, HIGH, HIGH},
@@ -107,11 +126,11 @@ void loop() {
         display_digit(i);
         delay(<span class="dv">500</span>);
       } 
-    }</code></pre>
+    }</code></pre></div>
 <p>After I turn in on, my Arduino now counts from 0 to 9. Since I wired up the anode for the first digit of my segment display, the first digit lights up.</p>
 <h2 id="displaying-more-digits">Displaying more digits</h2>
 <p>Okay, now I want to display more than one digit. To do so, I will wire up the anodes of each digit with a pin on my Arduino. I don’t forget to add a resistor there too. Then I can display digits in quick succession and make it look like I display them simultaniously. Now the code looks like this.</p>
-<pre class="sourceCode C"><code class="sourceCode c">    <span class="dt">const</span> <span class="dt">int</span> segments[] = {<span class="dv">12</span>,<span class="dv">11</span>,<span class="dv">10</span>,<span class="dv">9</span>,<span class="dv">8</span>,<span class="dv">7</span>,<span class="dv">6</span>};
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c">    <span class="dt">const</span> <span class="dt">int</span> segments[] = {<span class="dv">12</span>,<span class="dv">11</span>,<span class="dv">10</span>,<span class="dv">9</span>,<span class="dv">8</span>,<span class="dv">7</span>,<span class="dv">6</span>};
     <span class="dt">const</span> <span class="dt">int</span> digit[] = {<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>};
     <span class="dt">const</span> <span class="dt">int</span> digit_pattern[<span class="dv">10</span>][<span class="dv">7</span>] = {
       {LOW, LOW, LOW, LOW, LOW, LOW, HIGH},
@@ -150,12 +169,12 @@ void loop() {
         display_digit(<span class="dv">1</span>,<span class="dv">1</span>);
         display_digit(<span class="dv">2</span>,<span class="dv">2</span>);
         display_digit(<span class="dv">3</span>,<span class="dv">3</span>);
-    }</code></pre>
+    }</code></pre></div>
 <p>It is important that I first turn the digit off, then set the output segments and then turn the digit on in the <code>display_digit</code> function. Otherwise things don’t look right because the old digit is changed before it is switched off, or the new digit displays the wrong things before it is changed to the right values.</p>
 <p>I notice that the display is much darker than before. That makes sense because now every digit is on only a quarter of the time. I therefore replace the resistors. I also notice that numbers that light up more segments are darker. Again this makes sense since the current is divided among more LEDs. I could fix that by using the PWM pins on my Arduino as anodes and adjust brightness depending on how many segments are on, but I decide against that.</p>
 <h2 id="doing-something-while-displaying-digits">Doing something while displaying digits</h2>
 <p>To do something else besides displaying digits, I use the timer functions. I count occasionally and at all other times I display the number. The final code looks like this</p>
-<pre class="sourceCode C"><code class="sourceCode c">    <span class="dt">const</span> <span class="dt">int</span> segments[] = {<span class="dv">12</span>,<span class="dv">11</span>,<span class="dv">10</span>,<span class="dv">9</span>,<span class="dv">8</span>,<span class="dv">7</span>,<span class="dv">6</span>};
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c">    <span class="dt">const</span> <span class="dt">int</span> segments[] = {<span class="dv">12</span>,<span class="dv">11</span>,<span class="dv">10</span>,<span class="dv">9</span>,<span class="dv">8</span>,<span class="dv">7</span>,<span class="dv">6</span>};
     <span class="dt">const</span> <span class="dt">int</span> digit[] = {<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>};
     <span class="dt">const</span> <span class="dt">int</span> digit_pattern[<span class="dv">10</span>][<span class="dv">7</span>] = {
       {LOW, LOW, LOW, LOW, LOW, LOW, HIGH},
@@ -214,11 +233,12 @@ void loop() {
           display_digit(number[i],i);
         }
       }
-    }</code></pre>
-<div style="font-size:80%">
+    }</code></pre></div>
 <hr/>
-<p style="float:left">CC-BY-SA <a href="mailto:adrian_neumann@gmx.de">Adrian Neumann</a> (PGP Key <a href="http://adriann.github.io/ressources/pub.asc">A210311B</a>)</p>
-<p style="float:right"><a href="http://adriann.github.io">adriann.github.io</a></p>
+<div style="display:flex;justify-content:space-between;font-size:80%">
+<p>CC-BY-SA <a href="mailto:adrian_neumann@gmx.de">Adrian Neumann</a> (PGP Key <a href="http://adriann.github.io/ressources/pub.asc">A210311B</a>)</p>
+<p><a href="http://adriann.github.io">adriann.github.io</a></p>
+<p><a href="https://adriann.github.io/feed.rss">RSS</a></p>
 </div>
 </body>
 </html>
