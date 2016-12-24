@@ -10,6 +10,17 @@ Fri, 23 Dec 2016 22:06:20 +0100
  <ttl>20000</ttl>
 
  <item>
+  <title>Grammar cards for Anki</title>
+  <description>
+Insert a link to http://dojgdeck.neocities.org/ in the Japanese page.
+  </description>
+  <link>https://adriann.github.io/learning_japanese.html</link>
+  <pubDate>
+Sat, 24 Dec 2016 20:43:46 +0100
+  </pubDate>
+ </item>
+
+ <item>
   <title>This site now has an RSS Feed</title>
   <description>
 If you can read this you have successfully added the feed to your feed reader. Congratulations.  
