@@ -23,6 +23,7 @@ Fortunately there are excellent free resources for basic and more advanced gramm
 * [An Introduction to Japanese Syntax, Grammar & Language](http://pomax.github.io/nrGrammar/) is an excellent guide to basic grammar and also provides some history, which I find quite appealing. It is quite formal, teaching you for example about inflection bases instead of just telling you how to negate a verb. 
 * [Tae Kim's Guide to Japanese Grammar](http://www.guidetojapanese.org/learn/grammar) is very practical and teaches the basic grammar. It's focus is on teaching you useful things quickly, without as much back-story as the guide above. This makes it a little less interesting to me.
 * [The Japanese Grammar Database](http://www.jgram.org/) is very useful if you want to look up the meaning of a particular construction. They have a nice newsletter that sends a grammar topic to your e-mail every day.
+* [The DoJG Anki Deck](http://dojgdeck.neocities.org/) for studying grammar using the excellent Anki software (also see below!).
 
 Vocabulary and Kanji
 --------------------
