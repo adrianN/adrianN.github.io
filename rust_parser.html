@@ -1,0 +1,240 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <link href="https://adriann.github.io/feed.rss" rel="alternate" type="application/rss+xml" title="What's new on adriann.github.io" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Adrian Neumann (adrian_neumann@gmx.de)" />
+  <title>Writing a Simple Parser in Rust</title>
+  <style>
+  .caption{font-size:66%;text-align:right;}
+  .figure{float:right;padding-bottom:1em;padding-left:1em;}
+  .figure>img{display:block;margin:0 auto;}
+  .footnotes{font-size:80%;}
+  .block{border-left:1ex solid gray;padding-left:2em;}
+  li{padding:0.25em;}
+  a:hover{text-shadow: 0 0 5px;}
+  body{font-family:sans-serif;max-width:100ex;padding-left:3em;padding-right:2em;}
+  code{font-family:Consolas, Inconsolata, Monaco, monospace;}
+  p{text-align:justify;}
+  </style>
+</head>
+<body>
+<div id="header">
+<h1 class="title">Writing a Simple Parser in Rust</h1>
+</div>
+<p>In an effort to learn Rust I wrote a parser for simple arithmetic expressions. I want to parse expressions of the form <code>1234 + 43* (34 +[2])</code> using a simple recursive descent parser. Maybe I’ll try one of the libraries for writing parsers next. <a href="https://github.com/Geal/nom">Nom</a> looks good.</p>
+<p>First I define a grammar for my language. To refresh my memory about how grammars for arithmetic expressions should look like, I consult <a href="http://pages.cs.wisc.edu/~fischer/cs536.s08/course.hold/html/NOTES/3.CFG.html#exp">this site</a>. I want <code>*</code> to have higher precedence than <code>+</code> and of course expressions in parentheses should have higher precedence still.</p>
+<p>The grammar I came up with is as follows:</p>
+<pre><code>   expr -&gt; summand + expr | summand
+   summand -&gt; term * expr | term
+   term -&gt; NUMBER | ( expr )</code></pre>
+<p>Next I want define a type for items in this grammar. Normally I’d use inheritance, but Rust doesn’t have inheritance, so instead I use an <code>enum</code>. Enums in Rust are very useful because unlike in C I can add information to an enum value. For my grammar items, I add the value of the <code>NUMBER</code> terminal to the corresponding enum value.</p>
+<pre><code>#[derive(Debug)]
+enum GrammarItem {
+    Expr,
+    Product,
+    Sum,
+    Number(i64),
+}</code></pre>
+<p>I could have added something extra for parentheses, but I don’t think that adding the additional layer to my parse tree will help with anything.</p>
+<p>The nodes of my parse tree are structs that contain a <code>GrammarItem</code> and children in a vector like so</p>
+<pre><code>#[derive(Debug)]
+struct ParseNode {
+    children: Vec&lt;ParseNode&gt;,
+    entry: GrammarItem,
+}
+
+impl ParseNode {
+    pub fn new() -&gt; ParseNode {
+        ParseNode {
+            children: Vec::new(),
+            entry: GrammarItem::Expr,
+        }
+    }
+}</code></pre>
+<p>I know that each node can have at most two children, so a vector of children is probably overkill. But by using a vector I don’t have to worry about using <code>Box</code> to avoid <a href="https://stackoverflow.com/q/25296195">recursive types</a>.</p>
+<p>Usually one parses by first lexing the input and then constructing the parse tree. My parse function hence looks like this:</p>
+<pre><code>fn parse(input: &amp;String) -&gt; Result&lt;ParseNode, String&gt; {
+    let tokens = try!(lex(input));
+    parse_expr(&amp;tokens, 0).and_then(|(n, i)| if i == tokens.len() {
+        Ok(n)
+    } else {
+        Err(format!(&quot;Expected end of input, found {:?} at {}&quot;, tokens[i], i))
+    })
+}</code></pre>
+<p>Parsing can fail, so I return a <code>Result</code>. I first attempt to lex the input using the <code>lex</code> function, which I will show you in a moment. Lexing can also fail, so <code>lex</code> also returns a <code>Result</code>. At first I had a <code>match</code> on the return value of <code>lex</code>, so that I could call the parsing function only upon success, but then I learned about the <code>try!</code> macro. That’s a neat helper function that takes a <code>Result</code> and unwraps it if it’s ok and otherwise returns the error.</p>
+<p>If the lexing succeeds I stuff the tokens into the <code>parse_expr</code> function. The second parameter tells the function that it should start at the beginning. Since parsing can fail, <code>parse_expr</code> also returns a Result. In the success case, it returns a parse tree and an index one-past the last token it consumed. It can happen that the <code>parse_expr</code> function manages to construct a parse tree, but doesn’t consume all input. For example for the input string <code>(1+2)(3+4)</code> we manage to parse the <code>(1+2)</code> prefix, but then get stuck. In the success case, I want to check that the index returned indicates that we consumed all tokens. This doesn’t happen in the <code>parse_expr</code> function itself, because I want to use it recursively to parse the <code>( expr )</code> production in the grammar. In that case it is expected to stop parsing before consuming the closing <code>)</code>.</p>
+<p>This time I use the <code>and_then</code> function of the <code>Result</code> type to continue the computation if parsing was successful (I think I could have used another <code>try!</code> if I wanted to. I don’t know enough Rust to say which is more idiomatic). The closure that I put into <code>and_then</code> gets the <code>ParseNode</code> <code>n</code> and the index <code>i</code>. If the index is too small, I error out. The error message is constructed using the <code>format!</code> macro.</p>
+<p>Let’s move on to lexing. The <code>lex</code> function gets a <code>String</code> and turns it into a vector of tokens. So first I define another type for tokens. Again I use an enum.</p>
+<pre><code>#[derive(Debug, Clone)]
+enum LexItem {
+    Paren(char),
+    Op(char),
+    Num(i64),
+}</code></pre>
+<p>I could have used more enum values to distinguish between <code>+</code> and <code>*</code> and the different types of parentheses, but instead I just store the character. It probably would have been a good idea to add another integer to each <code>LexItem</code> that stores the location in the input at which the token starts. That would make error reporting more useful. Instead I will just use the position in the token stream for my errors. Since I’m the only user of this program, I will only be angry at myself, so it’s okay.</p>
+<p>The language I want to parse is very simple to lex. Except numbers, all tokens are just a single character long. So instead of complicated things with regular expressions. Instead I iterate over the characters of my input <code>String</code> and use a <code>match</code> do create a <code>LexItem</code>. The <code>match</code> statement is really handy here, since I can specify multiple alternatives for the same case with <code>|</code> and ranges of characters are also supported.</p>
+<pre><code>fn lex(input: &amp;String) -&gt; Result&lt;Vec&lt;LexItem&gt;, String&gt; {
+    let mut result = Vec::new();
+
+    let mut it = input.chars().peekable();
+    while let Some(&amp;c) = it.peek() {
+        match c {
+            &#39;0&#39;...&#39;9&#39; =&gt; {
+                it.next();
+                let n = get_number(c, &amp;mut it);
+                result.push(LexItem::Num(n));
+            }
+            &#39;+&#39; | &#39;*&#39; =&gt; {
+                result.push(LexItem::Op(c));
+                it.next();
+            }
+            &#39;(&#39; | &#39;)&#39; | &#39;[&#39; | &#39;]&#39; | &#39;{&#39; | &#39;}&#39; =&gt; {
+                result.push(LexItem::Paren(c));
+                it.next();
+            }
+            &#39; &#39; =&gt; {
+                it.next();
+            }
+            _ =&gt; {
+                return Err(format!(&quot;unexpected character {}&quot;, c));
+            }
+        }
+    }
+    Ok(result)
+}</code></pre>
+<p>I have the feeling that this method could be improved so that the vector doesn’t have to be mutable and is instead constructed directly using something like <code>collect</code>. I Python I would have written a generator from the loop and collected all <code>yield</code>-ed items in a list. If it were sufficient to consume only single characters, I could use <code>map</code> and <code>collect</code> to build my vector. But since <code>get_number</code> eats a whole number, I’m not sure how to do it.</p>
+<p>I’m not particularly happy about this function because I need a <code>peekable</code> iterator and I call <code>next()</code> so often. I would prefer to call <code>next</code> only in the <code>while</code>, but I couldn’t figure out a way that lets <code>get_number</code> consume a whole number without consuming the first character <em>after</em> the number as well. If I were to call <code>next</code> in the beginner of the loop, I wouldn’t see that character.</p>
+<p>For the same reason I can’t use <code>take_while</code> to get only the part of the iterator that contains digits into <code>get_number</code>. That function would hide the character after the number from my lexer.</p>
+<p>To extract a number from the input I use the following function.</p>
+<pre><code>fn get_number&lt;T: Iterator&lt;Item = char&gt;&gt;(c: char, iter: &amp;mut Peekable&lt;T&gt;) -&gt; i64 {
+    let mut number = c.to_string().parse::&lt;i64&gt;().expect(&quot;The caller should have passed a digit.&quot;);
+    while let Some(Ok(digit)) = iter.peek().map(|c| c.to_string().parse::&lt;i64&gt;()) {
+        number = number * 10 + digit;
+        iter.next();
+    }
+    number
+}</code></pre>
+<p>Here again I can’t use <code>next</code> in the <code>while</code> because I don’t want to consume the first non-digit, like <code>take_while</code> would. Instead I only <code>peek</code> at the next character. I use <code>map</code> to attempt a parsing of the digit into an int only in the <code>Some</code> case without having to do another <code>if let</code>. In case of <code>None</code> from the <code>peek</code>, <code>map</code> is a no-op. Maybe I should do some calculations involving the ASCII value of <code>c</code>, or alternatively extract the whole number as a slice and <code>parse</code> that to be more efficient.</p>
+<p>The next step is to actually start constructing the parse tree. As I said above, I use the <code>parse_expr</code> function for a simple recursive descent. It looks like this:</p>
+<pre><code>fn parse_expr(tokens: &amp;Vec&lt;LexItem&gt;, pos: usize) -&gt; Result&lt;(ParseNode, usize), String&gt; {
+    let (node_summand, next_pos) = try!(parse_summand(tokens, pos));
+    let c = tokens.get(next_pos);
+    match c {
+        Some(&amp;LexItem::Op(&#39;+&#39;)) =&gt; {
+            // recurse on the expr
+            let mut sum = ParseNode::new();
+            sum.entry = GrammarItem::Sum;
+            sum.children.push(node_summand);
+            let (rhs, i) = try!(parse_expr(tokens, next_pos + 1));
+            sum.children.push(rhs);
+            Ok((sum, i))
+        }
+        _ =&gt; {
+            // we have just the summand production, nothing more.
+            Ok((node_summand, next_pos))
+        }
+    }
+}</code></pre>
+<p>Instead of an iterator I use an index into the vector. I found this easier because <code>usize</code> can be copied around implicitly and I have no trouble with the borrow-checker. I first attempt to parse a summand with <code>parse_summand</code>. This returns a <code>Result</code>. I use <code>try!</code> to continue the computation if it succeeds. If I successfully parsed a summand, I check whether the next token is a <code>+</code>. I that case I need to parse the RHS of the <code>+</code> recursively. The function to parse a summand looks very similar.</p>
+<pre><code>fn parse_summand(tokens: &amp;Vec&lt;LexItem&gt;, pos: usize) -&gt; Result&lt;(ParseNode, usize), String&gt; {
+    let (node_term, next_pos) = try!(parse_term(tokens, pos));
+    let c = tokens.get(next_pos);
+    match c {
+        Some(&amp;LexItem::Op(&#39;*&#39;)) =&gt; {
+            // recurse on the expr
+            let mut product = ParseNode::new();
+            product.entry = GrammarItem::Product;
+            product.children.push(node_term);
+            let (rhs, i) = try!(parse_expr(tokens, next_pos + 1));
+            product.children.push(rhs);
+            Ok((product, i))
+        }
+        _ =&gt; {
+            // we have just the term production, nothing more.
+            Ok((node_term, next_pos))
+        }
+    }
+}</code></pre>
+<p>I suppose I could have abstracted a bit, but I don’t know whether the reduced code duplication would have been worth the increased complexity.</p>
+<p>The function to parse a term looks most complicated, because this is where I generate all my more or less helpful error messages.</p>
+<pre><code>fn parse_term(tokens: &amp;Vec&lt;LexItem&gt;, pos: usize) -&gt; Result&lt;(ParseNode, usize), String&gt; {
+    let c: &amp;LexItem = try!(tokens.get(pos)
+        .ok_or(String::from(&quot;Unexpected end of input, expected paren or number&quot;)));
+    match c {
+        &amp;LexItem::Num(n) =&gt; {
+            let mut node = ParseNode::new();
+            node.entry = GrammarItem::Number(n);
+            Ok((node, pos + 1))
+        }
+        &amp;LexItem::Paren(c) =&gt; {
+            match c {
+                &#39;(&#39; | &#39;[&#39; | &#39;{&#39; =&gt; {
+                    let (node, next_pos) = try!(parse_expr(tokens, pos + 1));
+                    if let Some(&amp;LexItem::Paren(c2)) = tokens.get(next_pos) {
+                        if c2 == matching(c) {
+                            // okay!
+                            Ok((node, next_pos + 1))
+                        } else {
+                            Err(format!(&quot;Expected {} but found {} at {}&quot;,
+                                        matching(c),
+                                        c2,
+                                        next_pos))
+                        }
+                    } else {
+                        Err(format!(&quot;Expected closing paren at {} but found {:?}&quot;,
+                                    next_pos,
+                                    tokens.get(next_pos)))
+                    }
+                }
+                _ =&gt; Err(format!(&quot;Expected paren at {} but found {:?}&quot;, pos, c)),
+            }
+        }
+        _ =&gt; {
+            Err(format!(&quot;Unexpected token {:?}, expected paren or number&quot;, {
+                c
+            }))
+        }
+    }
+}</code></pre>
+<p>The function is a lot simpler than the deep nesting makes it seem. We just check whether the next token is a number or a parenthesis. If it’s a number we simply return it. If it’s a parenthesis we parse the contained expression recursively and then check that the next token is a matching closing parenthesis. The function <code>matching</code> returns the matching parenthesis using a simple <code>match</code></p>
+<pre><code>fn matching(c: char) -&gt; char {
+    match c {
+        &#39;)&#39; =&gt; &#39;(&#39;,
+        &#39;]&#39; =&gt; &#39;[&#39;,
+        &#39;}&#39; =&gt; &#39;{&#39;,
+        &#39;(&#39; =&gt; &#39;)&#39;,
+        &#39;[&#39; =&gt; &#39;]&#39;,
+        &#39;{&#39; =&gt; &#39;}&#39;,
+        _ =&gt; panic!(&quot;should have been a parenthesis!&quot;),
+    }
+}</code></pre>
+<p>The last thing we need for this simple parser is a way to supply it with input. I use a the command line argument as input. The <code>main</code> function looks like this.</p>
+<pre><code>use std::env;
+
+fn main() {
+    let args: Vec&lt;_&gt; = env::args().collect();
+    if args.len() &gt; 1 {
+        println!(&quot;The first argument is {}&quot;, args[1]);
+        println!(&quot;{:?}&quot;, parse(&amp;args[1]));
+    }
+}</code></pre>
+<p>The output is not terribly pretty:</p>
+<pre><code>$ ./main &quot;1234 + 43* (34 +[2])&quot;
+The first argument is 1234 + 43* (34 +[2])
+Ok(ParseNode { children: [ParseNode { children: [], entry: Number(1234) },
+ParseNode { children: [ParseNode { children: [], entry: Number(43) },
+ParseNode { children: [ParseNode { children: [], entry: Number(34) },
+ParseNode { children: [], entry: Number(2) }], entry: Sum }], entry: Product }], entry: Sum })</code></pre>
+<p>I think I will write a pretty printer for my next toy project. That would also be useful when I want to check correctness using Quickcheck.</p>
+<hr/>
+<div style="display:inline-flex;flex-wrap:wrap;justify-content:space-between;font-size:80%">
+<p style="margin-right:2ex">CC-BY-SA <a href="mailto:adrian_neumann@gmx.de">Adrian Neumann</a> (PGP Key <a href="https://adriann.github.io/ressources/pub.asc">A0A8BC98</a>)</p>
+<p style="margin-left:1ex;margin-right:1ex"><a href="http://adriann.github.io">adriann.github.io</a></p>
+<p style="margin-left:2ex"><a href="https://adriann.github.io/feed.rss">RSS</a></p>
+</div>
+</body>
+</html>

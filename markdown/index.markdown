@@ -21,7 +21,7 @@ More can be found on my [Github page](https://github.com/adrianN?tab=repositorie
 * Karl Bringmann, Kurt Mehlhorn, Adrian Neumann: *Remarks on Category-Based Routing in Social Networks*, [Preprint on arXiv](http://arxiv.org/abs/1202.2293)
 * Karl Bringmann, Benjamin Doerr, Adrian Neumann, Jakub Sliacan: *Online Checkpointing with Improved Worst-Case Guarantees*, ICALP 2013, [Preprint on arXiv](http://arxiv.org/abs/1302.4216)
 * Kurt Mehlhorn, Adrian Neumann, Jens M. Schmidt: *Certifying 3-Edge-Connectivity*, WG 2013, [Preprint on arXiv](http://arxiv.org/abs/1211.6553)
-* Sayan Bhattacharya, Parinya Chalermsook, Kurt Mehlhorn, Adrian Neumann: *New Approximability Results for the Robust k-Median Problem*, [Preprint on arXiv](http://arxiv.org/abs/1309.4602) 
+* Sayan Bhattacharya, Parinya Chalermsook, Kurt Mehlhorn, Adrian Neumann: *New Approximability Results for the Robust k-Median Problem*, [Preprint on arXiv](http://arxiv.org/abs/1309.4602)
 * Michael Dirnberger, Tim Kehl, Adrian Neumann: *NEFI: Network Extraction From Images*, [Scientific Reports 2015](http://www.nature.com/articles/srep15669)
 
 ### Less Science
@@ -44,8 +44,10 @@ More can be found on my [Github page](https://github.com/adrianN?tab=repositorie
 ### Engineering
 
 * [Software Archeology](software_archeology.html)
-* Undefined Behavior in C++
+* C++
     * [Type Punning](undefined_behavior.html#type-punning)
+* Rust
+    * [Simple Parser](rust_parser.html)
 
 ## Elsewhere on the Web
 
