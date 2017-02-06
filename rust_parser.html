@@ -227,7 +227,11 @@ fn main() {
 <p>The output is not terribly pretty:</p>
 <pre><code>$ ./main &quot;1234 + 43* (34 +[2])&quot;
 The first argument is 1234 + 43* (34 +[2])
-Ok(ParseNode { children: [ParseNode { children: [], entry: Number(1234) }, ParseNode { children: [ParseNode { children: [], entry: Number(43) }, ParseNode { children: [ParseNode { children: [ParseNode { children: [], entry: Number(34) }, ParseNode { children: [ParseNode { children: [], entry: Number(2) }], entry: Paren }], entry: Sum }], entry: Paren }], entry: Product }], entry: Sum })</code></pre>
+Ok(ParseNode { children: [ParseNode { children: [], entry: Number(1234) }, ParseNode {
+children: [ParseNode { children: [], entry: Number(43) }, ParseNode { children: [ParseNode {
+children: [ParseNode { children: [], entry: Number(34) }, ParseNode { children: [ParseNode {
+children: [], entry: Number(2) }], entry: Paren }], entry: Sum }], entry: Paren }], entry:
+Product }], entry: Sum })</code></pre>
 <p>If you properly indent it, it looks like this:</p>
 <pre><code>Ok(
   ParseNode {
@@ -250,7 +254,36 @@ Ok(ParseNode { children: [ParseNode { children: [], entry: Number(1234) }, Parse
         entry: Product
         }],
     entry: Sum })</code></pre>
-<p>I think I will write a pretty printer for my next toy project. That would also be useful when I want to check correctness using Quickcheck.</p>
+<p>It is very simple to write a pretty-printer for <code>ParseNode</code>. It’s just a combination of <code>match</code> and <code>format!</code></p>
+<pre><code>fn print(tree: &amp;ParseNode) -&gt; String {
+    match tree.entry {
+        GrammarItem::Paren =&gt; {
+            format!(&quot;({})&quot;,
+                    print(tree.children.get(0).expect(&quot;parens need one child&quot;)))
+        }
+        GrammarItem::Sum =&gt; {
+            let lhs = print(tree.children.get(0).expect(&quot;sums need two children&quot;));
+            let rhs = print(tree.children.get(1).expect(&quot;sums need two children&quot;));
+            format!(&quot;{} + {}&quot;, lhs, rhs)
+        }
+        GrammarItem::Product =&gt; {
+            let lhs = print(tree.children.get(0).expect(&quot;sums need two children&quot;));
+            let rhs = print(tree.children.get(1).expect(&quot;sums need two children&quot;));
+            format!(&quot;{} * {}&quot;, lhs, rhs)
+        }
+        GrammarItem::Number(n) =&gt; format!(&quot;{}&quot;, n),
+    }
+}</code></pre>
+<p>After integrating that function into <code>main</code>, the output is readable again:</p>
+<pre><code>$ ./main &quot;1234 + 43* (34 +[2])&quot;
+The first argument is 1234 + 43* (34 +[2])
+Ok(ParseNode { children: [ParseNode { children: [], entry: Number(1234) }, ParseNode {
+children: [ParseNode { children: [], entry: Number(43) }, ParseNode { children: [ParseNode {
+children: [ParseNode { children: [], entry: Number(34) }, ParseNode { children: [ParseNode {
+children: [], entry: Number(2) }], entry: Paren }], entry: Sum }], entry: Paren }], entry:
+Product }], entry: Sum })
+1234 + 43 * (34 + (2))</code></pre>
+<p>The next step is testing the parser properly using QuickCheck. I’ll do that next and update this article.</p>
 <hr/>
 <div style="display:inline-flex;flex-wrap:wrap;justify-content:space-between;font-size:80%">
 <p style="margin-right:2ex">CC-BY-SA <a href="mailto:adrian_neumann@gmx.de">Adrian Neumann</a> (PGP Key <a href="https://adriann.github.io/ressources/pub.asc">A0A8BC98</a>)</p>

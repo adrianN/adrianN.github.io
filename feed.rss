@@ -10,6 +10,17 @@ Sun, 05 Feb 2017 15:21:57 +0100
  <ttl>20000</ttl>
 
  <item>
+  <title>Writing a Simple Parser in Rust (Update)</title>
+  <description>
+It turns out that a pretty printer is too simple to warrant its own posting.
+  </description>
+  <link>https://adriann.github.io/rust_parser.html</link>
+  <pubDate>
+Mon, 06 Feb 2017 19:16:25 +0100
+  </pubDate>
+ </item>
+
+ <item>
   <title>Writing a Simple Parser in Rust</title>
   <description>
 In an effort to learn Rust I wrote a parser for simple arithmetic expressions. I want to parse expressions of the form `1234 + 43* (34 +[2])` using a simple recursive descent parser.

@@ -265,7 +265,11 @@ The output is not terribly pretty:
 ~~~~~~~
 $ ./main "1234 + 43* (34 +[2])"
 The first argument is 1234 + 43* (34 +[2])
-Ok(ParseNode { children: [ParseNode { children: [], entry: Number(1234) }, ParseNode { children: [ParseNode { children: [], entry: Number(43) }, ParseNode { children: [ParseNode { children: [ParseNode { children: [], entry: Number(34) }, ParseNode { children: [ParseNode { children: [], entry: Number(2) }], entry: Paren }], entry: Sum }], entry: Paren }], entry: Product }], entry: Sum })
+Ok(ParseNode { children: [ParseNode { children: [], entry: Number(1234) }, ParseNode {
+children: [ParseNode { children: [], entry: Number(43) }, ParseNode { children: [ParseNode {
+children: [ParseNode { children: [], entry: Number(34) }, ParseNode { children: [ParseNode {
+children: [], entry: Number(2) }], entry: Paren }], entry: Sum }], entry: Paren }], entry:
+Product }], entry: Sum })
 ~~~~~~~
 
 If you properly indent it, it looks like this:
@@ -294,4 +298,41 @@ Ok(
   	entry: Sum })
 ~~~~~~~
 
-I think I will write a pretty printer for my next toy project. That would also be useful when I want to check correctness using Quickcheck.
+It is very simple to write a pretty-printer for `ParseNode`. It's just a combination of `match` and `format!`
+
+~~~~~~~
+fn print(tree: &ParseNode) -> String {
+    match tree.entry {
+        GrammarItem::Paren => {
+            format!("({})",
+                    print(tree.children.get(0).expect("parens need one child")))
+        }
+        GrammarItem::Sum => {
+            let lhs = print(tree.children.get(0).expect("sums need two children"));
+            let rhs = print(tree.children.get(1).expect("sums need two children"));
+            format!("{} + {}", lhs, rhs)
+        }
+        GrammarItem::Product => {
+            let lhs = print(tree.children.get(0).expect("sums need two children"));
+            let rhs = print(tree.children.get(1).expect("sums need two children"));
+            format!("{} * {}", lhs, rhs)
+        }
+        GrammarItem::Number(n) => format!("{}", n),
+    }
+}
+~~~~~~~
+
+After integrating that function into `main`, the output is readable again:
+
+~~~~~~~~
+$ ./main "1234 + 43* (34 +[2])"
+The first argument is 1234 + 43* (34 +[2])
+Ok(ParseNode { children: [ParseNode { children: [], entry: Number(1234) }, ParseNode {
+children: [ParseNode { children: [], entry: Number(43) }, ParseNode { children: [ParseNode {
+children: [ParseNode { children: [], entry: Number(34) }, ParseNode { children: [ParseNode {
+children: [], entry: Number(2) }], entry: Paren }], entry: Sum }], entry: Paren }], entry:
+Product }], entry: Sum })
+1234 + 43 * (34 + (2))
+~~~~~~~~
+
+The next step is testing the parser properly using QuickCheck. I'll do that next and update this article.
