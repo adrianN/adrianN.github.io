@@ -18,14 +18,12 @@ Next I want define a type for items in this grammar. Normally I'd use inheritanc
 ~~~~~~~
 #[derive(Debug)]
 enum GrammarItem {
-    Expr,
     Product,
     Sum,
     Number(i64),
+    Paren
 }
 ~~~~~~~
-
-I could have added something extra for parentheses, but I don't think that adding the additional layer to my parse tree will help with anything.
 
 The nodes of my parse tree are structs that contain a `GrammarItem` and children in a vector like so
 
@@ -40,7 +38,7 @@ impl ParseNode {
     pub fn new() -> ParseNode {
         ParseNode {
             children: Vec::new(),
-            entry: GrammarItem::Expr,
+            entry: GrammarItem::Paren,
         }
     }
 }
@@ -200,22 +198,25 @@ fn parse_term(tokens: &Vec<LexItem>, pos: usize) -> Result<(ParseNode, usize), S
         &LexItem::Paren(c) => {
             match c {
                 '(' | '[' | '{' => {
-                    let (node, next_pos) = try!(parse_expr(tokens, pos + 1));
-                    if let Some(&LexItem::Paren(c2)) = tokens.get(next_pos) {
-                        if c2 == matching(c) {
-                            // okay!
-                            Ok((node, next_pos + 1))
+                    parse_expr(tokens, pos + 1).and_then(|(node, next_pos)| {
+                        if let Some(&LexItem::Paren(c2)) = tokens.get(next_pos) {
+                            if c2 == matching(c) {
+                                // okay!
+                                let mut paren = ParseNode::new();
+                                paren.children.push(node);
+                                Ok((paren, next_pos + 1))
+                            } else {
+                                Err(format!("Expected {} but found {} at {}",
+                                            matching(c),
+                                            c2,
+                                            next_pos))
+                            }
                         } else {
-                            Err(format!("Expected {} but found {} at {}",
-                                        matching(c),
-                                        c2,
-                                        next_pos))
+                            Err(format!("Expected closing paren at {} but found {:?}",
+                                        next_pos,
+                                        tokens.get(next_pos)))
                         }
-                    } else {
-                        Err(format!("Expected closing paren at {} but found {:?}",
-                                    next_pos,
-                                    tokens.get(next_pos)))
-                    }
+                    })
                 }
                 _ => Err(format!("Expected paren at {} but found {:?}", pos, c)),
             }
@@ -264,10 +265,33 @@ The output is not terribly pretty:
 ~~~~~~~
 $ ./main "1234 + 43* (34 +[2])"
 The first argument is 1234 + 43* (34 +[2])
-Ok(ParseNode { children: [ParseNode { children: [], entry: Number(1234) },
-ParseNode { children: [ParseNode { children: [], entry: Number(43) },
-ParseNode { children: [ParseNode { children: [], entry: Number(34) },
-ParseNode { children: [], entry: Number(2) }], entry: Sum }], entry: Product }], entry: Sum })
+Ok(ParseNode { children: [ParseNode { children: [], entry: Number(1234) }, ParseNode { children: [ParseNode { children: [], entry: Number(43) }, ParseNode { children: [ParseNode { children: [ParseNode { children: [], entry: Number(34) }, ParseNode { children: [ParseNode { children: [], entry: Number(2) }], entry: Paren }], entry: Sum }], entry: Paren }], entry: Product }], entry: Sum })
+~~~~~~~
+
+If you properly indent it, it looks like this:
+
+~~~~~~~
+Ok(
+  ParseNode {
+    children: [
+    	ParseNode { children: [], entry: Number(1234) },
+    	ParseNode { children: [
+	    		ParseNode { children: [], entry: Number(43) },
+	    		ParseNode { children: [
+	    			ParseNode { children: [
+		    				ParseNode { children: [], entry: Number(34) },
+		    				ParseNode { children: [
+			    					ParseNode { children: [], entry: Number(2) }
+			    				],
+			    				entry: Paren
+		    				}],
+	    				entry: Sum
+	    			}],
+  			entry: Paren
+    		}],
+  		entry: Product
+    	}],
+  	entry: Sum })
 ~~~~~~~
 
 I think I will write a pretty printer for my next toy project. That would also be useful when I want to check correctness using Quickcheck.

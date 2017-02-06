@@ -34,12 +34,11 @@
 <p>Next I want define a type for items in this grammar. Normally I’d use inheritance, but Rust doesn’t have inheritance, so instead I use an <code>enum</code>. Enums in Rust are very useful because unlike in C I can add information to an enum value. For my grammar items, I add the value of the <code>NUMBER</code> terminal to the corresponding enum value.</p>
 <pre><code>#[derive(Debug)]
 enum GrammarItem {
-    Expr,
     Product,
     Sum,
     Number(i64),
+    Paren
 }</code></pre>
-<p>I could have added something extra for parentheses, but I don’t think that adding the additional layer to my parse tree will help with anything.</p>
 <p>The nodes of my parse tree are structs that contain a <code>GrammarItem</code> and children in a vector like so</p>
 <pre><code>#[derive(Debug)]
 struct ParseNode {
@@ -51,7 +50,7 @@ impl ParseNode {
     pub fn new() -&gt; ParseNode {
         ParseNode {
             children: Vec::new(),
-            entry: GrammarItem::Expr,
+            entry: GrammarItem::Paren,
         }
     }
 }</code></pre>
@@ -173,22 +172,25 @@ enum LexItem {
         &amp;LexItem::Paren(c) =&gt; {
             match c {
                 &#39;(&#39; | &#39;[&#39; | &#39;{&#39; =&gt; {
-                    let (node, next_pos) = try!(parse_expr(tokens, pos + 1));
-                    if let Some(&amp;LexItem::Paren(c2)) = tokens.get(next_pos) {
-                        if c2 == matching(c) {
-                            // okay!
-                            Ok((node, next_pos + 1))
+                    parse_expr(tokens, pos + 1).and_then(|(node, next_pos)| {
+                        if let Some(&amp;LexItem::Paren(c2)) = tokens.get(next_pos) {
+                            if c2 == matching(c) {
+                                // okay!
+                                let mut paren = ParseNode::new();
+                                paren.children.push(node);
+                                Ok((paren, next_pos + 1))
+                            } else {
+                                Err(format!(&quot;Expected {} but found {} at {}&quot;,
+                                            matching(c),
+                                            c2,
+                                            next_pos))
+                            }
                         } else {
-                            Err(format!(&quot;Expected {} but found {} at {}&quot;,
-                                        matching(c),
-                                        c2,
-                                        next_pos))
+                            Err(format!(&quot;Expected closing paren at {} but found {:?}&quot;,
+                                        next_pos,
+                                        tokens.get(next_pos)))
                         }
-                    } else {
-                        Err(format!(&quot;Expected closing paren at {} but found {:?}&quot;,
-                                    next_pos,
-                                    tokens.get(next_pos)))
-                    }
+                    })
                 }
                 _ =&gt; Err(format!(&quot;Expected paren at {} but found {:?}&quot;, pos, c)),
             }
@@ -225,10 +227,29 @@ fn main() {
 <p>The output is not terribly pretty:</p>
 <pre><code>$ ./main &quot;1234 + 43* (34 +[2])&quot;
 The first argument is 1234 + 43* (34 +[2])
-Ok(ParseNode { children: [ParseNode { children: [], entry: Number(1234) },
-ParseNode { children: [ParseNode { children: [], entry: Number(43) },
-ParseNode { children: [ParseNode { children: [], entry: Number(34) },
-ParseNode { children: [], entry: Number(2) }], entry: Sum }], entry: Product }], entry: Sum })</code></pre>
+Ok(ParseNode { children: [ParseNode { children: [], entry: Number(1234) }, ParseNode { children: [ParseNode { children: [], entry: Number(43) }, ParseNode { children: [ParseNode { children: [ParseNode { children: [], entry: Number(34) }, ParseNode { children: [ParseNode { children: [], entry: Number(2) }], entry: Paren }], entry: Sum }], entry: Paren }], entry: Product }], entry: Sum })</code></pre>
+<p>If you properly indent it, it looks like this:</p>
+<pre><code>Ok(
+  ParseNode {
+    children: [
+        ParseNode { children: [], entry: Number(1234) },
+        ParseNode { children: [
+                ParseNode { children: [], entry: Number(43) },
+                ParseNode { children: [
+                    ParseNode { children: [
+                            ParseNode { children: [], entry: Number(34) },
+                            ParseNode { children: [
+                                    ParseNode { children: [], entry: Number(2) }
+                                ],
+                                entry: Paren
+                            }],
+                        entry: Sum
+                    }],
+            entry: Paren
+            }],
+        entry: Product
+        }],
+    entry: Sum })</code></pre>
 <p>I think I will write a pretty printer for my next toy project. That would also be useful when I want to check correctness using Quickcheck.</p>
 <hr/>
 <div style="display:inline-flex;flex-wrap:wrap;justify-content:space-between;font-size:80%">
