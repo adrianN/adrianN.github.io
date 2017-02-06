@@ -313,8 +313,8 @@ fn print(tree: &ParseNode) -> String {
             format!("{} + {}", lhs, rhs)
         }
         GrammarItem::Product => {
-            let lhs = print(tree.children.get(0).expect("sums need two children"));
-            let rhs = print(tree.children.get(1).expect("sums need two children"));
+            let lhs = print(tree.children.get(0).expect("products need two children"));
+            let rhs = print(tree.children.get(1).expect("products need two children"));
             format!("{} * {}", lhs, rhs)
         }
         GrammarItem::Number(n) => format!("{}", n),

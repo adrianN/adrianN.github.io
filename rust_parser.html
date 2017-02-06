@@ -267,8 +267,8 @@ Product }], entry: Sum })</code></pre>
             format!(&quot;{} + {}&quot;, lhs, rhs)
         }
         GrammarItem::Product =&gt; {
-            let lhs = print(tree.children.get(0).expect(&quot;sums need two children&quot;));
-            let rhs = print(tree.children.get(1).expect(&quot;sums need two children&quot;));
+            let lhs = print(tree.children.get(0).expect(&quot;products need two children&quot;));
+            let rhs = print(tree.children.get(1).expect(&quot;products need two children&quot;));
             format!(&quot;{} * {}&quot;, lhs, rhs)
         }
         GrammarItem::Number(n) =&gt; format!(&quot;{}&quot;, n),
