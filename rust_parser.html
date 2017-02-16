@@ -8,6 +8,43 @@
   <meta name="generator" content="pandoc" />
   <meta name="author" content="Adrian Neumann (adrian_neumann@gmx.de)" />
   <title>Writing a Simple Parser in Rust</title>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
   <style>
   .caption{font-size:66%;text-align:right;}
   .figure{float:right;padding-bottom:1em;padding-left:1em;}
@@ -25,265 +62,334 @@
 <div id="header">
 <h1 class="title">Writing a Simple Parser in Rust</h1>
 </div>
-<p>In an effort to learn Rust I wrote a parser for simple arithmetic expressions. I want to parse expressions of the form <code>1234 + 43* (34 +[2])</code> using a simple recursive descent parser. Maybe I’ll try one of the libraries for writing parsers next. <a href="https://github.com/Geal/nom">Nom</a> looks good.</p>
+<p>In an effort to learn <a href="https://www.rust-lang.org">Rust</a> I wrote a parser for simple arithmetic expressions. I want to parse expressions of the form <code>1234 + 43* (34 +[2])</code> using a simple recursive descent parser. Maybe I’ll try one of the libraries for writing parsers next. <a href="https://github.com/Geal/nom">Nom</a> looks good.</p>
 <p>First I define a grammar for my language. To refresh my memory about how grammars for arithmetic expressions should look like, I consult <a href="http://pages.cs.wisc.edu/~fischer/cs536.s08/course.hold/html/NOTES/3.CFG.html#exp">this site</a>. I want <code>*</code> to have higher precedence than <code>+</code> and of course expressions in parentheses should have higher precedence still.</p>
 <p>The grammar I came up with is as follows:</p>
 <pre><code>   expr -&gt; summand + expr | summand
    summand -&gt; term * expr | term
    term -&gt; NUMBER | ( expr )</code></pre>
+<h2 id="types">Types</h2>
 <p>Next I want define a type for items in this grammar. Normally I’d use inheritance, but Rust doesn’t have inheritance, so instead I use an <code>enum</code>. Enums in Rust are very useful because unlike in C I can add information to an enum value. For my grammar items, I add the value of the <code>NUMBER</code> terminal to the corresponding enum value.</p>
-<pre><code>#[derive(Debug)]
-enum GrammarItem {
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">)]</span>
+<span class="kw">enum</span> GrammarItem {
     Product,
     Sum,
-    Number(i64),
+    Number(<span class="dt">i64</span>),
     Paren
-}</code></pre>
+}</code></pre></div>
 <p>The nodes of my parse tree are structs that contain a <code>GrammarItem</code> and children in a vector like so</p>
-<pre><code>#[derive(Debug)]
-struct ParseNode {
-    children: Vec&lt;ParseNode&gt;,
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">)]</span>
+<span class="kw">struct</span> ParseNode {
+    children: <span class="dt">Vec</span>&lt;ParseNode&gt;,
     entry: GrammarItem,
 }
 
-impl ParseNode {
-    pub fn new() -&gt; ParseNode {
+<span class="kw">impl</span> ParseNode {
+    <span class="kw">pub</span> <span class="kw">fn</span> new() -&gt; ParseNode {
         ParseNode {
-            children: Vec::new(),
+            children: <span class="dt">Vec</span>::new(),
             entry: GrammarItem::Paren,
         }
     }
-}</code></pre>
+}</code></pre></div>
 <p>I know that each node can have at most two children, so a vector of children is probably overkill. But by using a vector I don’t have to worry about using <code>Box</code> to avoid <a href="https://stackoverflow.com/q/25296195">recursive types</a>.</p>
-<p>Usually one parses by first lexing the input and then constructing the parse tree. My parse function hence looks like this:</p>
-<pre><code>fn parse(input: &amp;String) -&gt; Result&lt;ParseNode, String&gt; {
-    let tokens = try!(lex(input));
-    parse_expr(&amp;tokens, 0).and_then(|(n, i)| if i == tokens.len() {
-        Ok(n)
-    } else {
-        Err(format!(&quot;Expected end of input, found {:?} at {}&quot;, tokens[i], i))
-    })
-}</code></pre>
-<p>Parsing can fail, so I return a <code>Result</code>. I first attempt to lex the input using the <code>lex</code> function, which I will show you in a moment. Lexing can also fail, so <code>lex</code> also returns a <code>Result</code>. At first I had a <code>match</code> on the return value of <code>lex</code>, so that I could call the parsing function only upon success, but then I learned about the <code>try!</code> macro. That’s a neat helper function that takes a <code>Result</code> and unwraps it if it’s ok and otherwise returns the error.</p>
-<p>If the lexing succeeds I stuff the tokens into the <code>parse_expr</code> function. The second parameter tells the function that it should start at the beginning. Since parsing can fail, <code>parse_expr</code> also returns a Result. In the success case, it returns a parse tree and an index one-past the last token it consumed. It can happen that the <code>parse_expr</code> function manages to construct a parse tree, but doesn’t consume all input. For example for the input string <code>(1+2)(3+4)</code> we manage to parse the <code>(1+2)</code> prefix, but then get stuck. In the success case, I want to check that the index returned indicates that we consumed all tokens. This doesn’t happen in the <code>parse_expr</code> function itself, because I want to use it recursively to parse the <code>( expr )</code> production in the grammar. In that case it is expected to stop parsing before consuming the closing <code>)</code>.</p>
-<p>This time I use the <code>and_then</code> function of the <code>Result</code> type to continue the computation if parsing was successful (I think I could have used another <code>try!</code> if I wanted to. I don’t know enough Rust to say which is more idiomatic). The closure that I put into <code>and_then</code> gets the <code>ParseNode</code> <code>n</code> and the index <code>i</code>. If the index is too small, I error out. The error message is constructed using the <code>format!</code> macro.</p>
-<p>Let’s move on to lexing. The <code>lex</code> function gets a <code>String</code> and turns it into a vector of tokens. So first I define another type for tokens. Again I use an enum.</p>
-<pre><code>#[derive(Debug, Clone)]
-enum LexItem {
-    Paren(char),
-    Op(char),
-    Num(i64),
-}</code></pre>
+<p>I later on noticed that I could have saved a lot of <code>mut</code> and a couple of lines if I had made it posible to pass in the <code>entry</code> into the <code>new</code>. As it is right now I have to create the node and change it afterwards to set the entry to a value that I want. I also have to rely on the compiler to optimize the dead store away, or I waste some cycles. (I waste lots of cycles in this toy program anyway, so I don’t really care.)</p>
+<h2 id="lexing">Lexing</h2>
+<p>Usually one parses by first lexing the input and then constructing the parse tree. The <code>lex</code> function gets a <code>String</code> and turns it into a vector of tokens. So first I define another type for tokens. Again I use an enum.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">)]</span>
+<span class="kw">enum</span> LexItem {
+    Paren(<span class="dt">char</span>),
+    Op(<span class="dt">char</span>),
+    Num(<span class="dt">i64</span>),
+}</code></pre></div>
 <p>I could have used more enum values to distinguish between <code>+</code> and <code>*</code> and the different types of parentheses, but instead I just store the character. It probably would have been a good idea to add another integer to each <code>LexItem</code> that stores the location in the input at which the token starts. That would make error reporting more useful. Instead I will just use the position in the token stream for my errors. Since I’m the only user of this program, I will only be angry at myself, so it’s okay.</p>
 <p>The language I want to parse is very simple to lex. Except numbers, all tokens are just a single character long. So instead of complicated things with regular expressions. Instead I iterate over the characters of my input <code>String</code> and use a <code>match</code> do create a <code>LexItem</code>. The <code>match</code> statement is really handy here, since I can specify multiple alternatives for the same case with <code>|</code> and ranges of characters are also supported.</p>
-<pre><code>fn lex(input: &amp;String) -&gt; Result&lt;Vec&lt;LexItem&gt;, String&gt; {
-    let mut result = Vec::new();
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> lex(input: &amp;<span class="dt">String</span>) -&gt; <span class="dt">Result</span>&lt;<span class="dt">Vec</span>&lt;LexItem&gt;, <span class="dt">String</span>&gt; {
+    <span class="kw">let</span> <span class="kw">mut</span> result = <span class="dt">Vec</span>::new();
 
-    let mut it = input.chars().peekable();
-    while let Some(&amp;c) = it.peek() {
-        match c {
-            &#39;0&#39;...&#39;9&#39; =&gt; {
+    <span class="kw">let</span> <span class="kw">mut</span> it = input.chars().peekable();
+    <span class="kw">while</span> <span class="kw">let</span> <span class="cn">Some</span>(&amp;c) = it.peek() {
+        <span class="kw">match</span> c {
+            <span class="ch">&#39;0&#39;</span>...<span class="ch">&#39;9&#39;</span> =&gt; {
                 it.next();
-                let n = get_number(c, &amp;mut it);
+                <span class="kw">let</span> n = get_number(c, &amp;<span class="kw">mut</span> it);
                 result.push(LexItem::Num(n));
             }
-            &#39;+&#39; | &#39;*&#39; =&gt; {
+            <span class="ch">&#39;+&#39;</span> | <span class="ch">&#39;*&#39;</span> =&gt; {
                 result.push(LexItem::Op(c));
                 it.next();
             }
-            &#39;(&#39; | &#39;)&#39; | &#39;[&#39; | &#39;]&#39; | &#39;{&#39; | &#39;}&#39; =&gt; {
+            <span class="ch">&#39;(&#39;</span> | <span class="ch">&#39;)&#39;</span> | <span class="ch">&#39;[&#39;</span> | <span class="ch">&#39;]&#39;</span> | <span class="ch">&#39;{&#39;</span> | <span class="ch">&#39;}&#39;</span> =&gt; {
                 result.push(LexItem::Paren(c));
                 it.next();
             }
-            &#39; &#39; =&gt; {
+            <span class="ch">&#39; &#39;</span> =&gt; {
                 it.next();
             }
             _ =&gt; {
-                return Err(format!(&quot;unexpected character {}&quot;, c));
+                <span class="kw">return</span> <span class="cn">Err</span>(<span class="pp">format!</span>(<span class="st">&quot;unexpected character {}&quot;</span>, c));
             }
         }
     }
-    Ok(result)
-}</code></pre>
+    <span class="cn">Ok</span>(result)
+}</code></pre></div>
 <p>I have the feeling that this method could be improved so that the vector doesn’t have to be mutable and is instead constructed directly using something like <code>collect</code>. I Python I would have written a generator from the loop and collected all <code>yield</code>-ed items in a list. If it were sufficient to consume only single characters, I could use <code>map</code> and <code>collect</code> to build my vector. But since <code>get_number</code> eats a whole number, I’m not sure how to do it.</p>
 <p>I’m not particularly happy about this function because I need a <code>peekable</code> iterator and I call <code>next()</code> so often. I would prefer to call <code>next</code> only in the <code>while</code>, but I couldn’t figure out a way that lets <code>get_number</code> consume a whole number without consuming the first character <em>after</em> the number as well. If I were to call <code>next</code> in the beginner of the loop, I wouldn’t see that character.</p>
 <p>For the same reason I can’t use <code>take_while</code> to get only the part of the iterator that contains digits into <code>get_number</code>. That function would hide the character after the number from my lexer.</p>
 <p>To extract a number from the input I use the following function.</p>
-<pre><code>fn get_number&lt;T: Iterator&lt;Item = char&gt;&gt;(c: char, iter: &amp;mut Peekable&lt;T&gt;) -&gt; i64 {
-    let mut number = c.to_string().parse::&lt;i64&gt;().expect(&quot;The caller should have passed a digit.&quot;);
-    while let Some(Ok(digit)) = iter.peek().map(|c| c.to_string().parse::&lt;i64&gt;()) {
-        number = number * 10 + digit;
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> get_number&lt;T: <span class="bu">Iterator</span>&lt;Item = <span class="dt">char</span>&gt;&gt;(c: <span class="dt">char</span>, iter: &amp;<span class="kw">mut</span> Peekable&lt;T&gt;) -&gt; <span class="dt">i64</span> {
+    <span class="kw">let</span> <span class="kw">mut</span> number = c.to_string().parse::&lt;<span class="dt">i64</span>&gt;().expect(<span class="st">&quot;The caller should have passed a digit.&quot;</span>);
+    <span class="kw">while</span> <span class="kw">let</span> <span class="cn">Some</span>(<span class="cn">Ok</span>(digit)) = iter.peek().map(|c| c.to_string().parse::&lt;<span class="dt">i64</span>&gt;()) {
+        number = number * <span class="dv">10</span> + digit;
         iter.next();
     }
     number
-}</code></pre>
+}</code></pre></div>
 <p>Here again I can’t use <code>next</code> in the <code>while</code> because I don’t want to consume the first non-digit, like <code>take_while</code> would. Instead I only <code>peek</code> at the next character. I use <code>map</code> to attempt a parsing of the digit into an int only in the <code>Some</code> case without having to do another <code>if let</code>. In case of <code>None</code> from the <code>peek</code>, <code>map</code> is a no-op. Maybe I should do some calculations involving the ASCII value of <code>c</code>, or alternatively extract the whole number as a slice and <code>parse</code> that to be more efficient.</p>
-<p>The next step is to actually start constructing the parse tree. As I said above, I use the <code>parse_expr</code> function for a simple recursive descent. It looks like this:</p>
-<pre><code>fn parse_expr(tokens: &amp;Vec&lt;LexItem&gt;, pos: usize) -&gt; Result&lt;(ParseNode, usize), String&gt; {
-    let (node_summand, next_pos) = try!(parse_summand(tokens, pos));
-    let c = tokens.get(next_pos);
-    match c {
-        Some(&amp;LexItem::Op(&#39;+&#39;)) =&gt; {
-            // recurse on the expr
-            let mut sum = ParseNode::new();
+<h2 id="parsing">Parsing</h2>
+<p>The next step is to actually start constructing the parse tree. My parse function looks like this:</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> parse(input: &amp;<span class="dt">String</span>) -&gt; <span class="dt">Result</span>&lt;ParseNode, <span class="dt">String</span>&gt; {
+    <span class="kw">let</span> tokens = <span class="pp">try!</span>(lex(input));
+    parse_expr(&amp;tokens, <span class="dv">0</span>).and_then(|(n, i)| <span class="kw">if</span> i == tokens.len() {
+        <span class="cn">Ok</span>(n)
+    } <span class="kw">else</span> {
+        <span class="cn">Err</span>(<span class="pp">format!</span>(<span class="st">&quot;Expected end of input, found {:?} at {}&quot;</span>, tokens[i], i))
+    })
+}</code></pre></div>
+<p>Parsing can fail, so I return a <code>Result</code>. I first attempt to lex the input using the <code>lex</code> function, which I will show you in a moment. Lexing can also fail, so <code>lex</code> also returns a <code>Result</code>. At first I had a <code>match</code> on the return value of <code>lex</code>, so that I could call the parsing function only upon success, but then I learned about the <code>try!</code> macro. That’s a neat helper function that takes a <code>Result</code> and unwraps it if it’s ok and otherwise returns the error.</p>
+<p>If the lexing succeeds I stuff the tokens into the <code>parse_expr</code> function. The second parameter tells the function that it should start at the beginning. Since parsing can fail, <code>parse_expr</code> also returns a Result. In the success case, it returns a parse tree and an index one-past the last token it consumed. It can happen that the <code>parse_expr</code> function manages to construct a parse tree, but doesn’t consume all input. For example for the input string <code>(1+2)(3+4)</code> we manage to parse the <code>(1+2)</code> prefix, but then get stuck. In the success case, I want to check that the index returned indicates that we consumed all tokens. This doesn’t happen in the <code>parse_expr</code> function itself, because I want to use it recursively to parse the <code>( expr )</code> production in the grammar. In that case it is expected to stop parsing before consuming the closing <code>)</code>.</p>
+<p>This time I use the <code>and_then</code> function of the <code>Result</code> type to continue the computation if parsing was successful (I think I could have used another <code>try!</code> if I wanted to. I don’t know enough Rust to say which is more idiomatic). The closure that I put into <code>and_then</code> gets the <code>ParseNode</code> <code>n</code> and the index <code>i</code>. If the index is too small, I error out. The error message is constructed using the <code>format!</code> macro.</p>
+<p>I use the <code>parse_expr</code> function for a simple recursive descent. It looks like this:</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> parse_expr(tokens: &amp;<span class="dt">Vec</span>&lt;LexItem&gt;, pos: <span class="dt">usize</span>) -&gt; <span class="dt">Result</span>&lt;(ParseNode, <span class="dt">usize</span>), <span class="dt">String</span>&gt; {
+    <span class="kw">let</span> (node_summand, next_pos) = <span class="pp">try!</span>(parse_summand(tokens, pos));
+    <span class="kw">let</span> c = tokens.get(next_pos);
+    <span class="kw">match</span> c {
+        <span class="cn">Some</span>(&amp;LexItem::Op(<span class="ch">&#39;+&#39;</span>)) =&gt; {
+            <span class="co">// recurse on the expr</span>
+            <span class="kw">let</span> <span class="kw">mut</span> sum = ParseNode::new();
             sum.entry = GrammarItem::Sum;
             sum.children.push(node_summand);
-            let (rhs, i) = try!(parse_expr(tokens, next_pos + 1));
+            <span class="kw">let</span> (rhs, i) = <span class="pp">try!</span>(parse_expr(tokens, next_pos + <span class="dv">1</span>));
             sum.children.push(rhs);
-            Ok((sum, i))
+            <span class="cn">Ok</span>((sum, i))
         }
         _ =&gt; {
-            // we have just the summand production, nothing more.
-            Ok((node_summand, next_pos))
+            <span class="co">// we have just the summand production, nothing more.</span>
+            <span class="cn">Ok</span>((node_summand, next_pos))
         }
     }
-}</code></pre>
+}</code></pre></div>
 <p>Instead of an iterator I use an index into the vector. I found this easier because <code>usize</code> can be copied around implicitly and I have no trouble with the borrow-checker. I first attempt to parse a summand with <code>parse_summand</code>. This returns a <code>Result</code>. I use <code>try!</code> to continue the computation if it succeeds. If I successfully parsed a summand, I check whether the next token is a <code>+</code>. I that case I need to parse the RHS of the <code>+</code> recursively. The function to parse a summand looks very similar.</p>
-<pre><code>fn parse_summand(tokens: &amp;Vec&lt;LexItem&gt;, pos: usize) -&gt; Result&lt;(ParseNode, usize), String&gt; {
-    let (node_term, next_pos) = try!(parse_term(tokens, pos));
-    let c = tokens.get(next_pos);
-    match c {
-        Some(&amp;LexItem::Op(&#39;*&#39;)) =&gt; {
-            // recurse on the expr
-            let mut product = ParseNode::new();
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> parse_summand(tokens: &amp;<span class="dt">Vec</span>&lt;LexItem&gt;, pos: <span class="dt">usize</span>) -&gt; <span class="dt">Result</span>&lt;(ParseNode, <span class="dt">usize</span>), <span class="dt">String</span>&gt; {
+    <span class="kw">let</span> (node_term, next_pos) = <span class="pp">try!</span>(parse_term(tokens, pos));
+    <span class="kw">let</span> c = tokens.get(next_pos);
+    <span class="kw">match</span> c {
+        <span class="cn">Some</span>(&amp;LexItem::Op(<span class="ch">&#39;*&#39;</span>)) =&gt; {
+            <span class="co">// recurse on the expr</span>
+            <span class="kw">let</span> <span class="kw">mut</span> product = ParseNode::new();
             product.entry = GrammarItem::Product;
             product.children.push(node_term);
-            let (rhs, i) = try!(parse_expr(tokens, next_pos + 1));
+            <span class="kw">let</span> (rhs, i) = <span class="pp">try!</span>(parse_expr(tokens, next_pos + <span class="dv">1</span>));
             product.children.push(rhs);
-            Ok((product, i))
+            <span class="cn">Ok</span>((product, i))
         }
         _ =&gt; {
-            // we have just the term production, nothing more.
-            Ok((node_term, next_pos))
+            <span class="co">// we have just the term production, nothing more.</span>
+            <span class="cn">Ok</span>((node_term, next_pos))
         }
     }
-}</code></pre>
+}</code></pre></div>
 <p>I suppose I could have abstracted a bit, but I don’t know whether the reduced code duplication would have been worth the increased complexity.</p>
 <p>The function to parse a term looks most complicated, because this is where I generate all my more or less helpful error messages.</p>
-<pre><code>fn parse_term(tokens: &amp;Vec&lt;LexItem&gt;, pos: usize) -&gt; Result&lt;(ParseNode, usize), String&gt; {
-    let c: &amp;LexItem = try!(tokens.get(pos)
-        .ok_or(String::from(&quot;Unexpected end of input, expected paren or number&quot;)));
-    match c {
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> parse_term(tokens: &amp;<span class="dt">Vec</span>&lt;LexItem&gt;, pos: <span class="dt">usize</span>) -&gt; <span class="dt">Result</span>&lt;(ParseNode, <span class="dt">usize</span>), <span class="dt">String</span>&gt; {
+    <span class="kw">let</span> c: &amp;LexItem = <span class="pp">try!</span>(tokens.get(pos)
+        .ok_or(<span class="dt">String</span>::from(<span class="st">&quot;Unexpected end of input, expected paren or number&quot;</span>)));
+    <span class="kw">match</span> c {
         &amp;LexItem::Num(n) =&gt; {
-            let mut node = ParseNode::new();
+            <span class="kw">let</span> <span class="kw">mut</span> node = ParseNode::new();
             node.entry = GrammarItem::Number(n);
-            Ok((node, pos + 1))
+            <span class="cn">Ok</span>((node, pos + <span class="dv">1</span>))
         }
         &amp;LexItem::Paren(c) =&gt; {
-            match c {
-                &#39;(&#39; | &#39;[&#39; | &#39;{&#39; =&gt; {
-                    parse_expr(tokens, pos + 1).and_then(|(node, next_pos)| {
-                        if let Some(&amp;LexItem::Paren(c2)) = tokens.get(next_pos) {
-                            if c2 == matching(c) {
-                                // okay!
-                                let mut paren = ParseNode::new();
+            <span class="kw">match</span> c {
+                <span class="ch">&#39;(&#39;</span> | <span class="ch">&#39;[&#39;</span> | <span class="ch">&#39;{&#39;</span> =&gt; {
+                    parse_expr(tokens, pos + <span class="dv">1</span>).and_then(|(node, next_pos)| {
+                        <span class="kw">if</span> <span class="kw">let</span> <span class="cn">Some</span>(&amp;LexItem::Paren(c2)) = tokens.get(next_pos) {
+                            <span class="kw">if</span> c2 == matching(c) {
+                                <span class="co">// okay!</span>
+                                <span class="kw">let</span> <span class="kw">mut</span> paren = ParseNode::new();
                                 paren.children.push(node);
-                                Ok((paren, next_pos + 1))
-                            } else {
-                                Err(format!(&quot;Expected {} but found {} at {}&quot;,
+                                <span class="cn">Ok</span>((paren, next_pos + <span class="dv">1</span>))
+                            } <span class="kw">else</span> {
+                                <span class="cn">Err</span>(<span class="pp">format!</span>(<span class="st">&quot;Expected {} but found {} at {}&quot;</span>,
                                             matching(c),
                                             c2,
                                             next_pos))
                             }
-                        } else {
-                            Err(format!(&quot;Expected closing paren at {} but found {:?}&quot;,
+                        } <span class="kw">else</span> {
+                            <span class="cn">Err</span>(<span class="pp">format!</span>(<span class="st">&quot;Expected closing paren at {} but found {:?}&quot;</span>,
                                         next_pos,
                                         tokens.get(next_pos)))
                         }
                     })
                 }
-                _ =&gt; Err(format!(&quot;Expected paren at {} but found {:?}&quot;, pos, c)),
+                _ =&gt; <span class="cn">Err</span>(<span class="pp">format!</span>(<span class="st">&quot;Expected paren at {} but found {:?}&quot;</span>, pos, c)),
             }
         }
         _ =&gt; {
-            Err(format!(&quot;Unexpected token {:?}, expected paren or number&quot;, {
+            <span class="cn">Err</span>(<span class="pp">format!</span>(<span class="st">&quot;Unexpected token {:?}, expected paren or number&quot;</span>, {
                 c
             }))
         }
     }
-}</code></pre>
+}</code></pre></div>
 <p>The function is a lot simpler than the deep nesting makes it seem. We just check whether the next token is a number or a parenthesis. If it’s a number we simply return it. If it’s a parenthesis we parse the contained expression recursively and then check that the next token is a matching closing parenthesis. The function <code>matching</code> returns the matching parenthesis using a simple <code>match</code></p>
-<pre><code>fn matching(c: char) -&gt; char {
-    match c {
-        &#39;)&#39; =&gt; &#39;(&#39;,
-        &#39;]&#39; =&gt; &#39;[&#39;,
-        &#39;}&#39; =&gt; &#39;{&#39;,
-        &#39;(&#39; =&gt; &#39;)&#39;,
-        &#39;[&#39; =&gt; &#39;]&#39;,
-        &#39;{&#39; =&gt; &#39;}&#39;,
-        _ =&gt; panic!(&quot;should have been a parenthesis!&quot;),
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> matching(c: <span class="dt">char</span>) -&gt; <span class="dt">char</span> {
+    <span class="kw">match</span> c {
+        <span class="ch">&#39;)&#39;</span> =&gt; <span class="ch">&#39;(&#39;</span>,
+        <span class="ch">&#39;]&#39;</span> =&gt; <span class="ch">&#39;[&#39;</span>,
+        <span class="ch">&#39;}&#39;</span> =&gt; <span class="ch">&#39;{&#39;</span>,
+        <span class="ch">&#39;(&#39;</span> =&gt; <span class="ch">&#39;)&#39;</span>,
+        <span class="ch">&#39;[&#39;</span> =&gt; <span class="ch">&#39;]&#39;</span>,
+        <span class="ch">&#39;{&#39;</span> =&gt; <span class="ch">&#39;}&#39;</span>,
+        _ =&gt; <span class="pp">panic!</span>(<span class="st">&quot;should have been a parenthesis!&quot;</span>),
     }
-}</code></pre>
+}</code></pre></div>
 <p>The last thing we need for this simple parser is a way to supply it with input. I use a the command line argument as input. The <code>main</code> function looks like this.</p>
-<pre><code>use std::env;
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">use</span> std::env;
 
-fn main() {
-    let args: Vec&lt;_&gt; = env::args().collect();
-    if args.len() &gt; 1 {
-        println!(&quot;The first argument is {}&quot;, args[1]);
-        println!(&quot;{:?}&quot;, parse(&amp;args[1]));
+<span class="kw">fn</span> main() {
+    <span class="kw">let</span> args: <span class="dt">Vec</span>&lt;_&gt; = env::args().collect();
+    <span class="kw">if</span> args.len() &gt; <span class="dv">1</span> {
+        <span class="pp">println!</span>(<span class="st">&quot;The first argument is {}&quot;</span>, args[<span class="dv">1</span>]);
+        <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, parse(&amp;args[<span class="dv">1</span>]));
     }
-}</code></pre>
+}</code></pre></div>
 <p>The output is not terribly pretty:</p>
-<pre><code>$ ./main &quot;1234 + 43* (34 +[2])&quot;
-The first argument is 1234 + 43* (34 +[2])
-Ok(ParseNode { children: [ParseNode { children: [], entry: Number(1234) }, ParseNode {
-children: [ParseNode { children: [], entry: Number(43) }, ParseNode { children: [ParseNode {
-children: [ParseNode { children: [], entry: Number(34) }, ParseNode { children: [ParseNode {
-children: [], entry: Number(2) }], entry: Paren }], entry: Sum }], entry: Paren }], entry:
-Product }], entry: Sum })</code></pre>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust">$ ./main <span class="st">&quot;1234 + 43* (34 +[2])&quot;</span>
+The first argument is <span class="dv">1234</span> + <span class="dv">43</span>* (<span class="dv">34</span> +[<span class="dv">2</span>])
+<span class="cn">Ok</span>(ParseNode { children: [ParseNode { children: [], entry: Number(<span class="dv">1234</span>) }, ParseNode {
+children: [ParseNode { children: [], entry: Number(<span class="dv">43</span>) }, ParseNode { children: [ParseNode {
+children: [ParseNode { children: [], entry: Number(<span class="dv">34</span>) }, ParseNode { children: [ParseNode {
+children: [], entry: Number(<span class="dv">2</span>) }], entry: Paren }], entry: Sum }], entry: Paren }], entry:
+Product }], entry: Sum })</code></pre></div>
 <p>If you properly indent it, it looks like this:</p>
-<pre><code>Ok(
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="cn">Ok</span>(
   ParseNode {
     children: [
-        ParseNode { children: [], entry: Number(1234) },
-        ParseNode { children: [
-                ParseNode { children: [], entry: Number(43) },
+      ParseNode { children: [], entry: Number(<span class="dv">1234</span>) },
+      ParseNode { children: [
+          ParseNode { children: [], entry: Number(<span class="dv">43</span>) },
+          ParseNode { children: [
+            ParseNode { children: [
+                ParseNode { children: [], entry: Number(<span class="dv">34</span>) },
                 ParseNode { children: [
-                    ParseNode { children: [
-                            ParseNode { children: [], entry: Number(34) },
-                            ParseNode { children: [
-                                    ParseNode { children: [], entry: Number(2) }
-                                ],
-                                entry: Paren
-                            }],
-                        entry: Sum
-                    }],
-            entry: Paren
+                    ParseNode { children: [], entry: Number(<span class="dv">2</span>) }
+                  ],
+                  entry: Paren
+                }],
+              entry: Sum
             }],
-        entry: Product
+        entry: Paren
         }],
-    entry: Sum })</code></pre>
-<p>It is very simple to write a pretty-printer for <code>ParseNode</code>. It’s just a combination of <code>match</code> and <code>format!</code></p>
-<pre><code>fn print(tree: &amp;ParseNode) -&gt; String {
-    match tree.entry {
+      entry: Product
+      }],
+    entry: Sum })</code></pre></div>
+<h2 id="pretty-printing">Pretty Printing</h2>
+<p>It is very simple to write a pretty-printer for <code>ParseNode</code>. It’s just a combination of <code>match</code> and <code>format!</code>. I should have done this first, it would have made debugging easier.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> print(tree: &amp;ParseNode) -&gt; <span class="dt">String</span> {
+    <span class="kw">match</span> tree.entry {
         GrammarItem::Paren =&gt; {
-            format!(&quot;({})&quot;,
-                    print(tree.children.get(0).expect(&quot;parens need one child&quot;)))
+            <span class="pp">format!</span>(<span class="st">&quot;({})&quot;</span>,
+                    print(tree.children.get(<span class="dv">0</span>).expect(<span class="st">&quot;parens need one child&quot;</span>)))
         }
         GrammarItem::Sum =&gt; {
-            let lhs = print(tree.children.get(0).expect(&quot;sums need two children&quot;));
-            let rhs = print(tree.children.get(1).expect(&quot;sums need two children&quot;));
-            format!(&quot;{} + {}&quot;, lhs, rhs)
+            <span class="kw">let</span> lhs = print(tree.children.get(<span class="dv">0</span>).expect(<span class="st">&quot;sums need two children&quot;</span>));
+            <span class="kw">let</span> rhs = print(tree.children.get(<span class="dv">1</span>).expect(<span class="st">&quot;sums need two children&quot;</span>));
+            <span class="pp">format!</span>(<span class="st">&quot;{} + {}&quot;</span>, lhs, rhs)
         }
         GrammarItem::Product =&gt; {
-            let lhs = print(tree.children.get(0).expect(&quot;products need two children&quot;));
-            let rhs = print(tree.children.get(1).expect(&quot;products need two children&quot;));
-            format!(&quot;{} * {}&quot;, lhs, rhs)
+            <span class="kw">let</span> lhs = print(tree.children.get(<span class="dv">0</span>).expect(<span class="st">&quot;products need two children&quot;</span>));
+            <span class="kw">let</span> rhs = print(tree.children.get(<span class="dv">1</span>).expect(<span class="st">&quot;products need two children&quot;</span>));
+            <span class="pp">format!</span>(<span class="st">&quot;{} * {}&quot;</span>, lhs, rhs)
         }
-        GrammarItem::Number(n) =&gt; format!(&quot;{}&quot;, n),
+        GrammarItem::Number(n) =&gt; <span class="pp">format!</span>(<span class="st">&quot;{}&quot;</span>, n),
     }
-}</code></pre>
+}</code></pre></div>
 <p>After integrating that function into <code>main</code>, the output is readable again:</p>
-<pre><code>$ ./main &quot;1234 + 43* (34 +[2])&quot;
-The first argument is 1234 + 43* (34 +[2])
-Ok(ParseNode { children: [ParseNode { children: [], entry: Number(1234) }, ParseNode {
-children: [ParseNode { children: [], entry: Number(43) }, ParseNode { children: [ParseNode {
-children: [ParseNode { children: [], entry: Number(34) }, ParseNode { children: [ParseNode {
-children: [], entry: Number(2) }], entry: Paren }], entry: Sum }], entry: Paren }], entry:
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust">$ ./main <span class="st">&quot;1234 + 43* (34 +[2])&quot;</span>
+The first argument is <span class="dv">1234</span> + <span class="dv">43</span>* (<span class="dv">34</span> +[<span class="dv">2</span>])
+<span class="cn">Ok</span>(ParseNode { children: [ParseNode { children: [], entry: Number(<span class="dv">1234</span>) }, ParseNode {
+children: [ParseNode { children: [], entry: Number(<span class="dv">43</span>) }, ParseNode { children: [ParseNode {
+children: [ParseNode { children: [], entry: Number(<span class="dv">34</span>) }, ParseNode { children: [ParseNode {
+children: [], entry: Number(<span class="dv">2</span>) }], entry: Paren }], entry: Sum }], entry: Paren }], entry:
 Product }], entry: Sum })
-1234 + 43 * (34 + (2))</code></pre>
-<p>The next step is testing the parser properly using QuickCheck. I’ll do that next and update this article.</p>
+<span class="dv">1234</span> + <span class="dv">43</span> * (<span class="dv">34</span> + (<span class="dv">2</span>))</code></pre></div>
+<h2 id="testing">Testing</h2>
+<p>The next step is testing the parser properly using QuickCheck. This is another thing that I should have done earlier. I actually found a small “bug” using QuickCheck. In the types I use <code>i64</code>, but I can only handle positive numbers. QuickCheck produced inputs with negative numbers which I failed to parse.</p>
+<p>But let’s not get ahead of ourselves. To test with QuickCheck, I have to find a suitable invariant for my program that can be tested by throwing random inputs at it. The simplest thing for a deterministic parser like this is that pretty printing a parse tree and parsing the result again yields back the original tree.</p>
+<p>In QuickCheck you have to implement a generator for test inputs. The trait is called <code>Arbitrary</code> and has two methods: <code>arbitrary</code> and <code>shrink</code>. The point of <code>shrink</code> is to provide a way for QuickCheck to reduce counterexamples to your invariant to something manageable. I only bothered to implement the <code>arbitrary</code> function and use the <code>empty_shrinker</code> to satisfy the interface.</p>
+<p>I generate <code>ParseNode</code> instances recursively. The base case is a simple number. Otherwise I generate one of <code>Paren</code>, <code>Sum</code>, and <code>Product</code> and fill the children recursively. I use the random generator <code>Gen</code> as provided by QuickCheck. To generate a <code>GrammarItem</code> using the generator, I implemented the <code>Rand</code> trait for the enum. I found it a little strange that I had to do that manually, I would expect enums to magically work. Anyway, the implementation is not difficult. I just generate a random int and match over it.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">impl</span> <span class="bu">Rand</span> <span class="kw">for</span> GrammarItem {
+    <span class="kw">fn</span> rand&lt;R: Rng&gt;(rng: &amp;<span class="kw">mut</span> R) -&gt; GrammarItem {
+        <span class="kw">let</span> n = rng.gen_range(<span class="dv">0</span>, <span class="dv">4</span>);
+        <span class="kw">match</span> n {
+            <span class="dv">0</span> =&gt; GrammarItem::Product,
+            <span class="dv">1</span> =&gt; GrammarItem::Sum,
+            <span class="dv">2</span> =&gt; GrammarItem::Paren,
+            <span class="dv">3</span> =&gt; GrammarItem::Number(rng.gen()),
+            _ =&gt; <span class="pp">panic!</span>(<span class="st">&quot;unexpected number&quot;</span>),
+        }
+    }
+}
+
+<span class="kw">fn</span> rec_node&lt;G: Gen&gt;(i: <span class="dt">u32</span>, g: &amp;<span class="kw">mut</span> G) -&gt; ParseNode {
+    <span class="kw">let</span> <span class="kw">mut</span> node = ParseNode::new();
+    <span class="kw">if</span> i &gt;= <span class="dv">1</span> {
+        <span class="kw">loop</span> {
+            node.entry = g.gen();
+            <span class="kw">match</span> node.entry {
+                GrammarItem::Paren =&gt; {
+                    node.children.push(rec_node(i - <span class="dv">1</span>, g));
+                    <span class="kw">break</span>;
+                }
+                GrammarItem::Sum | GrammarItem::Product =&gt; {
+                    node.children.push(rec_node(i - <span class="dv">1</span>, g));
+                    node.children.push(rec_node(i - <span class="dv">1</span>, g));
+                    <span class="kw">break</span>;
+                }
+                GrammarItem::Number(_) =&gt; {}
+            }
+        }
+    } <span class="kw">else</span> {
+        node.entry = GrammarItem::Number(g.gen());
+    }
+    node
+}</code></pre></div>
+<p>Then to implement <code>Arbitrary</code> I just call that function with a small value for <code>i</code>.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">impl</span> Arbitrary <span class="kw">for</span> ParseNode {
+        <span class="kw">fn</span> arbitrary&lt;G: Gen&gt;(g: &amp;<span class="kw">mut</span> G) -&gt; ParseNode {
+           rec_node(<span class="dv">5</span>, g)
+        }
+
+        <span class="kw">fn</span> shrink(&amp;<span class="kw">self</span>) -&gt; <span class="dt">Box</span>&lt;<span class="bu">Iterator</span>&lt;Item = <span class="kw">Self</span>&gt;&gt; {
+            empty_shrinker()
+        }
+}</code></pre></div>
+<p>The property I want to test is very simple to state. I use the <code>quickcheck!</code> macro to turn a function returning a <code>bool</code> into a QuickCheck test.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="pp">quickcheck!</span> {
+    <span class="kw">fn</span> prop(xs: ParseNode) -&gt; <span class="dt">bool</span> {
+        <span class="kw">let</span> pp = print(&amp;xs);
+        <span class="kw">let</span> parsed = parse(&amp;pp).unwrap();
+        <span class="pp">println!</span>(<span class="st">&quot;instance {}&quot;</span>, pp);
+        <span class="pp">assert!</span>(pp == print(&amp;parsed)); 
+        <span class="cn">true</span>
+    }
+}</code></pre></div>
+<p>The output is only shown by QuickCheck in case the property is not satisfied, so it’s okay to just spam the pretty printed tree there, it won’t clutter up my test runs unless I need the information.</p>
+<p>As I said above, I actually found inputs where my property doesn’t hold. Namely, I can pretty print parse trees containing negative numbers, but I don’t parse them back. I fixed this by replacing <code>i64</code> by <code>u64</code> wherever appropriate. After this change the test runs green.</p>
+<p>I could have tested more thoroughly. Pretty printing always produces nice whitespace and only uses ( and ) for parentheses. But I don’t think that it’s worth the effort to change this. I also don’t test error cases. Writing a generator that produces expression strings that trigger a particular error seems difficult, I think more traditional testing is better for this. But since writing normal tests is really easy in Rust (just write <code>[#test]</code> in front of a function), I won’t bother for this toy project.</p>
+<p>So that about wraps it up. I learned a bit. The borrow checker is pretty helpful. Most of the time when it nagged me it was right and I was wrong. Enums and match are very useful for this kind of project. Testing is a breeze.</p>
 <hr/>
 <div style="display:inline-flex;flex-wrap:wrap;justify-content:space-between;font-size:80%">
 <p style="margin-right:2ex">CC-BY-SA <a href="mailto:adrian_neumann@gmx.de">Adrian Neumann</a> (PGP Key <a href="https://adriann.github.io/ressources/pub.asc">A0A8BC98</a>)</p>
