@@ -10,6 +10,17 @@ Mon, 06 Feb 2017 19:16:25 +0100
  <ttl>20000</ttl>
 
  <item>
+  <title>Writing a Simple Parser in Rust (Update 2)</title>
+  <description>
+    I added testing with QuickCheck.
+  </description>
+  <link>https://adriann.github.io/rust_parser.html</link>
+  <pubDate>
+    Thu, 16 Feb 2017 11:57:24 +0100
+  </pubDate>
+ </item>
+
+<item>
   <title>Writing a Simple Parser in Rust (Update)</title>
   <description>
 It turns out that a pretty printer is too simple to warrant its own posting.
