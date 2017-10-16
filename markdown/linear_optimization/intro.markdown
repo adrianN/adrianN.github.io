@@ -15,7 +15,7 @@ In the Diet Problem we want to find a cheap diet, say for the military. [This is
 
 Let's introduce a mathematical model of a diet. We have $i$ types of food and each foodstuff has $m$ different features, e.g. calories, price, different vitamins, etc. A diet, that is, a solution to our problem, consists of $x_i$ (kilograms) of food $i$ (say per month). The $x_i$ are the variables we want to find.
 
-We want to optimize the price of our diet, so our objective function is the sum of the amount of food $i$, $x_i$, times the cost, cost($i$), for $i=1,\ldots, n$. This is a linear function, because we don't multiply two or more variables with each other. The cost of food $i$ is not a variable, it's just a number.
+We want to optimize the price of our diet, so our objective function is the sum of the amount, $x_i$, of food $i$, times the cost, cost($i$), for $i=1,\ldots, n$. This is a linear function, because we don't multiply two or more variables with each other. The cost of food $i$ is not a variable, it's just a number.
 
 The cheapest diet is a starvation diet where you don't eat anything, but of course we want a diet that is cheap and nutritious, so we need to constrain our solution. To do so we can introduce a number of constraints. Things like 
 
@@ -27,7 +27,7 @@ As you can easily see these are all linear constraints, since for example the ca
 
 One has to be somewhat careful in designing these constraints, otherwise the solutions one gets can be amusingly impractical. The article I linked at the beginning contains a funny anecdote about this.
 
-Note that we implicitly assumed that we can have any real number as the amount of food we eat. This is bad because we might get a solution where we have to eat negative amounts of some food (Too many calories in your diet? Just try this one trick and eat negative amounts of butter!). We can fix this with additional constraints $x_i \ge 0$. Another problem is that some foods are not easily divided into small parts. It's hard to eat 0.213kg of bananas a day without wasting some bananas. We'd like to have integer values for some of the $x_i$. This can not be expressed with additional linear constraints[^1] and you'll see later on that imposing integrality constraints on our solution makes the problem a lot harder. 
+Note that we implicitly assumed that we can have any real number as the amount of food we eat. This is bad because we might get a solution where we have to eat negative amounts of some food (Too many calories in your diet? Just try this one weird trick and eat negative amounts of butter!). We can fix this with additional constraints $x_i \ge 0$. Another problem is that some foods are not easily divided into small parts. It's hard to eat 0.213kg of bananas a day without wasting some bananas. We'd like to have integer values for some of the $x_i$. This can not be expressed with additional linear constraints[^1] and you'll see later on that imposing integrality constraints on our solution makes the problem a lot harder. 
 
 But note that dropping some constraints, notably integrality constraints, can only improve the cost of the optimal solution. So a solution with fractional variables can be used as a lower bound for the optimal cost. This is an extremely useful insight if you want to prove bounds on the quality of some approximation algorithm you just came up with. Fractional solutions can also be a good start for finding true solution to your problem, for example by rounding.
 
@@ -48,4 +48,4 @@ $$\frac{(W-w_n)}{2} + w_n \leq W/2+w_n/2 \leq \mbox{opt} + \mbox{opt}/2$$
 
 
 
-[^1]: unless P=NP, I guess...
+[^1]: at least not with a reasonable number of linear constraints, unless P=NP. We'll maybe come back to this question. Eventually this series of articles will talk about techniques for finding solutions to linear programs where some variables have to be integers. 

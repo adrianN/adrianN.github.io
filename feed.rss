@@ -5,9 +5,20 @@
  <description>This is the RSS feed for my homepage. Since I update so infrequently, it is hard for people to keep up by checking manually.</description>
  <link>https://adriann.github.io</link>
 <lastBuildDate>
-Mon, 06 Feb 2017 19:16:25 +0100
+Mon, 16 Oct 2017 21:06:01 +0200
 </lastBuildDate>
  <ttl>20000</ttl>
+
+ <item>
+  <title>Linear Programs and Polyhedra</title>
+  <description>
+    I updated the text about linear programming. This updates finishes the first draft of the chapter about the shape of polyhedra. This enables me to talk about the basic simplex method in some later update. I also read the other chapters once more and corrected a couple of things.
+  </description>
+  <link>https://adriann.github.io/linear_optimization/polyhedra.html</link>
+  <pubDate>
+Mon, 16 Oct 2017 21:06:01 +0200
+  </pubDate>
+ </item>
 
  <item>
   <title>Writing a Simple Parser in Rust (Update 2)</title>

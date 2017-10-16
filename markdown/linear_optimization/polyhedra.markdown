@@ -35,8 +35,10 @@ Note that it really doesn't matter whether we use $\le$ or $\ge$. Just multiplyi
 
 <div class="block">**Def** A *polyhedron* is a set in $\text{R}^n$ whose
 members obey a set of linear inequalities
-$$\{x\in \text{R}^n | Ax \geq b\} \qquad A\in \text{R}^{m\times n},\ b\in \text{R}^m$$ If
-the region is bounded (i.e. it has a finite volume) it can also be
+
+$$\{x\in \text{R}^n | Ax \geq b\} \qquad A\in \text{R}^{m\times n},\ b\in \text{R}^m$$r
+
+If the region is bounded (i.e. it has a finite volume) it can also be
 called *polytope*. We say $n$ is the *dimensionality* of the polyhedron.
 </div>
 
@@ -115,6 +117,7 @@ statements are equivalent
 3.  $x$ is a basic feasible solution
 </div>
 
+<div class="block">
 **Proof**
 
 We show 1.) $\Rightarrow$ 2.) $\Rightarrow$ 3.) $\Rightarrow$ 1.).
@@ -165,5 +168,76 @@ We show 1.) $\Rightarrow$ 2.) $\Rightarrow$ 3.) $\Rightarrow$ 1.).
     Let $B$ be the matrix of active constraints s.t. $Bx=b$. Let $c$ be the sum of the $n$ rows of $B$. We know the objective value for $x$ w.r.t. $c$. It’s $c x = \sum b_i$.
 
     Because $B$ has rank $n$, $x$ is the unique solution to $Bx=b$. For all $y\in P$ that are different from $x$, $By > b$, hence $x$ is the optimal point for the cost vector $c$. Therefore $x$ is a vertex.
+</div>
+
+### The shape of polyhedra
+
+So far we've shown that the extreme points of a polyhedron, i.e. its corners, are also vertices, that is, optimal solutions for *some* cost vector. However, we want to be able to say that for *every* cost vector we can find an optimal solution that is also an extreme point.
+
+In this section we'll learn that polyhedra are so called *convex sets* and, for bounded polyhedra, every point inside the set can be expressed as a linear combination of the extreme points. Recall that a vector $x$ is a linear combinations of some vectors $y_1,\ldots, y_n$ if you can find constants $\lambda_1,\ldots, \lambda_n$ such that $x=\sum_i \lambda_i y_i$, or in vector notation $x=\lambda \cdot y$.
+
+<div class="block"> **Def** A subset $S\subseteq R^n$ is called *convex* if for any to points $x,y\in S$ the line connecting $x$ and $y$ is also in $S$. That is
+
+$$\forall \lambda \in [0,1], \forall x,y\in S: \lambda x + (1-\lambda)y \in S$$
+</div>
+
+<div class="block"> **Theorem** Polyhedra are convex sets.
+</div>
+
+<div class="block"> **Proof** This follows directly from the definition. Recall that we defined a polyhedron as the set of points 
+
+$$\{x\in \text{R}^n | Ax \geq b\}$$
+
+for some matrix A. Since matrix multiplication is linear we have for some $y_1,y_2$ from $P$ that
+
+$$A\cdot (\lambda y_1 + (1-\lambda) y_2) \ge \lambda b + (1-\lambda) b = b$$
+</div>
+
+Note that the notion of convex combination can be extended to sets of more than two points trivially. It is a simple exercise to show that this doesn't change what it means to be a convex set. I will just use it.
+
+<div class="block">**Def** The *convex hull* of a set of vectors $X=x_1,\ldots, x_n$ is the set
+
+$$\text{CH}(X)=\bigcup_{\sum \lambda_i=1} \left\{\sum_{i=1}^n \lambda_i x_i\right\}$$
+
+That is, the convex hull is the union of all convex combinations that can be formed from the vectors in $X$.
+</div>
+
+Intuitively the convex hull is the set you get by spanning a tight rubber band around the vectors of $X$.
+
+We come to the central result of this section. The next theorem shows that the extreme points of a polyhedron span the whole polyhedron. This is what allows us to only look at the extreme points when looking for an optimal solution to a LP.
+
+<div class="block">**Theorem** Let $P$ be a non-empty bounded polyhedron and let $E$ be the set of extreme points of $P$. Then $P = \text{CH}(E)$
+</div>
+
+<div class="block">**Proof**  We show both directions. First we show $\text{CH}(E) \subseteq P$. This direction is particularly easy. We already showed that polyhedra are convex sets, hence any convex combination of points from $P$ still lies in $P$.
+
+Now we show the other direction $P \subseteq \text{CH}(E)$. To do so we show that an arbitrary point $x\in P$ can be expressed as a convex combination of extreme points. The proof of this is very similar to the proof we gave above that extreme points are basic feasible solutions.
+
+Consider $Ax \ge b$. We rearrange the rows of $A$, $x$, and $b$ such that the first $k$ inequalities are tight. We can decompose $A$ into two matrices $B$ and $C$ such that $A=B+C$ by taking $B$ as the first $k$ rows of $A$ (and fill it with 0) and $C$ as the last $n-k$ rows of $A$ (and fill with 0 from the top).
+
+If the rank of $B$ is $n$, then $x$ is a basic feasible solution (i.e. an extreme point by the theorem above) and we're done. Otherwise we can find some vector $y$ in the kernel of $B$, i.e. $By=0$. Since the equalities defined by $C$ are not tight, we can move $x$ by some $\epsilon_1$ in the $y$ direction without leaving the polyhedron. We chose $\epsilon_1$ such that at least one constraint of $C$ becomes tight for $x=x+\epsilon_1 y$. There also has to be an $\epsilon_2$ that takes us to a boundary in the opposite direction. Let $x_2=x-\epsilon_2 y$.
+
+As in the previous proof $x$ can be expressed as a convex combination of $x_1$ and $x_2$. If $x_1$ and $x_2$ are extreme points, we're done. Otherwise we can repeat the same process for $x_1$ and $x_2$, only this time the rank of $B$ is one greater than before. Eventually we will reach full rank and hence a set of extreme points that can express $x$ as a convex combination.
+</div>
+
+Now that we know that every point in the polyhedron can be expressed as a convex combination of extreme points, we can use this fact to show that for *every* const vector $c$ we can find an optimal point that is also an extreme point.
+
+<div class="block">**Corollary** Let $P$ be a non-empty bounded polyhedron. Then the LP $\text{min } cx$ such that $x\in P$ has an optimal solution that is an extreme point.
+</div>
+
+<div class="block">**Proof** Let $x^*$ be an optimal solution and let $v=cx$ be the optimal objective value. By the previous theorem we can write $x^*$ as a convex combination of extreme points
+
+$$x^* = \sum \lambda_i y_i.$$
+
+We want to  show that there is a $y_i$ such that $c y_i= c x^*$. We already know that $v=cx^*$ is minimal, so we know that $cy_i\geq v$ for all $i$. Since the $\lambda_i$ must sum to 1, we can conclude that for at least one $y_i$ we actually have $cy_i=v$. Otherwise can can quickly derive the following contradiction:
+
+$$v=c x^* = c\sum \lambda_i y_i > c\sum \lambda_i x^* = \sum \lambda_i cx^* = v\sum \lambda_i = v$$
+
+</div>
+
+Now we have all ingredients for an algorithm. We have shown that for *every* cost vector there is an extreme point that is an optimal solution. Therefore we can find the optimal solution to a LP by enumerating extreme points. We also know that extreme points are basic feasible solutions, that is, points where the matrix of active constraints has full rank. That is, once we found one basic feasible solution we can move to another one by manipulating a matrix -- throwing out one active constraint and replacing it by a different one. This is the basic strategy of the Simplex method, that we'll discuss in the next section.
+
+(The next section is coming when I get around to writing it.)
 
 
+[Click here to go back to the index](../linear_optimization.html)
