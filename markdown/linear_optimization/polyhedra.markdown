@@ -36,7 +36,7 @@ Note that it really doesn't matter whether we use $\le$ or $\ge$. Just multiplyi
 <div class="block">**Def** A *polyhedron* is a set in $\text{R}^n$ whose
 members obey a set of linear inequalities
 
-$$\{x\in \text{R}^n | Ax \geq b\} \qquad A\in \text{R}^{m\times n},\ b\in \text{R}^m$$r
+$$\{x\in \text{R}^n | Ax \geq b\} \qquad A\in \text{R}^{m\times n},\ b\in \text{R}^m$$
 
 If the region is bounded (i.e. it has a finite volume) it can also be
 called *polytope*. We say $n$ is the *dimensionality* of the polyhedron.
