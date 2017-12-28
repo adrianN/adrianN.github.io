@@ -5,9 +5,20 @@
  <description>This is the RSS feed for my homepage. Since I update so infrequently, it is hard for people to keep up by checking manually.</description>
  <link>https://adriann.github.io</link>
 <lastBuildDate>
-Mon, 16 Oct 2017 21:06:01 +0200
+Thu, 28 Dec 2017 14:15:14 +0100
 </lastBuildDate>
  <ttl>20000</ttl>
+
+ <item>
+  <title>MovieThingy</title>
+  <description>
+    I added MovieThingy, a TUI tool for playing movies from a collection of mp4s on my Raspberry Pi, to the useful things I programmed.
+  </description>
+  <link>https://github.com/adrianN/MovieThingy</link>
+  <pubDate>
+Thu, 28 Dec 2017 14:15:14 +0100
+  </pubDate>
+ </item>
 
  <item>
   <title>Linear Programs and Polyhedra</title>

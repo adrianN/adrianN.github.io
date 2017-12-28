@@ -5,8 +5,8 @@
 
 The most useful things are:
 
+* [Tool for playing movies on a Raspberry Pi](https://github.com/adrianN/MovieThingy)
 * [Tool for extracting graphs from images of things like leaves, slime molds, insect wings, etc.](http://nefi.mpi-inf.mpg.de)
-* [Tool for compiling single chapters in LaTeX documents.](https://github.com/adrianN/latex-compile-chapter)
 * [Tool for mail-merge tasks with LaTeX](https://github.com/adrianN/latex-mailmerge)
 
 The least useful thing is a [fish simulation](http://www.mpi-inf.mpg.de/~aneumann/Fische/) that by now has fallen prey to improved security standards in browsers. Back in the day you could just run Java applets...
