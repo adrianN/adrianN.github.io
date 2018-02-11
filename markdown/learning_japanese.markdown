@@ -45,10 +45,11 @@ Reading
 
 I think reading is really essential if you want to improve quickly. It reinforces both vocabulary and grammar and helps you develop a feel for the language. Reading texts is a natural way to get those study hours under your belt. My Japanese got a lot better after I started getting my news from the NHK Easy News. As you can read at your own pace and consult a dictionary or a grammar text at your leisure, you can start reading quite early in your Japanese studies, which I unfortunately did not do.
 
-There are plugins for your browser that let you hover over words to display their translation. I use [Perapera Japanese](https://addons.mozilla.org/en-US/firefox/addon/perapera-kun-japanese-popup-tr/) for Firefox, but I try to avoid it as much as possible. I find that I can remember a word much better if I try to deduce its meaning from the context first.
+There are plugins for your browser that let you hover over words to display their translation. I use [Yomichan](https://addons.mozilla.org/en-US/firefox/addon/yomichan/) for Firefox, but I try to avoid it as much as possible. I find that I can remember a word much better if I try to deduce its meaning from the context first. Yomichan has a nice integration with Anki, you can add words that you don't know automatically to your deck, with surrounding context. This is a nice way to keep increasing your vocabulary after you finished the basic Japanese deck.
 
 * [NHK Easy News](http://www3.nhk.or.jp/news/easy/) News for children and foreigners updated on weekdays. Simple Japanese, Furigana, reasonably interesting. As the language is kept very simple, it is quite repetitive. After struggling for a couple of weeks you will quickly learn all the grammar they use and most of the words. 
 * [The Great Chokochoko Library](https://chokochoko.wordpress.com/the-great-library/) contains Japanese stories and articles on different topics at various reading levels.
+* 児童書: "Children's books" Amazon.jp delivers these world wide for reasonable fees. Even though the language is simplified for children, the lack of an electronic dictionary makes these quite challenging to read.
 
 Listening
 ---------
@@ -57,6 +58,7 @@ I find listening a lot harder than reading. But some people swear by listening t
 
 * The [NHK Easy News](http://www3.nhk.or.jp/news/easy/) provide audio for their articles in slow Japanese. Together with the text that makes them easy to understand. If they are already too easy for you, they have a link to the normal news article for adults. For me, normal news are way too hard though.
 * [NHK Kokokoza](http://www.nhk.or.jp/kokokoza/) Videos that repeat subjects from school for Japanese students. This is real spoken Japanese at native speed. They're very well done. [Basic English](http://www.nhk.or.jp/kokokoza/tv/basiceng_sp/) in particularly easy to understand. In general, I think that these are reasonably easy to understand, because you should already be familiar with the topic from school. 
+* [Try It](https://www.youtube.com/channel/UCcj-cHmS0uD91MLjtdiN89Q) More videos with subjects from school. There are nearly 4000 videos here.
 
 [^1]: Currently I learn seven new words each day, but on average I also forget one or two old words...
 [^2]: For example "Verb(a)なければなりません" is often taught as "have to do Verb". You have to remember to inflect the verb to end with an あ and then add this long sequence of syllables. I find it a lot easier to remember that you negate the verb (make it end with ない), then inflect it to the conditional form (なければ) and then add "won't do" (lit. won't become) to get "If you don't Verb, it won't do." Anyway, this is not really important for this page, but examples like the above make me prefer "real" grammar texts over the formulaic approach I encountered in textbooks.

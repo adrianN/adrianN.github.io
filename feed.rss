@@ -10,6 +10,17 @@ Thu, 28 Dec 2017 14:15:14 +0100
  <ttl>20000</ttl>
 
  <item>
+  <title>More Japanese</title>
+  <description>
+    I added a link to the Try It youtube channel, yomichan and mentioned 児童書.
+  </description>
+  <link>https://adriann.github.io/learning_japanese.html</link>
+  <pubDate>
+Sun, 11 Feb 2018 16:13:07 +0100
+  </pubDate>
+ </item>
+ <item>
+
   <title>MovieThingy</title>
   <description>
     I added MovieThingy, a TUI tool for playing movies from a collection of mp4s on my Raspberry Pi, to the useful things I programmed.
