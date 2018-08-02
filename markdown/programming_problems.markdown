@@ -83,13 +83,12 @@ If your language of choice doesn't have a build in list and/or string type (e.g.
 ###### perfect squares explained
 ```
 find n by multiplying the number m with m. 
-$n = m * m$
+n = m * m
 perfect square
-$m = 6 means n = 36$
-$m = 7 means n = 49$
+m = 6 means n = 36
+m = 7 means n = 49
 
-therefore these are not the n of a perfect square
-everyting between 37 - 48
+Is 37 the n of a perfect square? no, because m couldn't be the same number twice.
 ```
 
 1. Write a function that concatenates two lists. `[a,b,c]`, `[1,2,3]` &rarr; `[a,b,c,1,2,3]`
