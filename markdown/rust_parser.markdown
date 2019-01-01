@@ -1,6 +1,8 @@
 % Writing a Simple Parser in Rust
 % Adrian Neumann (adrian_neumann@gmx.de)
 
+*Erratum* Boris Berger pointed out that I made a mistake in the grammar that allows parsing 3 * 4 + 5 as 3 * (4 + 5) instead of (3 * 4) + 5. This is now corrected.
+
 In an effort to learn [Rust](https://www.rust-lang.org) I wrote a parser for simple arithmetic expressions. I want to parse expressions of the form `1234 + 43* (34 +[2])` using a simple recursive descent parser. Maybe I'll try one of the libraries for writing parsers next. [Nom](https://github.com/Geal/nom) looks good.
 
 First I define a grammar for my language. To refresh my memory about how grammars for arithmetic expressions should look like, I consult [this site](http://pages.cs.wisc.edu/~fischer/cs536.s08/course.hold/html/NOTES/3.CFG.html#exp). I want `*` to have higher precedence than `+` and of course expressions in parentheses should have higher precedence still.
@@ -9,7 +11,7 @@ The grammar I came up with is as follows:
 
 ~~~~~~~
    expr -> summand + expr | summand
-   summand -> term * expr | term
+   summand -> term * summand | term
    term -> NUMBER | ( expr )
 ~~~~~~~
 
@@ -173,11 +175,11 @@ fn parse_summand(tokens: &Vec<LexItem>, pos: usize) -> Result<(ParseNode, usize)
     let c = tokens.get(next_pos);
     match c {
         Some(&LexItem::Op('*')) => {
-            // recurse on the expr
+            // recurse on the summand
             let mut product = ParseNode::new();
             product.entry = GrammarItem::Product;
             product.children.push(node_term);
-            let (rhs, i) = try!(parse_expr(tokens, next_pos + 1));
+            let (rhs, i) = try!(parse_summand(tokens, next_pos + 1));
             product.children.push(rhs);
             Ok((product, i))
         }

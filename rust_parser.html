@@ -62,11 +62,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="header">
 <h1 class="title">Writing a Simple Parser in Rust</h1>
 </div>
+<p><em>Erratum</em> Boris Berger pointed out that I made a mistake in the grammar that allows parsing 3 * 4 + 5 as 3 * (4 + 5) instead of (3 * 4) + 5. This is now corrected.</p>
 <p>In an effort to learn <a href="https://www.rust-lang.org">Rust</a> I wrote a parser for simple arithmetic expressions. I want to parse expressions of the form <code>1234 + 43* (34 +[2])</code> using a simple recursive descent parser. Maybe I’ll try one of the libraries for writing parsers next. <a href="https://github.com/Geal/nom">Nom</a> looks good.</p>
 <p>First I define a grammar for my language. To refresh my memory about how grammars for arithmetic expressions should look like, I consult <a href="http://pages.cs.wisc.edu/~fischer/cs536.s08/course.hold/html/NOTES/3.CFG.html#exp">this site</a>. I want <code>*</code> to have higher precedence than <code>+</code> and of course expressions in parentheses should have higher precedence still.</p>
 <p>The grammar I came up with is as follows:</p>
 <pre><code>   expr -&gt; summand + expr | summand
-   summand -&gt; term * expr | term
+   summand -&gt; term * summand | term
    term -&gt; NUMBER | ( expr )</code></pre>
 <h2 id="types">Types</h2>
 <p>Next I want define a type for items in this grammar. Normally I’d use inheritance, but Rust doesn’t have inheritance, so instead I use an <code>enum</code>. Enums in Rust are very useful because unlike in C I can add information to an enum value. For my grammar items, I add the value of the <code>NUMBER</code> terminal to the corresponding enum value.</p>
@@ -185,11 +186,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
     <span class="kw">let</span> c = tokens.get(next_pos);
     <span class="kw">match</span> c {
         <span class="cn">Some</span>(&amp;LexItem::Op(<span class="ch">&#39;*&#39;</span>)) =&gt; {
-            <span class="co">// recurse on the expr</span>
+            <span class="co">// recurse on the summand</span>
             <span class="kw">let</span> <span class="kw">mut</span> product = ParseNode::new();
             product.entry = GrammarItem::Product;
             product.children.push(node_term);
-            <span class="kw">let</span> (rhs, i) = <span class="pp">try!</span>(parse_expr(tokens, next_pos + <span class="dv">1</span>));
+            <span class="kw">let</span> (rhs, i) = <span class="pp">try!</span>(parse_summand(tokens, next_pos + <span class="dv">1</span>));
             product.children.push(rhs);
             <span class="cn">Ok</span>((product, i))
         }
