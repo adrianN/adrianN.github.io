@@ -26,6 +26,7 @@ More can be found on my [Github page](https://github.com/adrianN?tab=repositorie
 
 ### Less Science
 
+* [Some stuff related to climate change](climate_change.html)
 * [Linear Optimization](linear_optimization.html)
 * [Counting subgraphs in streams](counting_subgraphs.html)
 * [Distributing balls into bins](ballsBins.html)
