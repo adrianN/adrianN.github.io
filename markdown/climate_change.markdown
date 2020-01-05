@@ -15,4 +15,5 @@ So you need at least 144sqm of solar panels per person, if you're generous about
 
 * [100% renewables (German)](http://energywatchgroup.org/wp-content/uploads/EWG_LUT_100RE_AllSectors_Global_KeyFindings_GER.pdf)
 * [Climate Clubs to Overcome Free-Riding (by Nordhaus)](https://issues.org/climate-clubs-to-overcome-free-riding/)
+* [How much area do we need for renewables (German)](https://www.wwf.de/2018/oktober/energiewende-mit-mensch-und-natur/) (2-2.5% of the area in the case of Germany)
 
