@@ -5,9 +5,20 @@
  <description>This is the RSS feed for my homepage. Since I update so infrequently, it is hard for people to keep up by checking manually.</description>
  <link>https://adriann.github.io</link>
 <lastBuildDate>
-Thu, 28 Dec 2017 14:15:14 +0100
+Sat, 18 Jan 2020 09:05:47 +0100
 </lastBuildDate>
  <ttl>20000</ttl>
+
+ <item>
+  <title>Future-proof static websites</title>
+  <description>
+    How to make a website only with unix tools.
+  </description>
+  <link>https://adriann.github.io/static_sites.html</link>
+  <pubDate>
+Sat, 18 Jan 2020 09:05:47 +0100
+  </pubDate>
+ </item>
 
  <item>
   <title>More Japanese</title>
@@ -19,8 +30,8 @@ Thu, 28 Dec 2017 14:15:14 +0100
 Sun, 11 Feb 2018 16:13:07 +0100
   </pubDate>
  </item>
- <item>
 
+ <item>
   <title>MovieThingy</title>
   <description>
     I added MovieThingy, a TUI tool for playing movies from a collection of mp4s on my Raspberry Pi, to the useful things I programmed.

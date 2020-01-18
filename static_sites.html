@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <link href="https://adriann.github.io/feed.rss" rel="alternate" type="application/rss+xml" title="What's new on adriann.github.io" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Adrian Neumann (adrian_neumann@gmx.de)" />
+  <title>Future Proof Static Websites</title>
+  <style>
+  .caption{font-size:66%;text-align:right;}
+  .figure{float:right;padding-bottom:1em;padding-left:1em;}
+  .figure>img{display:block;margin:0 auto;}
+  .footnotes{font-size:80%;}
+  .block{border-left:1ex solid gray;padding-left:2em;}
+  li{padding:0.25em;}
+  a:hover{text-shadow: 0 0 5px;}
+  body{font-family:sans-serif;max-width:100ex;padding-left:3em;padding-right:2em;}
+  code{font-family:Consolas, Inconsolata, Monaco, monospace;}
+  p{text-align:justify;}
+  </style>
+</head>
+<body>
+<div id="header">
+<h1 class="title">Future Proof Static Websites</h1>
+</div>
+<p>I administer the website for my <a href="https://takemusu-aikido-berlin.de">Aikido Group</a>. As is the nature of websites for small sports clubs, it contains only static content and changes very rarely. Naturally, I used a static site generator, namely Pelican (because I know some Python). For hosting I use <a href="https://www.nearlyfreespeech.net/">Nearly Free Speech</a> because they provide exactly what I need for about thirty cents a month. All logging is disabled so that I don’t have to worry about accidentally storing PII.</p>
+<p>Everything worked fine and I got a website.</p>
+<p>Now after a year or two where the website remained untouched I wanted to change something. Meanwhile my Python environment changed and Pelican was no longer working. I also had forgotten everything I learned about Pelican when I first set up the site.</p>
+<p>As I don’t really enjoy fiddling with software that doesn’t work, I considered just taking the HTML that Pelican produced the last time it worked and editing it by hand. However, the generated code was too complicated for my very limited HTML skills and I didn’t like copying around a lot of stuff to get things like a navigation menu.</p>
+<p>The website you’re currently on is made with a combination of <a href="https://pandoc.org">Pandoc</a> and a bit of shell and hosted on Github Pages. This setup works well, but I don’t really get a lot of benefit from using Markdown over just using plain HTML.</p>
+<p>So this time I simplified things a little more. All I really need is a bit of help copypasting things like the navigation into all pages. Luckily there is a POSIX tool for that: <code>m4</code>. <code>m4</code> is a Turing complete macro language that, to my knowledge, is mostly used to generate stuff it <code>automake</code>. It’s actually very easy to use for simple templating (and, being Turing complete, can also be used for very complex templating).</p>
+<p>I only use <code>m4</code> to include stuff in the header and the navigation, so for my purposes something even simpler might still work, but I don’t know anything that does <em>just</em> file inclusion.</p>
+<p>Now each page looks like this</p>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;de&quot;&gt;
+
+include(../macros/header)
+
+&lt;body&gt;
+
+include(../macros/nav)
+
+&lt;section id=&quot;content&quot;&gt;
+
+&lt;p&gt; The actual content &lt;/p&gt;
+
+&lt;/body&gt;
+
+&lt;/html&gt;</code></pre>
+<p>With a little more <code>m4</code> macros this could be reduced to something like</p>
+<pre><code>define(`pageContent&#39;, `
+&lt;p&gt; The actual content &lt;/p&gt;
+&#39;)
+include(../macros/page)</code></pre>
+<p>but I’m comfortable with the current amount of copypasting.</p>
+<p>The pages are stored under <code>pages/pagename.htmlm4</code> and a script like the following translates them to proper html and puts the result in <code>html/pagename.html</code>.</p>
+<pre><code>#!/bin/bash
+
+pushd .
+cd pages
+for f in `find . -name &quot;*.htmlm4&quot;`
+do
+  changeddir=&quot;${f/./../html}&quot;
+  destination=&quot;${changeddir/m4/}&quot;
+  echo &quot;${f} -&gt; ${destination}&quot;
+  m4 &quot;$f&quot; &gt; &quot;$destination&quot;
+done
+popd</code></pre>
+<p>Then I just have to <code>rsync -vrz --delete html/</code> to my hoster and I’m done. Since I only depend on <code>bash</code>, <code>rsync</code> and <code>m4</code>, I can be quite confident that I can regenerate the website in the future. And if all else fails, the whole site is simple enough HTML that I can generate it by hand.</p>
+<p>The full source of the website is available <a href="https://github.com/adrianN/takemusu-aikido-berlin.de">on Github</a>.</p>
+<hr/>
+<div style="display:inline-flex;flex-wrap:wrap;justify-content:space-between;font-size:80%">
+<p style="margin-right:2ex">CC-BY-SA <a href="mailto:adrian_neumann@gmx.de">Adrian Neumann</a> (PGP Key <a href="https://adriann.github.io/ressources/pub.asc">A0A8BC98</a>)</p>
+<p style="margin-left:1ex;margin-right:1ex"><a href="http://adriann.github.io">adriann.github.io</a></p>
+<p style="margin-left:2ex"><a href="https://adriann.github.io/feed.rss">RSS</a></p>
+</div>
+</body>
+</html>

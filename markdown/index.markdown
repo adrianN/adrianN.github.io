@@ -41,6 +41,7 @@ More can be found on my [Github page](https://github.com/adrianN?tab=repositorie
 * [Simple Programming Problems](programming_problems.html)
 * [Learning Japanese](learning_japanese.html)
 * [Segment displays with an Arduino](arduino_segment_displays.html)
+* [Future proof static sites](static_sites.html)
 
 ### Engineering
 
