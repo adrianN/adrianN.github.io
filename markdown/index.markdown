@@ -52,6 +52,7 @@ More can be found on my [Github page](https://github.com/adrianN?tab=repositorie
 
 ## Elsewhere on the Web
 
+* I maintain the website for my [Aikido Group](https://takemusu-aikido-berlin.de)
 * [Adrian's e-mail](mailto:adrian_neumann@gmx.de) (PGP Key [A210311B](http://adriann.github.io/ressources/pub.asc))
 * [MPI Homepage](http://www.mpi-inf.mpg.de/~aneumann/)
 * [Computer Science Stackoverflow](http://cs.stackexchange.com/users/4736/adriann)
