@@ -1,8 +1,6 @@
 % Writing a Simple Parser in Rust
 % Adrian Neumann (adrian_neumann@gmx.de)
 
-*Update May 2020* The code as written on the [old version of this page](rust_parser_old.html) didn't compile anymore as an astute reader noticed. I've updated this site so that it compiles with Rust 1.43. 
-
 *Erratum* Boris Berger pointed out that I made a mistake in the grammar that allows parsing 3 * 4 + 5 as 3 * (4 + 5) instead of (3 * 4) + 5. This is now corrected.
 
 In an effort to learn [Rust](https://www.rust-lang.org) I wrote a parser for simple arithmetic expressions. I want to parse expressions of the form `1234 + 43* (34 +[2])` using a simple recursive descent parser. Maybe I'll try one of the libraries for writing parsers next. [Nom](https://github.com/Geal/nom) looks good.
@@ -22,11 +20,11 @@ The grammar I came up with is as follows:
 Next I want define a type for items in this grammar. Normally I'd use inheritance, but Rust doesn't have inheritance, so instead I use an `enum`. Enums in Rust are very useful because unlike in C I can add information to an enum value. For my grammar items, I add the value of the `NUMBER` terminal to the corresponding enum value.
 
 ~~~~~~~rust
-#[derive(Debug, Clone)]
-pub enum GrammarItem {
+#[derive(Debug)]
+enum GrammarItem {
     Product,
     Sum,
-    Number(u64),
+    Number(i64),
     Paren
 }
 ~~~~~~~
@@ -34,10 +32,10 @@ pub enum GrammarItem {
 The nodes of my parse tree are structs that contain a `GrammarItem` and children in a vector like so
 
 ~~~~~~~rust
-#[derive(Debug, Clone)]
-pub struct ParseNode {
-    pub children: Vec<ParseNode>,
-    pub entry: GrammarItem,
+#[derive(Debug)]
+struct ParseNode {
+    children: Vec<ParseNode>,
+    entry: GrammarItem,
 }
 
 impl ParseNode {
@@ -60,10 +58,10 @@ Usually one parses by first lexing the input and then constructing the parse tre
 
 ~~~~~~~rust
 #[derive(Debug, Clone)]
-pub enum LexItem {
+enum LexItem {
     Paren(char),
     Op(char),
-    Num(u64),
+    Num(i64),
 }
 ~~~~~~~
 
@@ -78,7 +76,7 @@ fn lex(input: &String) -> Result<Vec<LexItem>, String> {
     let mut it = input.chars().peekable();
     while let Some(&c) = it.peek() {
         match c {
-            '0'..='9' => {
+            '0'...'9' => {
                 it.next();
                 let n = get_number(c, &mut it);
                 result.push(LexItem::Num(n));
@@ -112,9 +110,9 @@ For the same reason I can't use `take_while` to get only the part of the iterato
 To extract a number from the input I use the following function.
 
 ~~~~~~~~rust
-fn get_number<T: Iterator<Item = char>>(c: char, iter: &mut Peekable<T>) -> u64 {
-    let mut number = c.to_string().parse::<u64>().expect("The caller should have passed a digit.");
-    while let Some(Ok(digit)) = iter.peek().map(|c| c.to_string().parse::<u64>()) {
+fn get_number<T: Iterator<Item = char>>(c: char, iter: &mut Peekable<T>) -> i64 {
+    let mut number = c.to_string().parse::<i64>().expect("The caller should have passed a digit.");
+    while let Some(Ok(digit)) = iter.peek().map(|c| c.to_string().parse::<i64>()) {
         number = number * 10 + digit;
         iter.next();
     }
@@ -129,8 +127,8 @@ Here again I can't use `next` in the `while` because I don't want to consume the
 The next step is to actually start constructing the parse tree. My parse function looks like this:
 
 ~~~~~~~~rust
-pub fn parse(input: &String) -> Result<ParseNode, String> {
-    let tokens = lex(input)?;
+fn parse(input: &String) -> Result<ParseNode, String> {
+    let tokens = try!(lex(input));
     parse_expr(&tokens, 0).and_then(|(n, i)| if i == tokens.len() {
         Ok(n)
     } else {
@@ -139,17 +137,17 @@ pub fn parse(input: &String) -> Result<ParseNode, String> {
 }
 ~~~~~~~~
 
-Parsing can fail, so I return a `Result`. I first attempt to lex the input using the `lex` function, which I will show you in a moment. Lexing can also fail, so `lex` also returns a `Result`. At first I had a `match` on the return value of `lex`, so that I could call the parsing function only upon success, but then I learned about the `?` operator. That's a neat helper function that takes a `Result` and unwraps it if it's ok and otherwise bails from the function and returns the error.
+Parsing can fail, so I return a `Result`. I first attempt to lex the input using the `lex` function, which I will show you in a moment. Lexing can also fail, so `lex` also returns a `Result`. At first I had a `match` on the return value of `lex`, so that I could call the parsing function only upon success, but then I learned about the `try!` macro. That's a neat helper function that takes a `Result` and unwraps it if it's ok and otherwise returns the error.
 
 If the lexing succeeds I stuff the tokens into the `parse_expr` function. The second parameter tells the function that it should start at the beginning. Since parsing can fail, `parse_expr` also returns a Result. In the success case, it returns a parse tree and an index one-past the last token it consumed. It can happen that the `parse_expr` function manages to construct a parse tree, but doesn't consume all input. For example for the input string `(1+2)(3+4)` we manage to parse the `(1+2)` prefix, but then get stuck. In the success case, I want to check that the index returned indicates that we consumed all tokens. This doesn't happen in the `parse_expr` function itself, because I want to use it recursively to parse the `( expr )` production in the grammar. In that case it is expected to stop parsing before consuming the closing `)`.
 
-This time I use the `and_then` function of the `Result` type to continue the computation if parsing was successful (I think I could have used another `?` if I wanted to. I don't know enough Rust to say which is more idiomatic). The closure that I put into `and_then` gets the `ParseNode` `n` and the index `i`. If the index is too small, I error out. The error message is constructed using the `format!` macro.
+This time I use the `and_then` function of the `Result` type to continue the computation if parsing was successful (I think I could have used another `try!` if I wanted to. I don't know enough Rust to say which is more idiomatic). The closure that I put into `and_then` gets the `ParseNode` `n` and the index `i`. If the index is too small, I error out. The error message is constructed using the `format!` macro.
 
 I use the `parse_expr` function for a simple recursive descent. It looks like this:
 
 ~~~~~~~~rust
 fn parse_expr(tokens: &Vec<LexItem>, pos: usize) -> Result<(ParseNode, usize), String> {
-    let (node_summand, next_pos) = parse_summand(tokens, pos)?;
+    let (node_summand, next_pos) = try!(parse_summand(tokens, pos));
     let c = tokens.get(next_pos);
     match c {
         Some(&LexItem::Op('+')) => {
@@ -157,7 +155,7 @@ fn parse_expr(tokens: &Vec<LexItem>, pos: usize) -> Result<(ParseNode, usize), S
             let mut sum = ParseNode::new();
             sum.entry = GrammarItem::Sum;
             sum.children.push(node_summand);
-            let (rhs, i) = parse_expr(tokens, next_pos + 1)?;
+            let (rhs, i) = try!(parse_expr(tokens, next_pos + 1));
             sum.children.push(rhs);
             Ok((sum, i))
         }
@@ -169,11 +167,11 @@ fn parse_expr(tokens: &Vec<LexItem>, pos: usize) -> Result<(ParseNode, usize), S
 }
 ~~~~~~~~
 
-Instead of an iterator I use an index into the vector. I found this easier because `usize` can be copied around implicitly and I have no trouble with the borrow-checker. I first attempt to parse a summand with `parse_summand`. This returns a `Result`. I use `?` to continue the computation if it succeeds. If I successfully parsed a summand, I check whether the next token is a `+`. I that case I need to parse the RHS of the `+` recursively. The function to parse a summand looks very similar.
+Instead of an iterator I use an index into the vector. I found this easier because `usize` can be copied around implicitly and I have no trouble with the borrow-checker. I first attempt to parse a summand with `parse_summand`. This returns a `Result`. I use `try!` to continue the computation if it succeeds. If I successfully parsed a summand, I check whether the next token is a `+`. I that case I need to parse the RHS of the `+` recursively. The function to parse a summand looks very similar.
 
 ~~~~~~~~rust
 fn parse_summand(tokens: &Vec<LexItem>, pos: usize) -> Result<(ParseNode, usize), String> {
-    let (node_term, next_pos) = parse_term(tokens, pos)?;
+    let (node_term, next_pos) = try!(parse_term(tokens, pos));
     let c = tokens.get(next_pos);
     match c {
         Some(&LexItem::Op('*')) => {
@@ -181,7 +179,7 @@ fn parse_summand(tokens: &Vec<LexItem>, pos: usize) -> Result<(ParseNode, usize)
             let mut product = ParseNode::new();
             product.entry = GrammarItem::Product;
             product.children.push(node_term);
-            let (rhs, i) = parse_summand(tokens, next_pos + 1)?;
+            let (rhs, i) = try!(parse_summand(tokens, next_pos + 1));
             product.children.push(rhs);
             Ok((product, i))
         }
@@ -199,8 +197,8 @@ The function to parse a term looks most complicated, because this is where I gen
 
 ~~~~~~~rust
 fn parse_term(tokens: &Vec<LexItem>, pos: usize) -> Result<(ParseNode, usize), String> {
-    let c: &LexItem = tokens.get(pos)
-        .ok_or(String::from("Unexpected end of input, expected paren or number"))?;
+    let c: &LexItem = try!(tokens.get(pos)
+        .ok_or(String::from("Unexpected end of input, expected paren or number")));
     match c {
         &LexItem::Num(n) => {
             let mut node = ParseNode::new();
@@ -261,6 +259,8 @@ fn matching(c: char) -> char {
 The last thing we need for this simple parser is a way to supply it with input. I use a the command line argument as input. The `main` function looks like this.
 
 ~~~~~~~rust
+use std::env;
+
 fn main() {
     let args: Vec<_> = env::args().collect();
     if args.len() > 1 {
@@ -313,7 +313,7 @@ Ok(
 It is very simple to write a pretty-printer for `ParseNode`. It's just a combination of `match` and `format!`. I should have done this first, it would have made debugging easier.
 
 ~~~~~~~rust
-pub fn print(tree: &ParseNode) -> String {
+fn print(tree: &ParseNode) -> String {
     match tree.entry {
         GrammarItem::Paren => {
             format!("({})",
@@ -349,17 +349,17 @@ Product }], entry: Sum })
 
 ## Testing
 
-The next step is testing the parser properly using QuickCheck. This is another thing that I should have done earlier. I actually found a small "bug" using QuickCheck. In the types I used to use `i64`, but I can only handle positive numbers. QuickCheck produced inputs with negative numbers which I failed to parse.
+The next step is testing the parser properly using QuickCheck. This is another thing that I should have done earlier. I actually found a small "bug" using QuickCheck. In the types I use `i64`, but I can only handle positive numbers. QuickCheck produced inputs with negative numbers which I failed to parse.
 
 But let's not get ahead of ourselves. To test with QuickCheck, I have to find a suitable invariant for my program that can be tested by throwing random inputs at it. The simplest thing for a deterministic parser like this is that pretty printing a parse tree and parsing the result again yields back the original tree.
 
 In QuickCheck you have to implement a generator for test inputs. The trait is called `Arbitrary` and has two methods: `arbitrary` and `shrink`. The point of `shrink` is to provide a way for QuickCheck to reduce counterexamples to your invariant to something manageable. I only bothered to implement the `arbitrary` function and use the `empty_shrinker` to satisfy the interface.
 
-I generate `ParseNode` instances recursively. The base case is a simple number. Otherwise I generate one of `Paren`, `Sum`, and `Product` and fill the children recursively. I use the random generator `Gen` as provided by QuickCheck. To generate a `GrammarItem` using the generator, I implemented the `Distribution<GrammarItem> for Standard` trait for the enum, which is how the `rand` crate likes to things. I found it a little strange that I had to do that manually, I would expect enums to magically work. Anyway, the implementation is not difficult. I just generate a random int and match over it.
+I generate `ParseNode` instances recursively. The base case is a simple number. Otherwise I generate one of `Paren`, `Sum`, and `Product` and fill the children recursively. I use the random generator `Gen` as provided by QuickCheck. To generate a `GrammarItem` using the generator, I implemented the `Rand` trait for the enum. I found it a little strange that I had to do that manually, I would expect enums to magically work. Anyway, the implementation is not difficult. I just generate a random int and match over it.
 
 ~~~~~~~~rust
-impl Distribution<GrammarItem> for Standard {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> GrammarItem {
+impl Rand for GrammarItem {
+    fn rand<R: Rng>(rng: &mut R) -> GrammarItem {
         let n = rng.gen_range(0, 4);
         match n {
             0 => GrammarItem::Product,
@@ -404,7 +404,7 @@ impl Arbitrary for ParseNode {
            rec_node(5, g)
         }
 
-        fn shrink(&self) -> Box<dyn Iterator<Item = Self>> {
+        fn shrink(&self) -> Box<Iterator<Item = Self>> {
             empty_shrinker()
         }
 }
@@ -416,8 +416,8 @@ The property I want to test is very simple to state. I use the `quickcheck!` mac
 quickcheck! {
     fn prop(xs: ParseNode) -> bool {
         let pp = print(&xs);
-        println!("instance {}", pp);
         let parsed = parse(&pp).unwrap();
+        println!("instance {}", pp);
         assert!(pp == print(&parsed)); 
         true
     }
@@ -432,6 +432,3 @@ I could have tested more thoroughly. Pretty printing always produces nice whites
 
 So that about wraps it up. I learned a bit. The borrow checker is pretty helpful. Most of the time when it nagged me it was right and I was wrong. Enums and match are very useful for this kind of project. Testing is a breeze.
 
-## Get the code
-
-The whole code for this article, included the ommitted lines that define modules and include crates and stuff is available here: https://github.com/adrianN/simple_rust_parser
