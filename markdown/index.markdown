@@ -3,28 +3,18 @@
 
 ## Things I programmed
 
-The most useful things are:
-
-* [Tool for playing movies on a Raspberry Pi](https://github.com/adrianN/MovieThingy)
-* [Tool for extracting graphs from images of things like leaves, slime molds, insect wings, etc.](http://nefi.mpi-inf.mpg.de)
-* [Tool for mail-merge tasks with LaTeX](https://github.com/adrianN/latex-mailmerge)
-
-The least useful thing is a [fish simulation](http://www.mpi-inf.mpg.de/~aneumann/Fische/) that by now has fallen prey to improved security standards in browsers. Back in the day you could just run Java applets...
-
-More can be found on my [Github page](https://github.com/adrianN?tab=repositories)
+See my [Github page](https://github.com/adrianN?tab=repositories)
 
 ##Things I wrote
 
-### Science
+### No Science
 
-* Block, Marco; Neumann, Adrian: *Haskell-Intensivkurs*, [Springer 2011](http://www.springerlink.com/content/978-3-642-04717-6)
-* Karl Bringmann, Kurt Mehlhorn, Adrian Neumann: *Remarks on Category-Based Routing in Social Networks*, [Preprint on arXiv](http://arxiv.org/abs/1202.2293)
-* Karl Bringmann, Benjamin Doerr, Adrian Neumann, Jakub Sliacan: *Online Checkpointing with Improved Worst-Case Guarantees*, ICALP 2013, [Preprint on arXiv](http://arxiv.org/abs/1302.4216)
-* Kurt Mehlhorn, Adrian Neumann, Jens M. Schmidt: *Certifying 3-Edge-Connectivity*, WG 2013, [Preprint on arXiv](http://arxiv.org/abs/1211.6553)
-* Sayan Bhattacharya, Parinya Chalermsook, Kurt Mehlhorn, Adrian Neumann: *New Approximability Results for the Robust k-Median Problem*, [Preprint on arXiv](http://arxiv.org/abs/1309.4602)
-* Michael Dirnberger, Tim Kehl, Adrian Neumann: *NEFI: Network Extraction From Images*, [Scientific Reports 2015](http://www.nature.com/articles/srep15669)
+* [Simple Programming Problems](programming_problems.html)
+* [Learning Japanese](learning_japanese.html)
+* [Segment displays with an Arduino](arduino_segment_displays.html)
+* [Future proof static sites](static_sites.html)
 
-### Less Science
+### Some Science
 
 * [Some stuff related to climate change](climate_change.html)
 * [Linear Optimization](linear_optimization.html)
@@ -36,12 +26,14 @@ More can be found on my [Github page](https://github.com/adrianN?tab=repositorie
 * [Mastermind](mastermind.html)
 * [A graph of NP-complete problems](npc/npc.html)
 
-### No Science
+### Science
 
-* [Simple Programming Problems](programming_problems.html)
-* [Learning Japanese](learning_japanese.html)
-* [Segment displays with an Arduino](arduino_segment_displays.html)
-* [Future proof static sites](static_sites.html)
+* Block, Marco; Neumann, Adrian: *Haskell-Intensivkurs*, [Springer 2011](http://www.springerlink.com/content/978-3-642-04717-6)
+* Karl Bringmann, Kurt Mehlhorn, Adrian Neumann: *Remarks on Category-Based Routing in Social Networks*, [Preprint on arXiv](http://arxiv.org/abs/1202.2293)
+* Karl Bringmann, Benjamin Doerr, Adrian Neumann, Jakub Sliacan: *Online Checkpointing with Improved Worst-Case Guarantees*, ICALP 2013, [Preprint on arXiv](http://arxiv.org/abs/1302.4216)
+* Kurt Mehlhorn, Adrian Neumann, Jens M. Schmidt: *Certifying 3-Edge-Connectivity*, WG 2013, [Preprint on arXiv](http://arxiv.org/abs/1211.6553)
+* Sayan Bhattacharya, Parinya Chalermsook, Kurt Mehlhorn, Adrian Neumann: *New Approximability Results for the Robust k-Median Problem*, [Preprint on arXiv](http://arxiv.org/abs/1309.4602)
+* Michael Dirnberger, Tim Kehl, Adrian Neumann: *NEFI: Network Extraction From Images*, [Scientific Reports 2015](http://www.nature.com/articles/srep15669)
 
 ### Engineering
 
@@ -50,6 +42,11 @@ More can be found on my [Github page](https://github.com/adrianN?tab=repositorie
     * [Type Punning](undefined_behavior.html#type-punning)
 * Rust
     * [Simple Parser](rust_parser.html)
+
+## Links
+
+* [In list form](links_list.html)
+* [Grouped by topic](links_by_category.html)
 
 ## Elsewhere on the Web
 

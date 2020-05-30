@@ -1,4 +1,42 @@
-bla
-http://example.com
-example,link
-a description
+Cypherpunk Desert Bus
+https://web.archive.org/web/20161114214233/https://petertodd.org/2016/cypherpunk-desert-bus-zcash-trusted-setup-ceremony
+cyberpunk
+
+The Hunt for the Death Valley Germans
+https://web.archive.org/web/20200118063455/http://www.otherhand.org/home-page/search-and-rescue/the-hunt-for-the-death-valley-germans/
+survival
+
+The Disquieting Delights Of Salt-Rising Bread
+https://web.archive.org/web/20140523060612/http://www.popsci.com/article/science/clostridium-it-can-kill-you-or-it-can-make-you-bread
+baking,food,fermentation
+
+Neocities
+http://neocities.org/
+indie web
+A more modern version of Geocities
+
+Dürremonitor Deutschland
+https://www.ufz.de/index.php?de=37937
+climate change
+
+Simplifier
+https://simplifier.neocities.org/
+maker,chemistry
+Work log of a person making all kinds of things, from wood stains to solar cells.
+
+Arduino vs Evil
+https://www.youtube.com/user/arduinoversusevil
+maker,youtube
+Reviews of tools, machining, electronics.
+
+Nile Red
+https://www.youtube.com/user/TheRedNile
+maker,youtube,chemistry
+Chemistry
+
+Post 10
+https://www.youtube.com/channel/UCsCNU-ptlze2tqAJSDeVGNQ
+youtube
+A guy unclogging drains
+
+

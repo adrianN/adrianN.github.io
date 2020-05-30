@@ -1,3 +1,4 @@
+python3 links.py linkfile/linkfile.txt
 for i in markdown/*.markdown; do
 	filename="${i#markdown/}";
 	html="${filename%.markdown}.html";
