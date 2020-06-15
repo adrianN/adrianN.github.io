@@ -56,3 +56,19 @@ maker,climate change
 Reducing transmission of SARS-CoV-2
 https://science.sciencemag.org/content/early/2020/05/27/science.abc6197.full
 covid, masks
+
+The Majority Illusion in Social Networks
+https://doi.org/10.1371/journal.pone.0147617
+memetics
+
+Countering hate on social media: Large scale classification of hate and counter speech
+https://arxiv.org/abs/2006.01974
+memetics
+
+Destruction of Nuclear Bombs Using Ultra-High Energy Neutrino Beam
+https://arxiv.org/abs/hep-ph/0305062
+physics, hard scifi
+
+Are Black Hole Starships Possible
+https://arxiv.org/abs/0908.1803
+physics, hard scifi
