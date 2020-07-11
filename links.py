@@ -47,11 +47,18 @@ with open(sys.argv[1],'r') as linkFile:
 with open("markdown/links_list.markdown", "w") as out:
     preamble = "#Links\n"
     out.write(preamble)
-    for link in sorted(links, key=lambda x : x.text):
-        if link.descr:
-            out.write(f"* [{link.text}]({link.url}): {link.descr}\n")
-        else:
-            out.write(f"* [{link.text}]({link.url})\n")
+    bydate = defaultdict(list)
+    for link in links:
+        bydate[link.date].append(link)
+    for date,linkList in sorted(bydate.items(), reverse=True):
+        out.write(f"##{link.date}\n\n")
+        for link in sorted(linkList, key = lambda x : x.text):
+            out.write(f"* [{link.text}]({link.url})")
+            if link.descr:
+                out.write(f": {link.descr}\n")
+            else:
+                out.write("\n")
+        out.write("\n\n")
 
 links_by_category = defaultdict(list)
 for link in links:

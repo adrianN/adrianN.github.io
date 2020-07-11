@@ -8,6 +8,16 @@
 Sat, 18 Jan 2020 09:05:47 +0100
 </lastBuildDate>
  <ttl>20000</ttl>
+ <!-- top of the feed --!>
+
+ <item>
+   <title>Links</title>
+   <description>I added a collection of links.</description>
+   <link>https://adriann.github.io/links_by_category.html</link>
+   <pubDate>
+Sat, 11 Jul 2020 08:21:24 +0200
+   </pubDate>
+ </item>
 
  <item>
   <title>Future-proof static websites</title>
