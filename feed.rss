@@ -1,15 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?> 
 <rss version="2.0">
 <channel>
  <title>Adrian's Homepage</title>
  <description>This is the RSS feed for my homepage. Since I update so infrequently, it is hard for people to keep up by checking manually.</description>
  <link>https://adriann.github.io</link>
-<lastBuildDate>
-Sat, 18 Jan 2020 09:05:47 +0100
-</lastBuildDate>
+<lastBuildDate>Sun, 13 Sep 2020 16:57:06 +0000</lastBuildDate>
  <ttl>20000</ttl>
- <!-- top of the feed --!>
-
  <item>
    <title>Links</title>
    <description>I added a collection of links.</description>
@@ -118,5 +114,5 @@ Fri, 23 Dec 2016 22:09:13 +0100
   </pubDate>
  </item>
 
-</channel>
+<item><title>Link: Meditations on Moloch</title><link>https://www.lesswrong.com/posts/TxcRbCYHaeL59aY7E/meditations-on-moloch</link><pubDate>Sun, 13 Sep 2020 16:56:48 +0000</pubDate><description>Why are things bad in the world? Because of game theory and a high Price of Anarchy, claims the author of this article. Quite compelling.</description></item><item><title>Link: Meditations on Moloch</title><link>https://www.lesswrong.com/posts/TxcRbCYHaeL59aY7E/meditations-on-moloch</link><pubDate>Sun, 13 Sep 2020 16:57:06 +0000</pubDate><description>Why are things bad in the world? Because of game theory and a high Price of Anarchy, claims the author of this article. Quite compelling.</description></item></channel>
 </rss>
