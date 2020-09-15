@@ -145,12 +145,16 @@ if  filename_timestamp <= generated_time:
 dates = readDates(filename)
 links = readLinks(filename,dates)
 new_links = findNewLinks(links, generated_time)
-print(new_links)
+rssText, root = parseRss()
+filtered_new_links = []
+for link in new_links:
+    if link.url not in rssText or input(f"{link.text} already in rss. Duplicate y/n?") == 'y':
+        filtered_new_links.append(link)
+new_links = filtered_new_links
 
-root = parseRss()
 if len(new_links)>1:
     addLinks(root, new_links)
-else:
+elif len(new_links) == 1:
     addLink(root, new_links[0])
 
 updateRssTimeGenerated(root)
