@@ -11,6 +11,8 @@ The average German uses 48000 kWh per year of primary energy ([source](https://w
 
 So you need at least 144sqm of solar panels per person, if you're generous about energy savings and don't overprovision to reduce storage demands. Germany has an average population density of 4300 square meters per person.
 
+Germany currently (2019) uses around 2.4 million hectares for energy crops ([source](https://mediathek.fnr.de/grafiken/daten-und-fakten/anbauflache-fur-nachwachsende-rohstoffe.html). Thats 287 square meters per person. Conveniently almost exactly twice the amount of space needed to cover the energy needs with solar panels, given the above assumptions, so there is room for space between the panels.
+
 #Links
 
 [Links tagged "climate change"](https://adriann.github.io/links_by_category.html#climate-change)
