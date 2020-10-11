@@ -4,7 +4,7 @@
  <title>Adrian's Homepage</title>
  <description>This is the RSS feed for my homepage. Since I update so infrequently, it is hard for people to keep up by checking manually.</description>
  <link>https://adriann.github.io</link>
-<lastBuildDate>Sun, 13 Sep 2020 16:57:06 +0000</lastBuildDate>
+<lastBuildDate>Sun, 11 Oct 2020 04:49:39 +0000</lastBuildDate>
  <ttl>20000</ttl>
  <item>
    <title>Links</title>
@@ -114,5 +114,5 @@ Fri, 23 Dec 2016 22:09:13 +0100
   </pubDate>
  </item>
 
-<item><title>Link: Meditations on Moloch</title><link>https://www.lesswrong.com/posts/TxcRbCYHaeL59aY7E/meditations-on-moloch</link><pubDate>Sun, 13 Sep 2020 16:56:48 +0000</pubDate><description>Why are things bad in the world? Because of game theory and a high Price of Anarchy, claims the author of this article. Quite compelling.</description></item></channel>
+<item><title>Link: Meditations on Moloch</title><link>https://www.lesswrong.com/posts/TxcRbCYHaeL59aY7E/meditations-on-moloch</link><pubDate>Sun, 13 Sep 2020 16:56:48 +0000</pubDate><description>Why are things bad in the world? Because of game theory and a high Price of Anarchy, claims the author of this article. Quite compelling.</description></item><item><title>Link: Berlin: Auto fahren (fast) nur die Reichen</title><link>https://www.heise.de/tp/news/Berlin-Auto-fahren-fast-nur-die-Reichen-4911636.html</link><pubDate>Sun, 11 Oct 2020 04:49:39 +0000</pubDate><description>[...] Erst über 3.000 Euro monatliches Nettoeinkommen hat die Mehrheit der Berliner Haushalte ein eigenes Auto, wobei dies mit weiter zunehmendem Einkommen zur Normalität und der Verzicht zur Ausnahme wird.</description></item></channel>
 </rss>
