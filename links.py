@@ -78,7 +78,7 @@ def parseRss():
     with open("feed.rss",'r') as rssFile:
         s = rssFile.read()
         tree = ET.fromstring(s)
-        return tree
+        return s, tree
 
 def currentTimeStr():
     return datetime.datetime.now(datetime.timezone.utc).strftime("%a, %d %b %Y %T %z")
