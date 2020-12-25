@@ -102,7 +102,7 @@ def addLink(root, singleLink):
     if singleLink.descr:
         description.text = singleLink.descr
     else:
-        description.text = "This link has no description. It is tagged as " + ",".join(link.tagStr)
+        description.text = "This link has no description. It is tagged as " + ",".join(singleLink.tagStr)
 
 def addLinks(root, links):
     """ add multiple links to the rss tree """
