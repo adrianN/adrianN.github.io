@@ -13,6 +13,8 @@ So you need at least 144sqm of solar panels per person, if you're generous about
 
 Germany currently (2019) uses around 2.4 million hectares for energy crops ([source](https://mediathek.fnr.de/grafiken/daten-und-fakten/anbauflache-fur-nachwachsende-rohstoffe.html). Thats 287 square meters per person. Conveniently almost exactly twice the amount of space needed to cover the energy needs with solar panels, given the above assumptions, so there is room for space between the panels.
 
+Update (2021): 200W per square meter panels [are a thing now](https://us.sunpower.com/solar-resources/sunpower-maxeon-gen-iii-solar-cells), so the land use calculated above can be reduced by 25%.
+
 #Links
 
 [Links tagged "climate change"](https://adriann.github.io/links_by_category.html#climate-change)
