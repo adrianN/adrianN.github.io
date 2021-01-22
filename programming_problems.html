@@ -2,60 +2,43 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <link href="https://adriann.github.io/feed.rss" rel="alternate" type="application/rss+xml" title="What's new on adriann.github.io" />
+  <link rel="stylesheet" type="text/css" href="./stylesheets/programming_problems.css">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="generator" content="pandoc" />
   <meta name="author" content="Adrian Neumann (adrian_neumann@gmx.de)" />
   <title>Simple Programming Problems</title>
-  <style type="text/css">
-  .displayequation{margin-left:auto;margin-right:auto;}
-  </style>
-  <style>
-  .caption{font-size:66%;text-align:right;}
-  .figure{float:right;padding-bottom:1em;padding-left:1em;}
-  .figure>img{display:block;margin:0 auto;}
-  .footnotes{font-size:80%;}
-  .block{border-left:1ex solid gray;padding-left:2em;}
-  li{padding:0.25em;}
-  a:hover{text-shadow: 0 0 5px;}
-  body{font-family:sans-serif;max-width:100ex;padding-left:3em;padding-right:2em;}
-  code{font-family:Consolas, Inconsolata, Monaco, monospace;}
-  p{text-align:justify;}
-  </style>
 </head>
 <body>
+<div class="flex">
 <div id="header">
 <h1 class="title">Simple Programming Problems</h1>
 </div>
-<p>Whenever I’m TA for a introductory CS class where students learn some programming language, I have trouble coming up with good exercises. Problems from <a href="http://projecteuler.net/">Project Euler</a> and the like are usually much too difficult for beginners, especially if they don’t have a strong background in mathematics.</p>
+<p>Whenever I’m TA for a introductory CS class where students learn some programming language, I have trouble coming up with good exercises. Problems from <a href="http://projecteuler.net/" target="_blank">Project Euler</a> and the like are usually much too difficult for beginners, especially if they don’t have a strong background in mathematics.</p>
 <p>This page is a collection of progressively more difficult exercises that are suitable for people who just started learning. It will be extended as I come up with new exercises. Except for the GUI questions, exercises are generally algorithmic and should be solvable without learning any libraries. The difficulty of the exercises of course somewhat depends on the programming language you use. The List exercises for example are more complicated in languages like C that don’t have build-in support for lists.</p>
 <p>I suppose they are also useful, although much easier, whenever an experienced person wants to learn a new language.</p>
-<p>This guide has been translated to Chinese by yifeitao <a href="https://github.com/yifeitao/SimpleProgrammingProblems">Simple Programming Problems in Chinese</a></p>
+<p>This guide has been translated to Chinese by yifeitao <a href="https://github.com/yifeitao/SimpleProgrammingProblems" target="_blank">Simple Programming Problems in Chinese</a></p>
 <h2 id="before-you-begin">Before you begin</h2>
 <p>Learning to program means learning how to solve problems using code. Conceptually it is not very difficult to write a program that solves a problem that you can solve yourself. The skill you need to acquire is thinking very precisely about how you solve the problem and breaking it down into steps that are so simple that a computer can execute them. I encourage you to first solve a few instances of a problem by hand and think about what you did to find the solution. For example if the task is sorting lists, sort some short lists yourself. A reasonable method would be to find the smallest element, write it down and cross it out of the original list and repeat this process until you have sorted the whole list. Then you have to teach the computer 1) how to find the smallest element, 2) how to write it down, 3) how to cross it out, and wrap this in a loop. Then continue this task breakdown process until you’re confident you know how to write the necessary program.</p>
 <p>To make good progress in your programming task, you need to test your work as early and as thoroughly as possible. Everybody makes mistakes while programming and finding mistakes in programs consumes a very large part of a programmer’s work-day. Finding a problem in a small and easy piece of code is much simpler than trying to spot it in a large program. This is why you should try to test each sub task you identified during your task-breakdown by itself. Only after you’re confident that each part works as you expect you can attempt to plug them together. Make sure you test the complete program as well, errors can creep in in the way the different parts interact. You should try to automate your tests. The easier it is to test your program, the freer you are in experimenting with changes.</p>
 <p>The last important point is <em>how</em> you express your thoughts as code. In the same way that you can express the same argument in different ways in a normal English essay, you can express the same problem-solving method in different ways in code. Try for brevity. The lines that you don’t write are the lines where you can be sure that the don’t have bugs. Don’t be afraid to Google for idiomatic ways of doing the things you’d like to do (after you tried doing them yourself!). Remember that you don’t write the program for the computer, you write it for other humans (maybe a future you!). Choose names that explain things, add comments where these names don’t suffice. Never comment on <em>what</em> the code is doing, only write comments that explain <em>why</em>.</p>
 <p>This is a bad example:</p>
-<pre><code>
-// This function checks whether a number is even
+<pre><code><span>// This function checks whether a number is even</span>
 def f(x):
-  // compute x modulo 2 and check whether it is zero
+  <span>// compute x modulo 2 and check whether it is zero</span>
   if modulo(x,2) == 0:
-    // the number is even
+    <span>// the number is even</span>
     return True
   else:
-    // the number is odd
-    return False
-</code></pre>
+    <span>// the number is odd</span>
+    return False</code></pre>
 <p>The exact same idea is much easier to understand if you write it like this:</p>
-<pre><code>
-def is_divisible(number, divisor):
+<pre><code>def is_divisible(number, divisor):
   return modulo(number, divisor) == 0
 
 def is_even(number):
-  return is_divisible(number, 2)
-</code></pre>
+  return is_divisible(number, 2)</code></pre>
 <p>Better naming and a better task breakdown make the comments obsolete. Revise your code just as you would revise an essay. Sketch, write, delete, reformulate, ask others what they think. Repeat until only the crispest possible expression of your idea remains. Revisit code you’ve written a while ago to see whether you can improve it with things you’ve learned since.</p>
 <h2 id="elementary">Elementary</h2>
 <ol style="list-style-type: decimal">
@@ -89,11 +72,11 @@ def is_even(number):
 <li>Write a function that rotates a list by <code>k</code> elements. For example <code>[1,2,3,4,5,6]</code> rotated by two becomes <code>[3,4,5,6,1,2]</code>. Try solving this without creating a copy of the list. How many swap or move operations do you need?</li>
 <li>Write a function that computes the list of the first 100 Fibonacci numbers. The first two Fibonacci numbers are 1 and 1. The <code>n+1</code>-st Fibonacci number can be computed by adding the <code>n</code>-th and the <code>n-1</code>-th Fibonacci number. The first few are therefore 1, 1, 1+1=2, 1+2=3, 2+3=5, 3+5=8.</li>
 <li>Write a function that takes a number and returns a list of its digits. So for <code>2342</code> it should return <code>[2,3,4,2]</code>.</li>
-<li>Write functions that add, subtract, and multiply two numbers in their digit-list representation (and return a new digit list). If you’re ambitious you can implement <a href="https://en.wikipedia.org/wiki/Karatsuba_algorithm">Karatsuba multiplication</a>. Try <a href="https://en.wikipedia.org/wiki/Radix">different bases</a>. What is the best base if you care about speed? If you couldn’t completely solve the prime number exercise above due to the lack of large numbers in your language, you can now use your own library for this task.</li>
+<li>Write functions that add, subtract, and multiply two numbers in their digit-list representation (and return a new digit list). If you’re ambitious you can implement <a href="https://en.wikipedia.org/wiki/Karatsuba_algorithm" target="_blank">Karatsuba multiplication</a>. Try <a href="https://en.wikipedia.org/wiki/Radix" target="_blank">different bases</a>. What is the best base if you care about speed? If you couldn’t completely solve the prime number exercise above due to the lack of large numbers in your language, you can now use your own library for this task.</li>
 <li>Write a function that takes a list of numbers, a starting base <code>b1</code> and a target base <code>b2</code> and interprets the list as a number in base <code>b1</code> and converts it into a number in base <code>b2</code> (in the form of a list-of-digits). So for example <code>[2,1,0]</code> in base 3 gets converted to base 10 as <code>[2,1]</code>.</li>
 <li>Implement the following sorting algorithms: Selection sort, Insertion sort, Merge sort, Quick sort, Stooge Sort. Check Wikipedia for descriptions.</li>
 <li>Implement binary search.</li>
-<li><p>Write a function that takes a list of strings an prints them, one per line, in a rectangular frame. For example the list <code>[&quot;Hello&quot;, &quot;World&quot;, &quot;in&quot;, &quot;a&quot;, &quot;frame&quot;]</code> gets printed as:</p>
+<li>Write a function that takes a list of strings an prints them, one per line, in a rectangular frame. For example the list <code>[&quot;Hello&quot;, &quot;World&quot;, &quot;in&quot;, &quot;a&quot;, &quot;frame&quot;]</code> gets printed as:
 <pre><code>*********
 * Hello *
 * World *
@@ -101,7 +84,7 @@ def is_even(number):
 * a     *
 * frame *
 *********</code></pre></li>
-<li><p>Write function that translates a text to Pig Latin and back. English is translated to Pig Latin by taking the first letter of every word, moving it to the end of the word and adding ‘ay’. “The quick brown fox” becomes “Hetay uickqay rownbay oxfay”.</p></li>
+<li>Write function that translates a text to Pig Latin and back. English is translated to Pig Latin by taking the first letter of every word, moving it to the end of the word and adding ‘ay’. “The quick brown fox” becomes “Hetay uickqay rownbay oxfay”.</li>
 </ol>
 <h2 id="intermediate">Intermediate</h2>
 <ol style="list-style-type: decimal">
@@ -130,42 +113,43 @@ def is_even(number):
 <li>Given two strings, write a program that efficiently finds the longest common subsequence.</li>
 <li>Given an array with numbers, write a program that efficiently answers queries of the form: “Which is the nearest larger value for the number at position <code>i</code>?”, where distance is the difference in array indices. For example in the array <code>[1,4,3,2,5,7]</code>, the nearest larger value for 4 is 5. After linear time preprocessing you should be able to answer queries in constant time.</li>
 <li>Given two strings, write a program that outputs the shortest sequence of character insertions and deletions that turn one string into the other.</li>
-<li>Write a function that multiplies two matrices together. Make it as efficient as you can and compare the performance to a polished linear algebra library for your language. You might want to read about <a href="https://en.wikipedia.org/wiki/Strassen_algorithm">Strassen’s algorithm</a> and the effects CPU caches have. Try out different matrix layouts and see what happens.</li>
-<li>Implement a <a href="https://en.wikipedia.org/wiki/Van_Emde_Boas_tree">van Emde Boas</a> tree. Compare it with your previous search tree implementations.</li>
+<li>Write a function that multiplies two matrices together. Make it as efficient as you can and compare the performance to a polished linear algebra library for your language. You might want to read about <a href="https://en.wikipedia.org/wiki/Strassen_algorithm" target="_blank">Strassen’s algorithm</a> and the effects CPU caches have. Try out different matrix layouts and see what happens.</li>
+<li>Implement a <a href="https://en.wikipedia.org/wiki/Van_Emde_Boas_tree" target="_blank">van Emde Boas</a> tree. Compare it with your previous search tree implementations.</li>
 <li>Given a set of d-dimensional rectangular boxes, write a program that computes the volume of their union. Start with 2D and work your way up.</li>
 </ol>
 <h2 id="gui">GUI</h2>
 <ul>
 <li>Write a program that displays a bouncing ball.</li>
-<li>Write a <a href="https://en.wikipedia.org/wiki/Memory_%28game%29">Memory</a> game.</li>
+<li>Write a <a href="https://en.wikipedia.org/wiki/Memory_%28game%29" target="_blank">Memory</a> game.</li>
 <li>Write a Tetris clone</li>
 </ul>
 <h2 id="open-ended">Open Ended</h2>
 <ol style="list-style-type: decimal">
-<li>Write a program that plays Hangman as good as possible. For example you can use a large dictionary like <a href="http://wordlist.sourceforge.net/">this</a> and select the letter that excludes most words that are still possible solutions. Try to make the program as efficient as possible, i.e. don’t scan the whole dictionary in every turn.</li>
+<li>Write a program that plays Hangman as good as possible. For example you can use a large dictionary like <a href="http://wordlist.sourceforge.net/" target="_blank">this</a> and select the letter that excludes most words that are still possible solutions. Try to make the program as efficient as possible, i.e. don’t scan the whole dictionary in every turn.</li>
 <li>Write a program that plays Rock, Paper, Scissors better than random against a human. Try to exploit that humans are very bad at generating random numbers.</li>
 <li>Write a program that plays Battle Ship against human opponents. It takes coordinates as input and outputs whether that was a hit or not and its own shot’s coordinates.</li>
 </ol>
 <h2 id="other-collections">Other Collections</h2>
 <p>Of course I’m not the first person to come up with the idea of having a list like this.</p>
 <ul>
-<li><a href="http://users.csc.calpoly.edu/~jdalbey/">John Dalbey</a>’s collection
+<li><a href="http://users.csc.calpoly.edu/~jdalbey/" target="_blank">John Dalbey</a>’s collection
 <ul>
-<li>Several small problems <a href="http://users.csc.calpoly.edu/~jdalbey/103/Projects/ProgrammingPractice.html">Programming Practice</a></li>
-<li>CPE 101 <a href="http://users.csc.calpoly.edu/~jdalbey/101/index.html">Projects</a></li>
+<li>Several small problems <a href="http://users.csc.calpoly.edu/~jdalbey/103/Projects/ProgrammingPractice.html" target="_blank">Programming Practice</a></li>
+<li>CPE 101 <a href="http://users.csc.calpoly.edu/~jdalbey/101/index.html" target="_blank">Projects</a></li>
 </ul></li>
-<li><a href="http://codekata.pragprog.com/">Code Kata</a></li>
-<li><a href="http://www.ic.unicamp.br/~meidanis/courses/mc336/2006s2/funcional/L-99_Ninety-Nine_Lisp_Problems.html">99 Lisp Problems</a>, <a href="http://www.haskell.org/haskellwiki/99_Haskell_exercises">99 Haskell Problems</a>. Most of these can also be done in other languages.</li>
-<li><a href="http://rosettacode.org/wiki/Category:Programming_Tasks">Rosetta Code Programming Tasks</a>. These come with solutions in many languages!</li>
-<li><a href="http://codegolf.com/competition/browse">Code Golf Challenges</a>. The goal here is to solve the problem with as few characters as possible.</li>
-<li><a href="http://www.spoj.com/problems/classical/">SPOJ Problems</a>. This is a list of more than 13000 Problems!</li>
-<li><a href="http://codeabbey.com">Code Abbey</a> According to Github user RodionGork, this is less mathy than Project Euler.</li>
+<li><a href="http://codekata.pragprog.com/" target="_blank">Code Kata</a></li>
+<li><a href="http://www.ic.unicamp.br/~meidanis/courses/mc336/2006s2/funcional/L-99_Ninety-Nine_Lisp_Problems.html" target="_blank">99 Lisp Problems</a>, <a href="http://www.haskell.org/haskellwiki/99_Haskell_exercises" target="_blank">99 Haskell Problems</a>. Most of these can also be done in other languages.</li>
+<li><a href="http://rosettacode.org/wiki/Category:Programming_Tasks" target="_blank">Rosetta Code Programming Tasks</a>. These come with solutions in many languages!</li>
+<li><a href="http://codegolf.com/competition/browse" target="_blank">Code Golf Challenges</a>. The goal here is to solve the problem with as few characters as possible.</li>
+<li><a href="http://www.spoj.com/problems/classical/" target="_blank">SPOJ Problems</a>. This is a list of more than 13000 Problems!</li>
+<li><a href="http://codeabbey.com" target="_blank">Code Abbey</a> According to Github user RodionGork, this is less mathy than Project Euler.</li>
 </ul>
 <hr/>
-<div style="display:inline-flex;flex-wrap:wrap;justify-content:space-between;font-size:80%">
-<p style="margin-right:2ex">CC-BY-SA <a href="mailto:adrian_neumann@gmx.de">Adrian Neumann</a> (PGP Key <a href="https://adriann.github.io/ressources/pub.asc">A0A8BC98</a>)</p>
-<p style="margin-left:1ex;margin-right:1ex"><a href="http://adriann.github.io">adriann.github.io</a></p>
-<p style="margin-left:2ex"><a href="https://adriann.github.io/feed.rss">RSS</a></p>
+<footer>
+<p>CC-BY-SA <a href="mailto:adrian_neumann@gmx.de">Adrian Neumann</a> (PGP Key <a href="https://adriann.github.io/ressources/pub.asc">A0A8BC98</a>)</p>
+<p><a href="http://adriann.github.io" target="_blank">adriann.github.io</a></p>
+<p><a href="https://adriann.github.io/feed.rss" target="_blank">RSS</a></p>
+</footer>
 </div>
 </body>
 </html>
